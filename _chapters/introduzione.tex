@@ -1,0 +1,145 @@
+\chapter{Introduzione}
+La Ricerca Operativa è la disciplina che studia e mette a punto metodologie ed algoritmi per la risoluzione di problemi di ottimizzazione
+\begin{definition}{Problema Ottimizzazione}
+    Un problema di ottimizzazione è un problema in cui occorre prendere decisioni sull'uso di risorse disponibili solo in quantità limitate,
+    in modo tale da rispettare un dato insieme di vincoli, e da massimizzare il beneficio ottenibile dall'uso delle risorse \textbf{o minimizzare
+    il costo totale che ne deriva dall'utilizzo di queste risorse.}
+\end{definition}
+\begin{example}{Esempio di problema di ottimizzazione}
+    Supponiamo che un'azienda produca tavoli e sedie:
+    \begin{itemize}
+        \item Ogni tavolo richiede 4 ore di lavoro e 2 kg di legno.
+        \item Ogni sedia richiede 2 ore di lavoro e 1 kg di legno.
+        \item L'azienda dispone di 40 ore di lavoro e 16 kg di legno.
+        \item Guadagna 50 € per ogni tavolo e 20 € per ogni sedia.
+    \end{itemize}
+    Indichiamo con
+    \begin{itemize}
+        \item x = numero di tavoli prodotti.
+        \item y = numero di sedie prodotte.
+    \end{itemize}
+    Vogliamo massimizzare il profitto
+    \begin{center}
+        $\max_{x,y} (50x + 20y)$
+
+
+        soggetto ai vincoli
+        $$
+        \begin{cases}
+        4x + 2y \le 40 & \text{(ore di lavoro)} \\
+        2x + y \le 16 & \text{(legno)} \\
+        x, y \ge 0
+        \end{cases}
+        $$
+    \end{center}
+\end{example}
+Quindi un processo decisionale alla base dell'analisi e risoluzione di un problema
+di ottimizzazione puo essere scomposto nelle seguenti fasi:
+\begin{itemize}
+    \item individuazione del problema e delle sue caratteristiche;
+    \item costruzione di un modello logico-matematico che lo rappresenti (formulazione degli obiettivi e scelta della variabili di interesse, dette variabili
+di decisione, nell'esempio di prima sono x ed y);
+    \item determinazione di una o piu soluzioni;
+    \item analisi dei risultati ottenuti.
+\end{itemize}
+\newpage
+\section{Classificazione dei problemi di ottimizzazione}
+Per definire matematicamente un problema di ottimo, quello che si fa è definire:
+\begin{definition}{Insieme ammissibile}
+    \begin{center}
+        P = \{\text{tutte le soluzioni che rispettano i vincoli del problema}\}
+    \end{center}
+    P viene chiamato insieme ammissibile e ogni elemento x $\in$ P è \textbf{una soluzione ammissibile}
+\end{definition}
+\begin{example}{Esempio di Insieme ammissibile}
+    Nell'esempio dei tavoli e delle sedie avevamo:
+    \begin{center}
+        $$
+        \begin{cases}
+        4x + 2y \le 40 & \text{(ore di lavoro)} \\
+        2x + y \le 16 & \text{(legno)} \\
+        x, y \ge 0
+        \end{cases}
+        $$
+    \end{center}
+    Quindi l'insieme ammissibile è 
+    \begin{center}
+        $$
+        P = \left\{ (x,y) \in \mathbb{R}^2 : 
+        \begin{array}{l}
+        4x + 2y \le 40 \\
+        2x + y \le 16 \\
+        x \ge 0, y \ge 0
+        \end{array} 
+        \right\}
+        $$
+    \end{center}
+\end{example}
+\begin{definition}{Funzione Obiettivo}
+    Sull'insieme $P$, viene definita una funzione:
+    \begin{center}
+        $c : P \to \mathbb{R}$
+    \end{center}
+    Questa funzione associa ad ogni soluzione ammissibile un valore reale:
+    \begin{center}
+           $x \in P \to c(x) \in \mathbb{R}$
+    \end{center}
+    Il valore \(c(x)\) rappresenta, a seconda del problema:
+    \begin{itemize}
+        \item \textbf{un profitto/beneficio}, che vogliamo massimizzare.
+        \item \textbf{un costo}, vogliamo minimizzarlo.
+    \end{itemize}
+\end{definition}
+\begin{definition}{Problema di Ottimizzazione}
+    Quindi un problema di ottimizzazione può essere scritto semplicemente come:
+    \begin{center}
+        $\max_{x \in P} c(x)$
+    \end{center}
+    oppure
+    \begin{center}
+        $\min_{x \in P} c(x)$
+    \end{center}
+\end{definition}
+\begin{example}{Esempio di funzione obiettivo}
+    Un esempio di funzione obiettivo definita sull'insieme $P$ che abbiamo definito prima è:
+    \begin{center}
+        c(x,y) = 50x + 20y
+    \end{center}
+    Poichè vogliamo massimizzare il profitto, ho:
+    \begin{center}
+         $\max_{(x,y) \in P} 50x + 20y$
+    \end{center}
+\end{example}
+\begin{definition}{Soluzione Ottima}
+    Una soluzione ottima sarà un x* $\in P$ tale che, nel caso di massimizzazione,
+    \begin{center}
+        c(x*) $\geq$ c(x) $\forall x \in P$ 
+    \end{center}
+\end{definition}
+In alcuni casi, invece di richiedere una soluzione ottima di un problema,
+pu`o essere richiesto di individuarne una qualsiasi soluzione ammissibile, ossia
+di determinare se l'insieme delle soluzioni ammissibili sia vuoto o meno. In
+casi del genere, si parla di problema decisionale o problema di esistenza.
+Ad un problema decisionale è naturalmente associato il cosiddetto problema
+di certificato, che consiste nello stabilire se un dato x appartenga o meno a $P$
+\section{Classificazione dei metodi risolutivi}
+Gli algoritmi utilizzati per risolvere i problemi di ottimizzazione si suddivi
+dono in tre categorie principali:
+\begin{itemize}
+    \item \textbf{Metodi esatti} :  essi risolvono il problema all'ottimo. In caso di prob
+lemi computazionalmente intrattabili, essi richiedono complessit`a com
+putazionale esponenziale o comunque superpolinomiale.
+    \item \textbf{Metodi di approssimazione} : essi trovano una soluzione subottima,
+garantendo un indice della qualit`a della soluzione approssimata indi
+viduata. La loro applicazione risulta utile in caso di problemi computazionalmente intrattabili. è chiaro che in tal caso sarebbe auspicabile che il tempo di computazione da essi richiesto sia polinomiale.
+    \item \textbf{Metodi euristici} :  essi trovano una soluzione subottima senza alcuna
+garanzia circa la qualit`a della soluzione individuata, per cui `e ovvio che
+ha senso la messa a punto di euristiche solo polinomiali. L'applicazione
+di tali metodi `e particolarmente indicata per risolvere problemi del
+mondo reale di grandi dimensioni e/o problemi talmente difficili dal
+punto di vista computazionale che per essi non esiste neanche un al
+goritmo capace di trovare una soluzione approssimata in tempo poli
+nomiale.
+
+
+\end{itemize}

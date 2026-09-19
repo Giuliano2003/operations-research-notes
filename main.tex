@@ -1,0 +1,73 @@
+\documentclass{csnotes}
+\usepackage{xcolor}
+\usepackage[italian]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\lstdefinelanguage{turtle}{
+  morekeywords={@prefix, @base},
+  morecomment=[l]{\#},
+  morestring=[b]",
+  sensitive=true
+}
+\lstset{
+  language=turtle,
+  basicstyle=\small\ttfamily,
+  keywordstyle=\color{purple}\bfseries,
+  stringstyle=\color{teal},
+  commentstyle=\color{gray}\itshape,
+  numbers=none,
+  frame=single,
+  rulecolor=\color{lightgray},
+  backgroundcolor=\color{gray!5},
+  breaklines=true,
+  tabsize=2,
+  showstringspaces=false
+}
+\geometry{
+    top=2cm,
+    bottom=2cm,
+    left=2cm,
+    right=2cm
+}
+% Document meta
+\title{Ricerca Operativa}
+\author{Giuliano Savino}
+\date{\today}
+
+% Title page info
+\university{Università Degli Studi Di Napoli Federico II}
+\department{Dipartimento Di Ingegneria Elettrica \\ e Delle Tecnologie Dell'Informazione}
+\course{Corso Di Laurea Magistrale In Informatica}
+\subject{Ricerca Operativa}
+\academicyear{Academic Year 2026/2027}
+
+\begin{document}
+\thispagestyle{empty}
+\begin{flushright}
+    \small
+    \textbf{Ricerca Operativa}\\
+    \textit{Scritto da : Giuliano Savino}
+\end{flushright}
+
+\vspace{-0.15cm}
+\noindent
+\textcolor{blue!60!black}{\rule{\textwidth}{1.2pt}}
+\vfill
+\begin{center}
+
+    {\Large \textbf{Ricerca Operativa}}\\[0.2cm]
+        
+    {\large \textit{Scritto da : Giuliano Savino}}
+
+\end{center}
+
+\vfill
+
+\tableofcontents
+\newpage
+\input{_chapters/introduzione.tex}
+
+\end{document}
