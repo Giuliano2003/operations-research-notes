@@ -1,0 +1,337 @@
+\chapter{Programmazione Lineare}
+Un problema di ottimizzazione consiste nel cercare la migliore soluzione tra quelle ammissibili.
+Ad esempio
+\begin{center}
+    Un'azienda produce tavoli e sedie. Quanto deve produrne per massimizzare il profitto, rispettando i limiti di legno e ore di lavoro?
+\end{center}
+Prima abbiamo visto che, per risolvere un problema di ottimizzazione, dobbiamo costruire un modello logico-matematico. In questo capitolo impariamo proprio a costruire quel modello e formalizziamo questa tipologia di problemi attraverso la Programmazione Matematica, concentrandoci in particolare sulla Programmazione Lineare.
+La \textbf{Programmazione matematica} è il modo formale di rappresentare questo problema attraverso un modello matematico.
+In altre parole la Programmazione Matematica mi dice:
+\begin{center}
+    Prendi un problema decisionale e rappresentalo matematicamente come funzione obiettivo + vincoli + variabili di decisione.
+\end{center}
+In questo capitolo tratteremo la Programmazione Lineare che è un tipo particolare di Programmazione Matematica.
+\section{Definizione di problema di Programmazione Matematica}
+Sia $(x_1,x_2,\dots,x_n) = x \in \mathbb{R}^n$ una variabile vettoriale ad n componenti, dette \textbf{variabili di decisione}.
+Sia $\{g_i : \mathbb{R}^n \to \mathbb{R},i = 1,2,\dots,m \}$ m funzioni scalari.\\
+\begin{warning}{Attenzione alla Notazione}
+    Se io scrivo questo : $\{g_i : \mathbb{R}^n \to \mathbb{R},i = 1,2,\dots,m \}$, allora sto dicendo che le mie funzioni, vanno detta
+    $\mathbb{R} ^ n \text{a} R$ , quindi in teoria potrei avere il vettore x = (x1,x2), e poi avere g1(x,y) = x + y.
+    E come vedi c'è un conflitto di notazioni, quindi sulle mie funzioni, impongo un altro vincolo, \textbf{cioè quello che sono funzioni
+    sul vettore decisionale x (g(x1,x2) = x1 + x2)}, cosi la notazione per le funzioni si mantiene saldamente, 
+    e comunque il dominio rimane uguale.
+    Cioè si ha $\{g_i(x) : \mathbb{R}^n \to \mathbb{R},i = 1,2,\dots,m \}$,
+    perchè se noti $g_i(x_1,x_2,...,x_n)$ comunque spazia su tutto $\mathbb{R}^n$
+\end{warning}
+Sia $(b_1,b_2,\dots,b_m) = b \in \mathbb{R}^m$ un vettore a componenti scalari \textbf{detto vettore dei termini noti}.
+\begin{definition}{Variabile Vincolata}
+    La variabile $x$ è detta \textbf{vincolata} se per ogni $i = 1,2,\dots,m$ deve essere soddisfatta almeno una delle seguenti relazioni:
+    \begin{itemize}
+        \item $g_i(x) \leq b_i$
+        \item $g_i(x) = b_i$
+        \item $g_i(x) \geq b_i$ 
+    \end{itemize}
+\end{definition}
+\begin{definition}{Insieme Ammissibile}
+    L'insieme :
+    \begin{center}
+        $S = \{x \in \mathbb{R}^n \mid g_i(x) \approx b_i\}$
+    \end{center}
+    dove con il simbolo $\approx$ si intende che per ogni $i = 1,2,\dots,m$ vale uno dei tre simboli $\leq,\geq,=$.
+
+    Cioè è l'insieme dei punti $x \in \mathbb{R} ^ n$ che soddisfano i vincoli sulle variabili dati da g e da b.
+\end{definition}
+Si consideri ora un'ulteriore funzione scalare della variabile x (sempre per il discorso di notazione discusso prima), detta \textbf{funzione obiettivo}:
+\begin{center}
+    $z(x) : \mathbb{R} ^ n \to \mathbb{R}$
+\end{center}
+E considero il problema di determinare il valore di $x$ che renda minima (o massima) la funzione obiettivo $z(x)$ sull'insieme $S$, cioè nel rispettare
+dei vincoli sulle variabili di decisione del tipo (1),(2) e (3),cioè il problema non ti permette di scegliere un qualunque \(x\in\mathbb{R}^n\): puoi scegliere solo i punti che rispettano i vincoli, cioè quelli appartenenti a \(S\).
+
+
+Cioè formalmente
+\begin{center}
+    $\max_{x \in S} z(x)$
+\end{center}
+\textbf{trovare il punto \(x\in S\) che rende massimo il valore della funzione obiettivo \(z(x)\).} 
+Il problema appena descritto è un problema di Programmazione Matematica, la cui soluzione $x*$ è chiaramente un punto appartenente ad S ed
+inoltre risulta che
+\begin{equation}
+    \forall x \in S,\quad z(x^*) \geq z(x) \quad \text{(risp. } z(x^*) \leq z(x)\text{)}
+\end{equation}
+
+\begin{warning}{Ricorda}
+    Quando diciamo che una funzione è definita da $\mathbb{R}^2$ a $\mathbb{R}$, ad esempio $g(x_1,x_2) = x_1 + x_2$.
+    Nella definizione della funzione potrebbe comparire anche solo x1, non va contro la definizione matematica,
+    semplicemente non si utilizza x2.
+\end{warning}
+
+
+
+
+
+\section{Definizione di problema di Programmazione Lineare}
+
+Un problema di Programmazione Matematica è detto di \textbf{Programmazione Lineare (PL)} se ciascuna delle funzioni
+\[
+z(x) \quad \text{e} \quad \{g_i(x) : \mathbb{R}^n \to \mathbb{R},\ i=1,2,\ldots,m\}
+\]
+è \textbf{lineare} rispetto alla variabile $x$, cioè se
+
+\[
+\begin{aligned}
+z(x) &= c_1x_1+c_2x_2+\cdots+c_nx_n,\\
+g_i(x) &= a_{i1}x_1+a_{i2}x_2+\cdots+a_{in}x_n,
+\qquad i=1,2,\ldots,m.
+\end{aligned}
+\]
+
+dove $c_j$, $j=1,2,\ldots,n$, e $a_{ij}$, $i=1,2,\ldots,m$, $j=1,2,\ldots,n$, sono \textbf{costanti scalari date}.
+
+\begin{definition}{Problema di Programmazione Lineare}
+Per problema di programmazione lineare (PL) s'intende
+il problema di minimizzare o massimizzare una funzione obiettivo lineare in
+presenza di vincoli di disuguaglianza e/o uguaglianza lineari.
+\end{definition}
+
+\newpage
+\section{Esempi di problemi di PL}
+In quanto segue verranno descritti alcuni semplici esempi di problemi di PL
+che faranno comprendere quanto sia vasta la gamma di situazioni reali in
+cui la programmazione lineare pu`o essere usata.
+\subsection{Un problema di trasporto}
+
+Si immagini un'industria che produce un bene di consumo in due diversi stabilimenti di produzione, situati rispettivamente a Pomezia e a Caserta. La distribuzione alla rete di vendita avviene da due depositi situati rispettivamente a Roma e a Napoli. 
+
+Nella Tabella seguente, per ogni unità di prodotto, è riportato il costo legato al trasporto dal sito di produzione (Pomezia o Caserta) al deposito (Roma o Napoli):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lc}
+\toprule
+\textbf{Tratta} & \textbf{Costo (in euro)} \\
+\midrule
+Pomezia--Roma & 10 \\
+Pomezia--Napoli & 30 \\
+Caserta--Napoli & 5 \\
+Caserta--Roma & 35 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Lo stabilimento di Pomezia non può produrre settimanalmente più di 10000 unità di bene, mentre quello di Caserta non ne può produrre più di 8000. Inoltre, da statistiche fatte sulle vendite, risulta che ogni settimana vengono vendute almeno 11000 unità di bene tramite il deposito situato a Roma e almeno 4600 unità tramite il deposito situato a Napoli.
+
+Obiettivo dell'industria è minimizzare il costo totale del trasporto della merce dagli stabilimenti ai depositi, assicurando al tempo stesso che ciascun deposito riceva settimanalmente le quantità su indicate.
+
+\subsubsection*{Variabili di decisione}
+In questo caso, le variabili di decisione sono le quantità di bene trasportate settimanalmente dagli stabilimenti ai depositi:
+\begin{itemize}
+    \item $x_1 = \text{quantità di bene trasportata \textbf{settimanalmente} da Pomezia a Roma;}$
+    \item $x_2 = \text{quantità di bene trasportata \textbf{settimanalmente} da Pomezia a Napoli;}$
+    \item $x_3 = \text{quantità di bene trasportata \textbf{settimanalmente} da Caserta a Napoli;}$
+    \item $x_4 = \text{quantità trasportata \textbf{settimanalmente} da Caserta a Roma.}$
+\end{itemize}
+
+\subsubsection*{Funzione obiettivo e Vincoli}
+La funzione obiettivo è il costo totale sostenuto settimanalmente per il trasporto dagli stabilimenti ai depositi:
+\[
+z(x_1, x_2, x_3, x_4) = 10x_1 + 30x_2 + 5x_3 + 35x_4.
+\]
+
+Come sottolineato, i due stabilimenti hanno capacità produttiva limitata. Tali limitazioni si traducono formalmente nell'imposizione dei seguenti \textbf{vincoli di produzione}:
+\begin{align*}
+x_1 + x_2 &\le 10000 \\
+x_3 + x_4 &\le 8000
+\end{align*}
+
+Nei problemi di Ricerca Operativa, si ipotizza un flusso diretto e perfetto, quindi quello che viene trasportato, è quello che viene effettivamente prodotto dall'azienda
+e poi successivamente anche venduto
+
+Il rifornimento medio settimanale ai depositi è garantito dall'imposizione dei seguenti \textbf{vincoli di domanda}:
+\begin{align*}
+x_1 + x_4 &\ge 11000 \\
+x_2 + x_3 &\ge 4600
+\end{align*}
+
+Infine, è più che evidente che ciascuna quantità $x_j$, con $j = 1, 2, 3, 4$ non può essere negativa e deve assumere valori interi.
+
+\subsubsection*{Modello Matematico Completo}
+Dunque, la formulazione matematica completa del problema di trasporto descritto è la seguente:
+
+\begin{align*}
+\min \quad z(x) &= 10x_1 + 30x_2 + 5x_3 + 35x_4 \\
+\text{s.a.} \quad x_1 + x_2 &\le 10000 \\
+x_3 + x_4 &\le 8000 \\
+x_1 + x_4 &\ge 11000 \\
+x_2 + x_3 &\ge 4600 \\
+x_i &\ge 0 \quad \text{ed intero, } i = 1, 2, 3, 4.
+\end{align*}
+
+\section{Forma standard di un problema di PL}
+\begin{definition}{Problema di PL in forma standard}
+Un problema di PL si dice formulato in forma standard
+se si tratta di minimizzare una funzione obiettivo lineare soggetta a vincoli di
+uguaglianza, se le variabili di decisione sono vincolate ad essere non negative (>=0)
+e il vettore dei termini noti è non negativo
+\end{definition}
+Ogni problema di PL può essere formulato in forma standard applicando,
+qualora necessario, opportune trasformazioni alla funzione obiettivo, ai vincoli ed alle variabili, per cui nel prosieguo della trattazione di problemi di
+PL, faremo sempre riferimento a problemi formulati in forma standard.
+
+Ora vedremo come trasformare un problema di programmazione lineare, in uno in forma standard.
+\subsection{Trasformazione della funzione obiettivo}
+è sempre possibile assumere che la funzione obiettivo lineare $z(x)$ sia da
+minimizzare, in quanto il valore della variabile $x*$ che rende massima $z(x)$
+rende minima la stessa funzione cambiata di segno.
+\begin{equation}
+    max_{x} z(x) = -min_{x} -(z(x))
+\end{equation}
+\subsubsection{Esempio di trasforazione della funzione obiettivo}
+
+Consideriamo il seguente problema di massimizzazione:
+
+$$
+\max z(x) = 3x+2
+$$
+
+soggetto al vincolo:
+
+$$
+0 \leq x \leq 5
+$$
+
+La funzione obiettivo è crescente, quindi il suo valore massimo si ottiene per:
+
+$$
+x^* = 5
+$$
+
+e quindi:
+
+$$
+z(x^*) = 3(5)+2=17
+$$
+
+Pertanto:
+
+$$
+\max z(x)=17
+$$
+
+Possiamo trasformare il problema in un problema di minimizzazione cambiando il segno della funzione obiettivo:
+
+$$
+\min -z(x) = -3x-2
+$$
+
+mantenendo invariato il vincolo:
+
+$$
+0 \leq x \leq 5
+$$
+
+La funzione $-z(x)=-3x-2$ è decrescente, quindi il suo valore minimo si ottiene ancora (è solo un caso, a noi interessa solo il valore della funzione obiettivo) per:
+
+$$
+x^*=5
+$$
+
+e:
+
+$$
+-z(x^*)=-3(5)-2=-17
+$$
+
+Pertanto:
+
+$$
+\min -z(x)=-17
+$$
+
+La soluzione $x^*$ rimane quindi invariata, mentre cambia soltanto il segno del valore della funzione obiettivo:
+
+$$
+\boxed{\max z(x)=-\min[-z(x)]}
+$$
+
+In generale, quindi, un problema di massimizzazione può sempre essere trasformato in un problema di minimizzazione semplicemente cambiando il segno della funzione obiettivo.
+
+\subsubsection{Trasformazioni dei vincoli}
+
+Un qualsiasi vincolo può essere trasformato in vincolo di uguaglianza introducendo opportune variabili aggiuntive nonnegative. Infatti, un vincolo del tipo
+
+$$ \sum_{j=1}^{n} a_{ij}x_j \le b_i $$
+
+(dove l'indice i scorre le funzioni dei vincoli, invece j la dimensione delle variabile di decisione)
+
+può essere equivalentemente riscritto nella seguente forma:
+
+$$ \sum_{j=1}^{n} a_{ij}x_j + x_{n+1} = b_i, \quad x_{n+1} \ge 0, $$
+
+dove $x_{n+1}$ rappresenta la differenza nonnegativa tra il secondo ed il primo membro della disuguaglianza e viene detta \textit{variabile di slack}.
+
+Un vincolo del tipo
+
+$$ \sum_{j=1}^{n} a_{ij}x_j \ge b_i $$
+
+può, invece, essere equivalentemente riscritto nella seguente forma:
+
+$$ \sum_{j=1}^{n} a_{ij}x_j - x_{n+1} = b_i, \quad x_{n+1} \ge 0, $$
+
+dove $x_{n+1}$ rappresenta la differenza nonnegativa tra il primo ed il secondo membro della disuguaglianza e viene detta \textit{variabile di surplus}.
+
+
+
+\subsubsection{Non negatività dei termini}
+E sempre possibile assumere che ogni componente del vettore dei termini
+noti b sia nonnegativa. Infatti, se cosi non fosse, è sufficiente moltiplicare per
+(-1) entrambi i membri del vincolo ed eventualmente cambiare verso della
+disuguaglianza se il vincolo in questione non è un vincolo di uguaglianza.
+\subsubsection{Esempio di trasformazione dei termini noti}
+
+Vediamo due esempi pratici per chiarire questa operazione.
+
+\paragraph{Caso 1: Vincolo di disuguaglianza}
+Supponiamo di avere un vincolo in cui il termine noto (a destra) è negativo, ad esempio $-15$:
+$$ -3x_1 + 4x_2 - x_3 \le -15 $$
+
+Per rendere il termine noto positivo, moltiplichiamo entrambi i membri dell'espressione per $-1$. Poiché si tratta di una disuguaglianza, è fondamentale ricordarsi di invertire il verso del simbolo (il $\le$ diventa $\ge$):
+$$ 3x_1 - 4x_2 + x_3 \ge 15 $$
+
+\paragraph{Caso 2: Vincolo di uguaglianza}
+Consideriamo ora un vincolo di uguaglianza con termine noto negativo, come $-8$:
+$$ 2x_1 - 5x_2 = -8 $$
+
+Analogamente al caso precedente, moltiplichiamo per $-1$ ambo i membri. In questo caso, essendo un'equazione, il simbolo di uguaglianza rimane invariato:
+$$ -2x_1 + 5x_2 = 8 $$
+
+Queste trasformazioni algebriche elementari garantiscono che il vettore dei termini noti sia sempre $b \ge 0$, una condizione di forma standard spesso necessaria prima di applicare algoritmi risolutivi di ottimizzazione.
+
+\subsubsection{Trasformazioni delle variabili}
+E sempre possibile assumere che le variabili di decisione siano vincolate ad
+essere nonnegative. Infatti, se per qualche $j = 1,2,\dots,n$ risulta che:
+\begin{itemize}
+    \item $x_j \leq 0$ allora basta effettuare nella formulazione matematica la sostituzione:
+    \begin{equation}
+        x_j = -x'_j \text{ , } x'_j \geq 0
+    \end{equation}
+    Ad esempio se ho $x_j = -4, \text{ quello che posso fare è porre } x'_j = 4 \geq 0 $
+    \item $x_j$ non è vincolata in segno (cioè $\in \mathbb{R}$), allora basta effettuare nella formulazione matematica:
+    \begin{equation}
+        x_j = x_j ^+ - x_j ^- \text{ , } x_j ^+ \geq 0 \text{ , }  x_j ^- \geq 0
+    \end{equation}
+    \textbf{Problema originale:}
+    \begin{align*}
+    \max z &= 5x_1 - 2x_2 \\
+    \text{soggetto a:} \quad 3x_1 + x_2 &\le 15 \\
+    x_1 &\ge 0 \\
+    x_2 &\in \mathbb{R} \quad \text{(non vincolata in segno)}
+    \end{align*}
+
+    \textbf{Problema trasformato (sostituendo $x_2 = x_2^+ - x_2^-$):}
+    \begin{align*}
+    \max z &= 5x_1 - 2(x_2^+ - x_2^-) = 5x_1 - 2x_2^+ + 2x_2^- \\
+    \text{soggetto a:} \quad 3x_1 + x_2^+ - x_2^- &\le 15 \\
+    x_1, x_2^+, x_2^- &\ge 0
+    \end{align*}
+\end{itemize}
