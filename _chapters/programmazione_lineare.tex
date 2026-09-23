@@ -16,8 +16,8 @@ Sia $(x_1,x_2,\dots,x_n) = x \in \mathbb{R}^n$ una variabile vettoriale ad n com
 Sia $\{g_i : \mathbb{R}^n \to \mathbb{R},i = 1,2,\dots,m \}$ m funzioni scalari.\\
 \begin{warning}{Attenzione alla Notazione}
     Se io scrivo questo : $\{g_i : \mathbb{R}^n \to \mathbb{R},i = 1,2,\dots,m \}$, allora sto dicendo che le mie funzioni, vanno detta
-    $\mathbb{R} ^ n \text{a} R$ , quindi in teoria potrei avere il vettore x = (x1,x2), e poi avere g1(x,y) = x + y.
-    E come vedi c'è un conflitto di notazioni, quindi sulle mie funzioni, impongo un altro vincolo, \textbf{cioè quello che sono funzioni
+    $\mathbb{R} ^ n \text{ a } R$ , quindi in teoria potrei avere il vettore x = (x1,x2), e poi avere g1(x,y) = x + y.
+    E come vedi c'è un conflitto di notazioni (fra le g ed x), quindi sulle mie funzioni, impongo un altro vincolo, \textbf{cioè quello che sono funzioni
     sul vettore decisionale x (g(x1,x2) = x1 + x2)}, cosi la notazione per le funzioni si mantiene saldamente, 
     e comunque il dominio rimane uguale.
     Cioè si ha $\{g_i(x) : \mathbb{R}^n \to \mathbb{R},i = 1,2,\dots,m \}$,
@@ -335,3 +335,64 @@ essere nonnegative. Infatti, se per qualche $j = 1,2,\dots,n$ risulta che:
     x_1, x_2^+, x_2^- &\ge 0
     \end{align*}
 \end{itemize}
+\subsection{Formulazione standard di un generico problema di PL}
+La formulazione standard di un generico problema di PL è, dunque, la seguente:
+\begin{alignat}{2}
+\min \quad & z(x) = c_1 x_1 + c_2 x_2 + \dots + c_n x_n \nonumber \\[1ex]
+\text{s.a} \quad & \nonumber \\[1ex]
+& a_{11} x_1 + a_{12} x_2 + \dots + a_{1n} x_n &&= b_1 \tag{1.1} \\
+& a_{21} x_1 + a_{22} x_2 + \dots + a_{2n} x_n &&= b_2 \tag{1.2} \\
+& \dots\dots\dots\dots\dots && \quad \dots \nonumber \\
+& a_{m1} x_1 + a_{m2} x_2 + \dots + a_{mn} x_n &&= b_m \tag{1.$m$} \\
+& x_j \ge 0, \quad j = 1, 2, \dots, n \nonumber \\
+& b_i \ge 0, \quad i = 1, 2, \dots, m \nonumber
+\end{alignat}
+
+\begin{warning}{Notazione vettore riga e vettore colonna}
+    Quando scriviamo che $(x_1,x_2,\dots,x_n) \in \mathbb{R}^n$, stiamo matematicamente prendendo un elemento da $\mathbb{R}^n$, cioè un vettore,
+    dato che $\mathbb{R}^n$, contiene vettori di n componenti, a questo livello non si vede quindi la notazione vettore riga o colonna, quella entra in gioco quando vengono fatte operazioni matriciali
+    nel caso di questo corso, la notazione sarà di vettore riga, cioè $n x 1$
+\end{warning}
+
+Si indicano con:
+\begin{itemize}
+    \item $A \in \mathbb{R}^ {m \times n}$ la matrice dei coefficienti tecnologici $a_{ij}$, $i = 1,2,...m$, $j = 1,2,...,n$
+    \item $b \in \mathbb{R}^m$ il vettore (riga $m \times 1$ in questo caso perché stiamo per fare operazioni matriciali) $m$-dimensionale
+    \item $c \in \mathbb{R}^n$ il vettore $n$ dimensionale dei coefficienti della funzione obiettivo.
+\end{itemize}
+Dunque
+\[
+A =
+\begin{pmatrix}
+a_{11} & a_{12} & \dots & a_{1n} \\
+a_{21} & a_{22} & \dots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{m1} & a_{m2} & \dots & a_{mn}
+\end{pmatrix},
+\qquad
+b =
+\begin{pmatrix}
+b_1 \\
+b_2 \\
+\vdots \\
+b_m
+\end{pmatrix},
+\qquad
+c =
+\begin{pmatrix}
+c_1 \\
+c_2 \\
+\vdots \\
+c_n
+\end{pmatrix}.
+\]
+
+La precedente formulazione può essere scritta nella seguente forma compatta:
+
+\begin{align*}
+\min \quad z(x) &= c^\top x \\
+\text{s.a.}\quad & Ax = b \\
+& x \geq 0.
+\end{align*}
+
+Questo in \textbf{forma matriciale}.
