@@ -396,3 +396,428 @@ La precedente formulazione può essere scritta nella seguente forma compatta:
 \end{align*}
 
 Questo in \textbf{forma matriciale}.
+
+
+
+Inoltre si suppone che siano verificate le seguenti 3 ipotesi:
+\begin{itemize}
+    \item rango[A] = rango[A|b]
+    \item $m$ < $n$
+    \item la matrice A non ha colonne nulle.
+\end{itemize}
+
+
+Queste 3 ipotesi si usano perchè vogliamo che il problema sia matematicamente ben definito, non banale e risolvibile tramite algoritmi come il Simplesso.   
+Ora nei seguenti capitoli spiegheremo perchè si suppongono proprio queste ipotesi.
+
+\subsection{Eliminazione di Gauss}
+
+L'\textbf{eliminazione di Gauss} è un procedimento che permette di trasformare una matrice in una forma più semplice, detta \textbf{forma a scala}, mediante opportune operazioni elementari sulle righe.
+
+Le operazioni elementari di riga consentite sono:
+
+\begin{enumerate}
+    \item \textbf{Scambio di due righe}:
+    \[
+    R_i \leftrightarrow R_j.
+    \]
+
+    \item \textbf{Moltiplicazione di una riga per uno scalare non nullo}:
+    \[
+    R_i \leftarrow \lambda R_i,
+    \qquad \lambda \neq 0.
+    \]
+
+    \item \textbf{Somma a una riga di un multiplo di un'altra riga}:
+    \[
+    R_i \leftarrow R_i + \lambda R_j.
+    \]
+\end{enumerate}
+
+Queste operazioni permettono di modificare la rappresentazione della matrice senza modificarne il \textbf{rango}.
+
+\subsubsection*{Procedimento}
+
+L'obiettivo dell'eliminazione di Gauss è ottenere una \textbf{matrice a scala}, nella quale:
+
+\begin{itemize}
+    \item tutte le righe nulle si trovano eventualmente nella parte inferiore della matrice;
+    \item il primo elemento non nullo di ogni riga non nulla, detto \textbf{pivot}, si trova più a destra rispetto al pivot della riga precedente;
+    \item sotto ogni pivot sono presenti solamente zeri.
+\end{itemize}
+
+Ad esempio:
+
+\[
+\begin{pmatrix}
+1 & 2 & 3\\
+2 & 4 & 6\\
+1 & 1 & 1
+\end{pmatrix}
+\]
+
+può essere trasformata mediante operazioni elementari di riga:
+
+\[
+\begin{pmatrix}
+1 & 2 & 3\\
+2 & 4 & 6\\
+1 & 1 & 1
+\end{pmatrix}
+\longrightarrow
+\begin{pmatrix}
+1 & 2 & 3\\
+0 & 0 & 0\\
+0 & -1 & -2
+\end{pmatrix}
+\longrightarrow
+\begin{pmatrix}
+1 & 2 & 3\\
+0 & -1 & -2\\
+0 & 0 & 0
+\end{pmatrix}.
+\]
+
+La matrice ottenuta è in forma a scala e presenta due righe non nulle, equivalenti a due pivot. Pertanto:
+
+\[
+\boxed{\operatorname{rango}(A)=2}.
+\]
+
+In generale, per determinare il rango di una matrice tramite l'eliminazione di Gauss, è sufficiente portare la matrice in forma a scala e contare il numero di \textbf{pivot}, oppure, equivalentemente, il numero di \textbf{righe non nulle}.
+\begin{definition}{Rango di una Matrice}
+Il rango di una matrice è il numero massimo di righe o colonne linearmente indipendenti della matrice.
+
+
+Il rango di A, rango(A) è sempre minore o uguale del numero di colonne della matrice:
+\begin{equation}
+    rango(A) <= n
+\end{equation}
+e vale anche che:
+\begin{equation}
+    rango(A) <= min(n,m)
+\end{equation}
+\end{definition}
+\begin{example}{Rango di una matrice}
+    Nell'esempio della matrice di prima, la riga 2, facendo R2=R2-2(R1), quindi la riga 2, è combinazione lineare di riga 1, una volta eliminata rimangono 2 righe lineramente indipendenti,
+    il che è proprio il rango.
+\end{example}
+
+\begin{definition}{Notazione [A|b]}
+In algebra lineare, la matrice di ampiezza $(m \times (n+1))$ formata affiancando il vettore dei termini noti $b$ alla matrice dei coefficienti $A$:
+    $$[A \mid b] = \begin{pmatrix} a_{11} & a_{12} & \cdots & a_{1n} & \mid & b_1 \\ a_{21} & a_{22} & \cdots & a_{2n} & \mid & b_2 \\ \vdots & \vdots & \ddots & \vdots & \mid & \vdots \\ a_{m1} & a_{m2} & \cdots & a_{mn} & \mid & b_m \end{pmatrix}$$
+prende il nome di matrice completa (o matrice aumentata) del sistema lineare $Ax = b$.
+\end{definition}
+
+\begin{theorem}{Teorema Rouchè-Capelli}
+    Consideriamo il sistema lineare:
+    \begin{equation}
+        Ax = b
+    \end{equation}
+    Il teorema dice:
+    \begin{center}
+        $rango(A) = rango(A|b) \Leftrightarrow \text{ Il sistema è compatibile } $
+    \end{center}
+    \begin{itemize}
+        \item \textbf{Sistema compatibile} : Esiste \textbf{almeno} una soluzione (quindi un $(x_1,x_2,\dots,x_n) \in \mathbb{R}^n$) 
+        per il sistema lineare.
+        \item \textbf{Sistema non compatibile} : Non esiste \textbf{nessuna} soluzione per il sistema lineare.
+    \end{itemize}
+    In particolare se:
+    \begin{equation}
+        rango(A) \neq rango(A|b)
+    \end{equation}
+    Il sistema è incompatibile cioè
+    \begin{center}
+        S = $\varnothing$
+    \end{center}
+    Se
+    \begin{equation}
+        rango(A) = rango(A|b) = n
+    \end{equation}
+    Il sistema ammette un'unica soluzione
+
+    Se
+    \begin{equation}
+        rango(A) = rango(A|b) < n
+    \end{equation}
+    Il sistema ammette infinite soluzioni
+\end{theorem}
+
+\paragraph{Ipotesi 1 (rango(A) = rango(A|b)):} Grazie al teorema di \textbf{Rouchè-Capelli}, che dice
+un sistema di equazioni lineari $Ax = b$ ammette almeno una soluzione se e solo se il rango della matrice dei coefficienti $A$ è uguale al rango della matrice aumentata $[A\vert{}b]$.
+Se $rango[A] \neq rango[A\vert{}b]$ , il sistema $Ax = b$ sarebbe incompatibile, quindi la regione ammissibile del problema cioè l'insieme $S$, sarebbe vuoto e non esisterebbe nessuna soluzione da attingere per l'ottimizzazione.
+
+\paragraph{Ipotesi 2 (m < n):} Scomponiamo in casi,dimostrando che $m < n$ è l'unica strada:
+\begin{itemize}
+    \item Se $m = n$ (e $A$ ha rango pieno, cioè $rango[A] = n = m$), allora ricordando il seguente lemma
+    \begin{lemma}{Lemma sulle matrici quadrate}
+        Per una matrice quadrata vale:
+        \begin{equation}
+            A \text{ è invertibile } \Leftrightarrow rango[A] = n
+        \end{equation}
+    \end{lemma} 
+    Quindi $m = n$ e $rango[A] = n$, implicano che $A$ è invertibile.
+
+    Pertanto esiste
+    \begin{equation}
+        A^{-1}
+    \end{equation}
+    Quindi il sistema lineare :
+    \begin{equation}
+        Ax = b
+    \end{equation}
+    diventa
+    \begin{equation}
+        A^{-1}Ax = b A^{-1}
+    \end{equation}
+    Poichè
+    \begin{equation}
+        A^{-1}A = I
+    \end{equation}
+    Otteniamo:
+    \begin{equation}
+        x = A^{-1} b
+    \end{equation}
+    Quindi \textbf{abbiamo una e una sola soluzione}, pertanto la regione ammissibile sarà formato da solo un punto, e non avrebbe senso ottimizzare.
+    \item Se $m > n$, cioè abbiamo piu vincoli che incognite.
+    In questo caso ricordiamoci che:
+    \begin{equation}
+        rango[A] <= n
+    \end{equation}
+    Quindi se $m > n$, allora $rango[A] <= n < m$, quindi \textbf{non tutte le righe potranno essere linearmente indipendenti, e ci sarà qualcuna che è combinazione di un'altra,
+    dato che il massimo numero di righe lineramente indipendenti è $n$, ma $n < m$}
+    \paragraph{Esempio}
+
+    Consideriamo la matrice
+
+    $$
+    A=
+    \begin{pmatrix}
+    1 & 0\\
+    0 & 1\\
+    1 & 1
+    \end{pmatrix}.
+    $$
+
+    In questo caso abbiamo
+
+    $$
+    m=3,\qquad n=2,
+    $$
+
+    quindi
+
+    $$
+    m>n.
+    $$
+
+    Il rango di \(A\) soddisfa necessariamente
+
+    $$
+    \operatorname{rank}(A)\leq n=2<3=m.
+    $$
+
+    Infatti, indicando con \(r_1,r_2,r_3\) le righe di \(A\), abbiamo
+
+    $$
+    r_1=(1,0),\qquad
+    r_2=(0,1),\qquad
+    r_3=(1,1).
+    $$
+
+    Si osserva che
+
+    $$
+    r_3=r_1+r_2.
+    $$
+
+    Pertanto la terza riga è una combinazione lineare delle prime due e, di conseguenza, le tre righe non possono essere tutte linearmente indipendenti.
+
+    Infatti,
+
+    $$
+    \operatorname{rank}(A)=2<n_{\text{righe}}=3.
+    $$
+
+    Questo mostra che quando \(m>n\), al massimo \(n\) righe possono essere linearmente indipendenti.
+
+    Quindi se succeddese che $m > n$, si potrebbero avere dei vincoli aggiuntivi:
+    \begin{itemize}
+        \item che possono essere ridondanti
+        \item oppure essere incompatibili con gli altri vincoli, rendendo $S = \emptyset$
+    \end{itemize}
+
+
+    \textbf{In conclusione} poiché per ipotesi 1 si ha
+
+    $$
+    \operatorname{rank}(A)=\operatorname{rank}([A|b]),
+    $$
+
+    per il teorema di Rouché--Capelli il sistema è compatibile.
+
+    Inoltre, per ipotesi,
+
+    $$
+    n>m.
+    $$
+
+    Poiché \(A\) ha \(m\) righe,
+
+    $$
+    \operatorname{rank}(A)\leq m<n.
+    $$
+
+    Indicando con \(r\) il rango comune delle due matrici, si ha quindi
+
+    $$
+    r<n.
+    $$
+
+    Il numero di variabili libere è
+
+    $$
+    n-r>0.
+    $$
+
+    Pertanto esiste almeno una variabile libera e il sistema ammette infinite soluzioni:
+
+    $$
+    \boxed{|S|=\infty}.
+    $$
+
+\end{itemize} 
+\paragraph{Ipotesi 3 : la matrice A non ha colonne nulle}. 
+
+
+Supponiamo che la colonna $j <= n$ di A sia nulla.
+Se cosi fosse, allora la variabile $x_j$ non comparirebbe in nessuno dei vincoli:
+\begin{equation}
+    Ax = b
+\end{equation}
+\paragraph{Esempio}
+
+Consideriamo il sistema
+
+\[
+A x = b
+\]
+
+con
+
+\[
+A =
+\begin{pmatrix}
+1 & 0 & 2 \\
+3 & 0 & -1
+\end{pmatrix},
+\qquad
+x =
+\begin{pmatrix}
+x_1 \\ x_2 \\ x_3
+\end{pmatrix},
+\qquad
+b =
+\begin{pmatrix}
+4 \\ 5
+\end{pmatrix}.
+\]
+
+Il sistema è quindi
+
+\[
+\begin{cases}
+x_1 + 2x_3 = 4 \\
+3x_1 - x_3 = 5
+\end{cases}
+\]
+
+Si osserva che la seconda colonna di $A$ è nulla:
+
+\[
+A_{\cdot 2} =
+\begin{pmatrix}
+0 \\ 0
+\end{pmatrix}.
+\]
+
+Di conseguenza, la variabile $x_2$ non compare in nessuno dei vincoli.
+
+\textbf{La variabile $x_j$ comparirebbe solo nella minimizzazione della funzione obiettivo} tramite il termine $c_jx_j$ :
+\begin{itemize}
+    \item Se \textbf{$c_j \geq 0$} per minimizzare $z(x)$, conviene scegliere il valore piu piccolo possibile ammissibile per $x_j$.
+    Poichè $x_j \geq 0$ (per i vincoli di PL standard), la scelta ottimale è immediatamente $x_j$ = 0.
+    \item Se \textbf{$c_j < 0$} : per minimizzare $z(x)$, possiamo rendere $x_j$ arbitrariamente grande ($x_j --> + \infty $).
+    Questo farebbe tendere la funzione obiettivo a $-\infty$, rendendo il problema illimitato inferiormente
+\end{itemize}
+In entrambi i casi, la presenza di una colonna nulla semplifica o degenere il problema a tal punto da poter eliminare direttamente la variabile $x_j$ prima dell'analisi. 
+Quindi si preferisce che la matrice $A$ \textbf{non abbia colonne nulle}
+
+
+In alcuni casi sarà supposta anche la \textbf{quarta ipotesi}, cioè:
+\begin{equation}
+    rango[A] = m
+\end{equation}
+Questo vincolo garantisce che tutte le $m$ equazioni siano linearmente indipendenti (\textbf{La 2°ipotesi garantiva solo che ci stavano soluzioni in S}), eliminando equazioni superflue.
+
+Si noti che se verificata l'ipotesi 4, non può accadere che m > n:
+Infatti, per una matrice \(A\in\mathbb{R}^{m\times n}\), vale sempre:
+
+$$ \operatorname{rango}(A)\leq \min(m,n). $$
+
+Quindi, se l'ipotesi 4 impone
+
+$$ \operatorname{rango}(A)=m, $$
+
+necessariamente deve essere
+
+$$ m\leq n. $$
+
+Pertanto:
+
+$$ \boxed{\text{Ipotesi 4} \Longrightarrow m\leq n} $$
+
+e quindi non può accadere \(m>n\).
+
+Dunque, \textbf{mettendo insieme} le ipotesi 1, 2 e 4, abbiamo che grazie all'ipotesi 4 (rango[A] = $m$), sappiamo che deve valere $m \leq n$, l'ipotesi 2, rafforza questo e dice che $m < n$, e grazie all'ipotesi 1, che i ranghi devono coincidere.  
+Quindi:
+\begin{equation}
+    rango[A] = rango[A|b] = m < n
+\end{equation}
+Cioè il sistema è compatibile e ha infinite soluzioni, applicando \textbf{Rouchè-Capelli}
+
+\subsection{Interpretazione delle ipotesi}
+
+In definitiva, le \textbf{ipotesi 1, 2 e 4} lavorano insieme sul sistema di vincoli
+
+$$
+Ax = b
+$$
+
+per garantire che la regione ammissibile sia non vuota e abbia una struttura ben definita.
+
+\begin{itemize}
+
+\item \textbf{Ipotesi 1:}
+\[
+\operatorname{rango}(A) = \operatorname{rango}(A\mid b)
+\]
+Garantisce che il sistema $Ax=b$ sia \textbf{compatibile}, cioè che ammetta almeno una soluzione. Per il teorema di Rouché--Capelli, quindi, la regione ammissibile non è vuota.
+
+\item \textbf{Ipotesi 4:}
+\[
+\operatorname{rango}(A) = m
+\]
+Garantisce che le $m$ equazioni del sistema siano \textbf{linearmente indipendenti}; non vi sono quindi equazioni linearmente ridondanti tra i vincoli.
+
+\item \textbf{Ipotesi 2:}
+\[
+m < n
+\]
+Indica che il numero di incognite è maggiore del numero di equazioni.
+Cioè che l'insieme S abbia un numero infinito di soluzioni
+
+\end{itemize}
+
+L'\textbf{ipotesi 3}, invece, riguarda direttamente la funzione obiettivo e si suppone anche essa sempre vera. Essa garantisce che il problema di ottimizzazione non sia \textbf{illimitato inferiormente}, ossia che la funzione obiettivo sia limitata inferiormente sulla regione ammissibile.
