@@ -821,3 +821,104 @@ Cioè che l'insieme S abbia un numero infinito di soluzioni
 \end{itemize}
 
 L'\textbf{ipotesi 3}, invece, riguarda direttamente la funzione obiettivo e si suppone anche essa sempre vera. Essa garantisce che il problema di ottimizzazione non sia \textbf{illimitato inferiormente}, ossia che la funzione obiettivo sia limitata inferiormente sulla regione ammissibile.
+
+\section{ Interpretazione e soluzione grafica di un problema di PL}
+Quando il problema di PL da dover risolvere è caratterizzato da due sole
+variabili decisionali, è possibile risolverlo immediatamente per via grafica.
+In questo paragrafo verranno illustrati alcuni semplici esempi di rappresentazione e soluzione grafica di problemi di PL in due variabili. Essi ci
+aiuteranno a meglio comprendere gli aspetti geometrici della natura di questi
+problemi.
+
+\paragraph{Esempio 2.5.1} Si consideri il seguente problema :
+\begin{align*}
+\min \quad z(x) &= -x_1 - x_2\\
+\text{s.a.} \quad x_1 + 2x_2 &\leq 3 \\
+2x_1 + x_2 &\leq 3 \\
+x_j &\ge 0 \quad  j = 1, 2.
+\end{align*}
+
+\textbf{$z(x)$} è una funzione a due variabili, puoi vederla anche come:
+\begin{equation}
+    z(x_1,x_2) = -x_1 - x_2
+\end{equation}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{_files/_images/1.png}
+    \caption{Grafico della funzione $z(x_1,x_2) = -x_1-x_2$ in un dominio limitato per semplicità}
+    \label{fig:mia_immagine}
+\end{figure}
+
+\newpage
+
+\subsection{Curve di Livello}
+Per iniziare a introdurre questo argomento, osserva questo, data una funzione a due variabili:
+\begin{equation}
+    z = f(x,y)
+\end{equation}
+I punti sulla superficie che si andrà a formare dalla funzione, saranno dei punti:
+\begin{equation}
+    \{(x,y,z) \in D : z = f(x,y)\}
+\end{equation}
+Ora considera l'equazione:
+\begin{equation}
+    f(x,y) = k
+\end{equation}
+Significa sostanzialmente, $f(x,y) = k = z$, cioè questa \textbf{equazione identifica i punti sulla superficie tali che}:
+\begin{equation}
+    \{(x,y,k) : f(x,y) = k\}
+\end{equation} 
+Ora c'è un altro modo per identificare questi punti sulla superficie, cioè si prende il piano di equazione:
+\begin{equation}
+    z = k
+\end{equation}
+\begin{observation}{Equazione del piano}
+Nota che $z = k$ si può scrivere, come scrivo in una variabile $y = k$, scrivo anche z = k, cioè è un piano che identifica tutti i punti $(x,y,k)$ a quota k,
+cioè posso vederlo come una funzione, per qualsiasi punto $(x,y)$, mi restituisce sempre k
+\end{observation}
+Si prendono i punti $(x,y,z)$ sulla superficie della funzione.
+
+I punti che vengono fuori dall'intersezione del piano $z = k$ e la supeficie della funzione, identificano i punti:
+\begin{equation}
+    \{(x,y,k) : f(x,y) = k\}
+\end{equation}
+Cioè i punti che soddisfano l'equazione:
+\begin{equation}
+    f(x,y) = k
+\end{equation}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{_files/_images/2.png}
+    \caption{Il cerchio blu a quota k, indica tutti i punti $\{(x,y,k) : f(x,y) = k\}$ }
+    \label{fig:mia_immagine}
+\end{figure}
+
+Ora se dalla definizione di questi punti, elimino \textbf{la quota k}, allora usciranno tutti i punti:
+\begin{equation}
+    \{(x,y) : f(x,y) = k\}
+\end{equation}
+\textbf{Cioè è come se proietassi i punti sull'asse xy, come vedi nella figura sopra.}
+Questa \textbf{è l'esatta definizione di Curva di livello}
+\begin{definition}{Curva di Livello}
+    \begin{equation}
+        L_k = \{(x,y) \in D : f(x,y) = k \}
+    \end{equation}
+    Cioè l'insieme dei punti $(x,y)$ che soddisfano $f(x,y) = k$, cioè come nell'immagine di prima i punti proiettati sull'asse xy
+\end{definition}
+La bellezza delle curve di livello è che si possono rappresentare in un piano con assi xy, cioè dato che $k$ è costante, quello che si fa è scrivere :
+\begin{equation}
+    y = x - k
+\end{equation}
+Se f(x,y) = x + y.
+
+
+Nel caso di \textbf{funzioni lineari} (cioè su quelle su cui stiamo lavorando noi), ci ritroveremo su curve di livello che sono delle rette, come in questo caso:
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{_files/_images/3.png}
+    \caption{In Rosso la funzione $f(x,y) = x - y$ , in blu il piano $z$ = 2 e in viola la curva di livello $L_2$ della funzione, y = x - 2}
+    \label{fig:mia_immagine}
+\end{figure}
+
+In generale nelle funzioni lineari, ci troveremo a lavorare su delle rette, e variando k, ci troveremo delle rette parallele, chiamati fasci di rette.
