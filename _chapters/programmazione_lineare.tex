@@ -922,3 +922,369 @@ Nel caso di \textbf{funzioni lineari} (cioè su quelle su cui stiamo lavorando n
 \end{figure}
 
 In generale nelle funzioni lineari, ci troveremo a lavorare su delle rette, e variando k, ci troveremo delle rette parallele, chiamati fasci di rette.
+
+\paragraph{Esempio di Curva di Livello}
+Consideriamo la funzione:
+\begin{equation}
+    z(x,y) = -x-y
+\end{equation}
+Ora scelgo k = 3, e voglio visualizzare la curva di livello, per quel k.
+
+Considero l'equazione:
+\begin{equation}
+    -x-y = 3
+\end{equation}
+Questa equazione considera tutti i punti sulla superficie:
+\begin{equation}
+    \{(x,y,3) : 3 = -x - y \}
+\end{equation}
+
+Ora per identificare la curva di livello, basta levare la quota k, e quindi:
+\begin{equation}
+    L_3 = \{(x,y) : 3 = -x - y \}
+\end{equation}
+Cioè tutti i punti $(x,y)$ sul piano che soddisfano l'equazione:
+\begin{equation}
+    -x-y = 3
+\end{equation}
+Ma questa può essere equivalentemente riscritta come:
+\begin{equation}
+    y = x-3
+\end{equation}
+\textbf{Quindi abbiamo esplicitato che è una retta nel piano, ma già lo era , noi lo abbiamo solo esplicitato.}
+Noi abbiamo scelto un k a piacere, ma per funzioni lineari, al variare di k, si individua un fascio di rette parallele
+
+
+
+Ora sapendo questo ritorniamo al nostro esempio di prima, e continuiamolo.
+
+Per una funzione lineare a due variabili della forma
+
+\begin{equation}
+f(x_1,x_2) = ax_1 + bx_2,
+\end{equation}
+
+le \textbf{curve di livello} sono definite ponendo la funzione uguale a una costante \(d\):
+
+\begin{equation}
+ax_1 + bx_2 = d.
+\end{equation}
+
+Al variare di \(d\), si ottiene quindi un \textbf{fascio di rette parallele tra loro}. Infatti, i coefficienti \(a\) e \(b\) rimangono invariati, mentre cambia solamente il termine noto \(d\). Di conseguenza, la pendenza delle rette rimane sempre la stessa, mentre esse si spostano nel piano.
+
+Dal punto di vista geometrico, il grafico di una funzione lineare a due variabili è un \textbf{piano nello spazio tridimensionale}. Intersecando questo piano con un piano orizzontale di equazione
+
+$$
+z=d,
+$$
+
+si ottiene una retta nello spazio. La proiezione di tale retta sul piano \(x_1x_2\) è proprio la curva di livello
+
+$$
+ax_1 + bx_2 = d.
+$$
+
+Pertanto, al variare di \(d\), si ottengono diverse curve di livello, tutte costituite da rette parallele tra loro.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{_files/_images/4.png}
+\caption{Due curve di livello, per \(k=2\) e \(k=4\), della funzione lineare \(f(x_1,x_2)=-x_1-x_2\).}
+\label{fig:mia_immagine}
+\end{figure}
+
+
+
+\newpage
+Ora visualizziamole dal lato, cosi è piu semplice lavorarci:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{_files/_images/5.png}
+\caption{Due curve di livello, per \(k=3\) e \(k=5\), della funzione lineare \(f(x_1,x_2)=-x_1-x_2\).}
+\label{fig:mia_immagine}
+\end{figure}
+
+Il vettore
+
+\begin{equation}
+\mathbf{n} = (a,b)
+\end{equation}
+
+è detto \textbf{vettore normale} alle rette. Esso è perpendicolare alla direzione delle rette, cioè forma con essa un angolo di \(90^\circ\).
+
+È importante distinguere tra la \textbf{posizione} del vettore e la sua \textbf{direzione}: il vettore ((a,b)) non deve necessariamente intersecare la retta. Quando diciamo che il vettore è perpendicolare alla retta, ci riferiamo alla sua \textbf{direzione}.
+
+Poiché tutte le rette
+
+\[
+ax_1+bx_2=d
+\]
+
+sono parallele tra loro, il vettore ((a,b)) è normale a \textbf{tutte} le rette della famiglia, indipendentemente dal valore di (d).
+
+Inoltre, al variare di (d), le rette si spostano parallelamente a se stesse. 
+\textbf{La direzione dello spostamento è proprio quella individuata dal vettore normale ((a,b)), se \(d\) aumenta, le rette si spostano nel verso di \((a,b)\); se \(d\) diminuisce, si spostano nel verso opposto.}
+
+
+Ritorniamo a lavorare con il nostro esempio originale:
+\begin{equation}
+    f(x_1,x_2) = -x_1 - x_2
+\end{equation}
+Consideriamo le curve di livello al variare di d (nella figura 2.6 sotto):
+\begin{equation}
+    -x_1 - x_2 = d
+\end{equation}
+Ora nota che il vettore $(a,b) = (-1,-1)$ è normale rispetto a tutte le rette del fascio, se \(d\) aumenta, la retta si sposta nel verso di \((a,b)\); se \(d\) diminuisce, si sposta nel verso opposto.
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.6\textwidth]{_files/_images/6.png}
+\caption{Curve di livello, della funzione lineare \(f(x_1,x_2)=-x_1-x_2\), e vettore $(a,b) = (-1,-1)$ che indica gli spostamenti del fascio di rette}
+\label{fig:curve}
+\end{figure}
+
+\clearpage
+Ora consideriamo il nostra problema iniziale:
+\begin{align*}
+\min \quad z(x) &= -x_1 - x_2\\
+\text{s.a.} \quad x_1 + 2x_2 &\leq 3 \\
+2x_1 + x_2 &\leq 3 \\
+x_j &\ge 0 \quad  j = 1, 2.
+\end{align*}
+
+Ora consideriamo il primo vincolo, ragionamento analogo si fa con il secondo vincolo.
+Consideriamo l'equazione:
+\begin{equation}
+    x_1 + 2x_2 = 3
+\end{equation}
+Questa viene rappresenata nel piano in questo modo:
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.3\textwidth]{_files/_images/7.png}
+\label{fig:curve}
+\end{figure}
+\\
+Tramite il vettore $(a,b) = (1,2)$ io posso dire sostanzialmente gli insiemi di punti che soddisfano
+\begin{equation}
+     x_1 + 2x_2 <= 3
+\end{equation}
+Cioè l'area:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.3\textwidth]{_files/_images/8.png}
+\label{fig:curve}
+\end{figure}
+Considerando anche il secondo vincolo, e considerando anche i vincoli positivi ($>=0$) sulle variabili, allora la regione ammissibile $S$, cioè
+l'insieme di punti $(x,y)$ che io posso scegliere per minimizzare la funzione a due variabili $z$, è:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.2\textwidth]{_files/_images/9.png}
+\label{fig:curve}
+\end{figure}
+Ora, data questa regione ammissibile, vogliamo capire come scegliere la coppia $(x_1,x_2)$ che rende minima la funzione obiettivo.
+
+\clearpage
+
+Consideriamo le curve di livello della funzione obiettivo
+
+$$
+z(x_1,x_2)=-x_1-x_2.
+$$
+
+Le curve di livello sono ottenute fissando un valore $k$ e imponendo
+
+$$
+-x_1-x_2=k.
+$$
+
+Al variare di $k$ otteniamo quindi un insieme infinito di rette parallele, ognuna delle quali rappresenta tutti i punti del piano in cui la funzione assume lo stesso valore $k$.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{_files/_images/10.png}
+\label{fig:curve}
+\end{figure}
+
+Le curve di livello, considerate nel piano $(x_1,x_2)$, ci permettono quindi di visualizzare come varia il valore della funzione obiettivo.
+
+In particolare, consideriamo il vettore
+
+$$
+(-1,-1).
+$$
+
+Questo vettore indica la direzione nella quale la funzione cresce più rapidamente. Infatti, esso coincide con il gradiente della funzione:
+
+$$
+\nabla z=(-1,-1).
+$$
+
+Muovendoci nella direzione indicata da questo vettore, passiamo da curve di livello associate a valori di $k$ sempre maggiori. Poiché su una curva di livello vale per i punti $(x,y)$ su quella curva di livello
+
+$$
+z(x_1,x_2)=k,
+$$
+
+un valore maggiore di $k$ corrisponde necessariamente a un valore maggiore della funzione obiettivo.
+
+Ad esempio, se ci troviamo su una curva di livello $k=2$ e ci spostiamo nella direzione di $(-1,-1)$, incontreremo curve di livello associate a valori come $k=3$, $k=4$, ecc. In questa direzione, quindi, la funzione assume valori sempre maggiori.
+
+Al contrario, muovendoci nella direzione opposta,
+
+$$
+(1,1),
+$$
+
+attraversiamo curve di livello associate a valori di $k$ sempre minori. Questa è quindi la direzione di diminuzione della funzione obiettivo.
+
+Nel problema di ottimizzazione, però, non possiamo muoverci liberamente nel piano: dobbiamo rimanere all'interno della regione ammissibile. Per trovare il minimo, dobbiamo quindi cercare di spostarci nella direzione in cui la funzione diminuisce, cioè nella direzione $(1,1)$, finché raggiungiamo il punto più lontano possibile in tale direzione che appartiene ancora alla regione ammissibile.
+
+Il punto, o eventualmente i punti, raggiunti sull'ultima curva di livello che interseca la regione ammissibile rappresentano le soluzioni ottime del problema.
+
+\newpage
+
+Rappresentando le curve di livello quindi della nostra funzione e tenendo conto dell'insieme $S$ in giallo:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{_files/_images/11.png}
+\label{fig:curve}
+\end{figure}
+
+O meglio si può vedere dal disegno della prof, \textbf{dove le curve di livello della funzione sono quelle trattegiate, e devi guardare solo quelle}:
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{_files/_images/12.png}
+\label{fig:curve}
+\end{figure}
+
+Consideriamo quindi quella curva di livello con valore $k=-2$, che rappresenta il minimo valore che la funzione può assumere nell'insieme ammissibile $S$. Non possiamo infatti spostarci ulteriormente nella direzione di diminuzione della funzione, perché usciremmo dalla regione ammissibile.
+
+In generale, se la regione ammissibile contenesse un tratto della curva di livello $k=-2$, potremmo scegliere uno qualsiasi degli infiniti punti appartenenti a quel tratto,\textbf{poiché tutti questi punti avrebbero lo stesso valore della funzione obiettivo}. In questo caso, però, la regione ammissibile non contiene altri punti della curva di livello $k=-2$: di conseguenza, il punto di contatto con la regione ammissibile costituisce l'unica soluzione ottima.
+
+La regione ammissibile S del problema dell'esempio precedente è limitata e la soluzione ottima è unica. Attraverso il seguente esempio vengono
+descritti altri casi possibili.
+
+
+\section{Esempio: diversi casi possibili} Consideriamo la regione ammissibile $S$ descritta dai vincoli: \[ -x_1+x_2\leq 1 \] e \[ x_j\geq 0,\qquad j=1,2. \] Quindi: \[ S= \left\{ (x_1,x_2)\in\mathbb{R}^2: -x_1+x_2\leq1,\; x_1\geq0,\; x_2\geq0 \right\}. \] 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.4\textwidth]{_files/_images/13.png}
+\label{fig:curve}
+\end{figure}
+
+
+Supponiamo di voler minimizzare diverse funzione obiettivo lineari.
+
+A seconda del vettore dei costi $c$ si possono presentare diversi casi.
+\begin{center}
+    Tieni conto che una volta definito c, si è definito la funzione lineare, non c'è altro piu da definire,
+    quindi $c = (1,1)$, identifica una sola funzione lineare, cioè $z(x_1,x_2) = x_1 + x_2$.
+\end{center}
+\subsection{Caso 1: soluzione ottima unica} Sia: \[ c=(1,1). \] La funzione obiettivo è: \[ z(x)=x_1+x_2. \] Poiché $x_1,x_2\geq0$, il valore minimo possibile è $0$, ottenuto per: \[ x^*=(0,0). \] Quindi: \[ \boxed{x^*=(0,0)} \] è l'unica soluzione ottima. Il valore ottimo è: \[ z(x^*)=0. \] Questo è un caso in cui esiste una \textbf{unica soluzione ottima}. 
+\subsection{Caso 2: infinite soluzioni ottime e insieme delle soluzioni ottime limitato} Sia: \[ c=(1,0). \] La funzione obiettivo diventa: \[ z(x)=x_1. \] 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel={$x_1$},
+    ylabel={$x_2$},
+    xmin=-1, xmax=5,
+    ymin=-1, ymax=4,
+    grid=both,
+    axis equal
+]
+
+% Curve di livello
+\addplot[domain=-1:4] coordinates {(1,-1) (1,4)};
+\addplot[domain=-1:4] coordinates {(2,-1) (2,4)};
+\addplot[domain=-1:4] coordinates {(3,-1) (3,4)};
+
+% Vettore dei costi
+\addplot[
+    -{Latex[length=3mm]},
+    very thick
+] coordinates {(0,0) (2,0)};
+
+\node at (axis cs:2.4,0.3) {$c=(1,0)$};
+
+\end{axis}
+\end{tikzpicture}
+\caption{Curve di livello e vettore dei costi $c=(1,0)$.}
+\end{figure}
+
+Poiché $x_1\geq0$, il valore minimo è ottenuto imponendo: \[ x_1=0. \] I punti ammissibili con $x_1=0$ devono inoltre soddisfare: \[ x_2\leq1, \qquad x_2\geq0. \] Pertanto ogni punto della forma \[ \boxed{ x^*=(0,x_2),\qquad 0\leq x_2\leq1 } \] è una soluzione ottima. Il valore ottimo è: \[ z(x^*)=0. \] In questo caso esistono \textbf{infiniti punti ottimi}, ma l'insieme delle soluzioni ottime è \textbf{limitato}. Infatti: \[ \{(0,x_2):0\leq x_2\leq1\} \] è un segmento limitato. 
+\subsection{Caso 3: infinite soluzioni ottime e insieme delle soluzioni ottime illimitato} Sia: \[ c=(0,1). \]
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel={$x_1$},
+    ylabel={$x_2$},
+    xmin=-1, xmax=5,
+    ymin=-1, ymax=5,
+    grid=both,
+    axis equal
+]
+
+% Curve di livello
+\addplot coordinates {(-1,1) (5,1)};
+\addplot coordinates {(-1,2) (5,2)};
+\addplot coordinates {(-1,3) (5,3)};
+
+% Vettore dei costi
+\addplot[
+    -{Latex[length=3mm]},
+    very thick
+] coordinates {(0,0) (0,2)};
+
+\node at (axis cs:0.8,2.2) {$c=(0,1)$};
+
+\end{axis}
+\end{tikzpicture}
+\caption{Curve di livello e vettore dei costi $c=(0,1)$.}
+\end{figure}
+
+
+La funzione obiettivo è: \[ z(x)=x_2. \] Poiché: \[ x_2\geq0, \] il valore minimo si ottiene ponendo: \[ x_2=0. \] Tutti i punti della forma \[ \boxed{ x^*=(x_1,0),\qquad x_1\geq0 } \] sono ammissibili e hanno: \[ z(x^*)=0. \] Quindi tutti questi punti sono soluzioni ottime. In questo caso l'insieme delle soluzioni ottime è: \[ \{(x_1,0):x_1\geq0\}, \] che è \textbf{illimitato}. È importante osservare che il fatto che l'insieme ammissibile $S$ sia infinito o illimitato non implica necessariamente che il problema sia illimitato. In questo caso, infatti, il valore ottimo esiste ed è: \[ \boxed{z^*=0}. \] 
+\subsection{Caso 4: problema illimitato inferiormente} Sia: \[ c=(-1,-1). \] 
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel={$x_1$},
+    ylabel={$x_2$},
+    xmin=-1, xmax=5,
+    ymin=-1, ymax=5,
+    grid=both,
+    axis equal
+]
+
+% Curve di livello
+\addplot[domain=-1:5, samples=2] {-x+1};
+\addplot[domain=-1:5, samples=2] {-x+3};
+\addplot[domain=-1:5, samples=2] {-x+5};
+
+% Vettore dei costi
+\addplot[
+    -{Latex[length=3mm]},
+    very thick
+] coordinates {(0,0) (-2,-2)};
+
+\node at (axis cs:-1.8,-1.5) {$c=(-1,-1)$};
+
+\end{axis}
+\end{tikzpicture}
+\caption{Curve di livello e vettore dei costi $c=(-1,-1)$.}
+\end{figure}
+
+La funzione obiettivo è: \[ z(x)=-x_1-x_2. \]
+Ricordiamoci sempre che la funzione obiettivo è definita su $\mathbb{R}^n$, un insieme infinito, quindi qualsiasi punto li dentro ha senso
+
+
+Vogliamo quindi risolvere: \[ \min_{x\in S}(-x_1-x_2). \] Consideriamo la successione di punti: \[ x^{(k)}=(k,0), \qquad k=1,2,3,\ldots \] Verifichiamo che questi punti siano ammissibili. Abbiamo: \[ x_1=k\geq0, \qquad x_2=0\geq0, \] e inoltre: \[ -x_1+x_2=-k\leq1. \] Pertanto: \[ x^{(k)}\in S \qquad\forall k\geq1. \] Calcoliamo ora il valore della funzione obiettivo: \[ z(x^{(k)}) = -k-0 = -k. \] Quindi: \[ \boxed{ z(x^{(k)})=-k\longrightarrow-\infty } \] Questo significa che possiamo trovare punti ammissibili il cui costo diventa arbitrariamente piccolo. Per esempio: \[ -1,\;-10,\;-100,\;-1000,\ldots \] non esiste quindi un valore minimo finito. Si dice che il problema è \textbf{illimitato inferiormente} e si scrive: \[ \boxed{ \inf_{x\in S}z(x)=-\infty. } \]
+
+
+
+
