@@ -1560,6 +1560,262 @@ che faccio è aggiungere un fattore di scala}, chiamato $\lambda$,questo mi perm
 \end{center}
 Questo poi \textbf{deve valere} per ogni segmento che prendo fra due punti arbitrari in $S$
 
+\begin{definition}{Combinazione convessa}
+
+Siano $x_1,x_2,\ldots,x_k$ vettori di $\mathbb{R}^n$ e siano
+$\lambda_1,\lambda_2,\ldots,\lambda_k$ scalari non negativi tali che la loro somma sia uguale a $1$, cioè
+
+$$
+\lambda_i\geq0,\qquad i=1,2,\ldots,k
+$$
+
+e
+
+$$
+\sum_{i=1}^{k}\lambda_i=1.
+$$
+
+Il vettore
+
+$$
+\sum_{i=1}^{k}\lambda_i x_i
+$$
+
+è detto \textbf{combinazione convessa} dei vettori
+$x_1,x_2,\ldots,x_k$.
+
+La combinazione convessa permette di ottenere un \textbf{nuovo vettore} a partire dai vettori $x_1,\ldots,x_k$, utilizzando i coefficienti $\lambda_i$ come dei ``pesi''.
+
+Poiché:
+
+$$
+\lambda_i\geq0
+\qquad\text{e}\qquad
+\sum_{i=1}^{k}\lambda_i=1,
+$$
+
+il vettore risultante rimane sempre nella regione geometrica ``compresa'' dai vettori di partenza, considerando questi ultimi come punti dello spazio.
+
+\paragraph{Caso di due vettori.}
+
+Consideriamo due vettori $x_1$ e $x_2$:
+
+$$
+x=\lambda_1x_1+\lambda_2x_2
+$$
+
+con
+
+$$
+\lambda_1,\lambda_2\geq0,
+\qquad
+\lambda_1+\lambda_2=1.
+$$
+
+Possiamo porre $\lambda_2=\lambda$, ottenendo:
+
+$$
+x=(1-\lambda)x_1+\lambda x_2,
+\qquad
+0\leq\lambda\leq1.
+$$
+
+Il vettore risultante $x$ appartiene quindi al \textbf{segmento che unisce $x_1$ e $x_2$}.
+
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+
+\draw[->] (-0.5,0) -- (6,0) node[right] {$x_1$};
+
+\fill (1,0) circle (2pt) node[below] {$x_1$};
+\fill (4,0) circle (2pt) node[below] {$x$};
+\fill (5.5,0) circle (2pt) node[below] {$x_2$};
+
+\draw[very thick] (1,0) -- (5.5,0);
+
+\end{tikzpicture}
+\end{center}
+
+Variando $\lambda$ tra $0$ e $1$, il punto $x$ può assumere \textbf{tutte le posizioni del segmento}.
+
+In particolare:
+
+$$
+\lambda=0 \Rightarrow x=x_1
+$$
+
+e
+
+$$
+\lambda=1 \Rightarrow x=x_2.
+$$
+
+
+\end{definition}
+
+
+
+\begin{definition}{Combinazione Convessa - Continuo}
+\paragraph{Caso di tre vettori.}
+
+Consideriamo ora tre vettori $x_1,x_2,x_3$:
+
+$$
+x=\lambda_1x_1+\lambda_2x_2+\lambda_3x_3
+$$
+
+con
+
+$$
+\lambda_1,\lambda_2,\lambda_3\geq0,
+\qquad
+\lambda_1+\lambda_2+\lambda_3=1.
+$$
+
+Se i tre punti $x_1,x_2,x_3$ \textbf{non sono allineati}, il punto $x$ appartiene al \textbf{triangolo} avente come vertici $x_1,x_2,x_3$.
+
+\begin{center}
+\begin{tikzpicture}[scale=1.1]
+
+\coordinate (A) at (0,0);
+\coordinate (B) at (5,0);
+\coordinate (C) at (2,3);
+
+\draw[thick] (A) -- (B) -- (C) -- cycle;
+
+\fill (A) circle (2pt) node[below left] {$x_1$};
+\fill (B) circle (2pt) node[below right] {$x_2$};
+\fill (C) circle (2pt) node[above] {$x_3$};
+
+\fill (2.4,1.2) circle (2pt) node[right] {$x$};
+
+\end{tikzpicture}
+\end{center}
+
+La posizione del punto $x$ all'interno del triangolo dipende dai valori dei coefficienti $\lambda_1,\lambda_2,\lambda_3$.
+
+Ad esempio:
+
+$$
+x=0.2x_1+0.3x_2+0.5x_3
+$$
+
+individua uno specifico punto all'interno del triangolo.
+
+Se uno dei coefficienti è uguale a $0$, il punto può trovarsi sul bordo del triangolo. Ad esempio:
+
+$$
+x=0.5x_1+0.5x_2+0x_3
+$$
+
+produce un punto appartenente al segmento che collega $x_1$ e $x_2$.
+
+Se invece un coefficiente è uguale a $1$, tutti gli altri devono essere uguali a $0$ e si ottiene direttamente uno dei vettori di partenza. Ad esempio:
+
+$$
+x=1x_1+0x_2+0x_3=x_1.
+$$
+
+\paragraph{In generale.}
+
+Il ragionamento può essere esteso a un numero qualsiasi di vettori. La combinazione convessa
+
+$$
+x=\sum_{i=1}^{k}\lambda_i x_i
+$$
+
+produce un punto appartenente alla regione convessa generata dai punti $x_1,\ldots,x_k$.
+
+La forma geometrica di questa regione dipende dal numero di punti, dalla dimensione dello spazio e dalla loro disposizione.
+
+Ad esempio, in $\mathbb{R}^2$, quattro punti possono generare un quadrilatero:
+
+\begin{center}
+\begin{tikzpicture}[scale=1.0]
+
+\coordinate (A) at (0,0);
+\coordinate (B) at (4,0);
+\coordinate (C) at (5,2.5);
+\coordinate (D) at (1,3);
+
+\draw[thick] (A) -- (B) -- (C) -- (D) -- cycle;
+
+\fill (A) circle (2pt) node[below left] {$x_1$};
+\fill (B) circle (2pt) node[below right] {$x_2$};
+\fill (C) circle (2pt) node[above right] {$x_3$};
+\fill (D) circle (2pt) node[above left] {$x_4$};
+
+\end{tikzpicture}
+\end{center}
+
+
+\end{definition}
+
+
+
+\newpage
+
+\begin{definition}{Inviluppo convesso}
+
+Si dice \textbf{inviluppo convesso} dei vettori
+$x_1,x_2,\ldots,x_k$ l'insieme di tutti i vettori che possono essere ottenuti come combinazione convessa di
+$x_1,x_2,\ldots,x_k$ e si indica con
+
+$$
+\operatorname{conv}(x_1,x_2,\ldots,x_k).
+$$
+
+Pertanto:
+
+$$
+\boxed{
+\operatorname{conv}(x_1,\ldots,x_k)
+=
+\left\{
+\sum_{i=1}^{k}\lambda_i x_i
+\;\middle|\;
+\lambda_i\geq0,\;
+\sum_{i=1}^{k}\lambda_i=1
+\right\}.
+}
+$$
+
+In altre parole, l'inviluppo convesso è l'\textbf{insieme di tutti i punti che possiamo ottenere facendo variare i coefficienti $\lambda_i$}, rispettando sempre le condizioni:
+
+$$
+\lambda_i\geq0
+\qquad\text{e}\qquad
+\sum_{i=1}^{k}\lambda_i=1.
+$$
+
+Possiamo quindi interpretarlo geometricamente come la \textbf{regione convessa più piccola che contiene tutti i punti $x_1,\ldots,x_k$}.
+
+\begin{itemize}
+
+\item \textbf{2 vettori:} l'inviluppo convesso è il \textbf{segmento} che li collega.
+
+\item \textbf{3 vettori non allineati:} l'inviluppo convesso è il \textbf{triangolo}, compreso il suo interno e il suo bordo.
+
+\item \textbf{Più vettori:} l'inviluppo convesso è la regione convessa che contiene tutti i punti dati. In $\mathbb{R}^2$ può essere, ad esempio, un triangolo, un quadrilatero, un pentagono, ecc.
+
+\end{itemize}
+
+\textbf{Idea fondamentale:}
+
+$$
+\boxed{
+\text{vario i }\lambda_i
+\quad\Longrightarrow\quad
+\text{vario il punto }x
+\quad\Longrightarrow\quad
+\text{ottengo tutto l'inviluppo convesso}
+}
+$$
+
+Quindi la \textbf{combinazione convessa} produce \textbf{un singolo punto} (per una specifica scelta dei $\lambda_i$), mentre l'\textbf{inviluppo convesso} contiene \textbf{tutti i punti ottenibili} facendo variare i $\lambda_i$ nel rispetto delle condizioni richieste.
+
+\end{definition}
+
 
 
 
