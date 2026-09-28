@@ -186,7 +186,7 @@ rende minima la stessa funzione cambiata di segno.
 \begin{equation}
     max_{x} z(x) = -min_{x} -(z(x))
 \end{equation}
-\subsubsection{Esempio di trasforazione della funzione obiettivo}
+\subsubsection{Esempio di trasformazione della funzione obiettivo}
 
 Consideriamo il seguente problema di massimizzazione:
 
@@ -1284,6 +1284,284 @@ Ricordiamoci sempre che la funzione obiettivo è definita su $\mathbb{R}^n$, un 
 
 
 Vogliamo quindi risolvere: \[ \min_{x\in S}(-x_1-x_2). \] Consideriamo la successione di punti: \[ x^{(k)}=(k,0), \qquad k=1,2,3,\ldots \] Verifichiamo che questi punti siano ammissibili. Abbiamo: \[ x_1=k\geq0, \qquad x_2=0\geq0, \] e inoltre: \[ -x_1+x_2=-k\leq1. \] Pertanto: \[ x^{(k)}\in S \qquad\forall k\geq1. \] Calcoliamo ora il valore della funzione obiettivo: \[ z(x^{(k)}) = -k-0 = -k. \] Quindi: \[ \boxed{ z(x^{(k)})=-k\longrightarrow-\infty } \] Questo significa che possiamo trovare punti ammissibili il cui costo diventa arbitrariamente piccolo. Per esempio: \[ -1,\;-10,\;-100,\;-1000,\ldots \] non esiste quindi un valore minimo finito. Si dice che il problema è \textbf{illimitato inferiormente} e si scrive: \[ \boxed{ \inf_{x\in S}z(x)=-\infty. } \]
+
+
+
+
+\section{Geometria della Programmazione Lineare}
+\subsection{Poliedro ed insiemi convessi}
+All'inizio del corso, abbiamo fatto un esempio di un regione ammissibile $S$, lo riporto:
+\begin{center}
+        $$
+        S = \left\{ (x,y) \in \mathbb{R}^2 : 
+        \begin{array}{l}
+        4x + 2y \le 40 \\
+        2x + y \le 16 \\
+        x \ge 0, y \ge 0
+        \end{array} 
+        \right\}
+        $$
+\end{center}
+Questa regione delimita un insieme di punti sul piano:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{_files/_images/14.png}
+    \caption{L'area gialla è l'insieme dei punti della regione ammissibile S}
+    \label{fig:mia_immagine}
+\end{figure}
+Come vedi i vincoli del problema nell'insieme $S$,sono un sistema, il che si può equivalentemente scrivere sottoforma matriciale,\textbf{come
+abbiamo visto nel paragrafo apposito quando si trasformava il problema sottoforma matriciale}
+Quindi si può definire:
+\begin{definition}{Poliedro}
+    L'insieme $P$ = \{$x \in \mathbb{R} ^ n$ | $Ax >= b$\}, dove $A \in R^{m x n}$ e $b \in \mathbb{R}^m$ è detto \textbf{poliedro}
+\end{definition}
+Un poliedro quindi è una regione di punti.
+\begin{definition}{Insieme Limitato}
+Un insieme $S \subset \mathbb{R}^n$ è detto \textbf{limitato} se esiste una costante $k$ tale che il valore assoluto di ogni componente di ogni elemento di $S$ sia minore o uguale a $k$, cioè:
+\[
+|x_i| \leq k,
+\qquad
+\forall i = 1,2,\ldots,n,
+\quad
+\forall x \in S.
+\]
+\end{definition}
+
+
+Prima di passare alla prossima definizione, ricordiamo che:
+\begin{equation}
+    a_1 x_1 + a_2 x_2 + \dots + a_n x_n = b
+\end{equation}
+Può essere vista come una curva di livello $L_k$ per la funzione, o come una funzione ad una variabile, \textbf{isolando $x_2$}.
+Per ora per semplicità pensala a come una funzione ad una variabile.
+
+
+\paragraph{Esempio}
+Considera 
+\begin{equation}
+    x_1 + x_2 = 5
+\end{equation}
+Che isolando $x_2$ diventa:
+\begin{equation}
+    x_2 = 5 - x_1
+\end{equation}
+Questa è una retta, e descrive tutti i punti \{$(x_1,x_2)$ | $x_1 + x_2 = 5$ \}
+
+\begin{definition}{Iperpiano}
+Sia $a \in \mathbb{R}^n$ e sia $b \in \mathbb{R}$ uno scalare.
+L'insieme
+
+$$
+\{x \in \mathbb{R}^n \mid a^Tx = b\}
+$$
+
+è detto \textbf{iperpiano}.
+\end{definition}
+
+\textbf{Esempio.}
+Consideriamo l'iperpiano in $\mathbb{R}^2$:
+\[
+x_1+x_2=5.
+\]
+
+Possiamo riscriverlo come
+\[
+x_2=5-x_1,
+\]
+ottenendo quindi una retta nel piano $(x_1,x_2)$.
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines=middle,
+    xlabel={$x_1$},
+    ylabel={$x_2$},
+    xmin=-2, xmax=7,
+    ymin=-2, ymax=7,
+    grid=both,
+    width=9cm,
+    height=7cm,
+    samples=100,
+]
+\addplot[domain=-2:7] {5-x};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+
+La retta rappresenta tutti i punti $(x_1,x_2)\in\mathbb{R}^2$
+che soddisfano l'equazione $x_1+x_2=5$.
+
+
+\begin{definition}{Semi-spazio}
+
+Sia $a \in \mathbb{R}^n$ e sia $b \in \mathbb{R}$ uno scalare.
+
+L'insieme
+
+$$
+\{x \in \mathbb{R}^n \mid a^Tx \geq b\}
+$$
+
+è detto \textbf{semi-spazio}.
+
+\end{definition}
+
+In pratica, il semi-spazio è l'insieme di tutti i punti che si trovano \textbf{da un lato dell'iperpiano}
+
+$$
+a^Tx=b,
+$$
+
+in particolare dal lato individuato dalla \textbf{direzione del vettore normale} $a$.
+
+Infatti, il vettore $a$ è perpendicolare all'iperpiano $a^Tx=b$ e indica la direzione verso cui aumenta il valore di $a^Tx$.
+
+Il vincolo
+
+$$
+a^Tx\geq b
+$$
+
+seleziona quindi l'iperpiano stesso (perchè >=) e tutti i punti che si trovano dal lato verso cui punta il vettore $a$.
+
+Si noti quindi che $a$ è perpendicolare all'iperpiano stesso.
+
+Questo perchè considerando l'iperpiano
+
+$$
+H=\{x\in\mathbb{R}^n\mid a^Tx=b\}.
+$$
+
+Siano $x,y\in H$ due punti appartenenti allo stesso iperpiano. Per definizione di iperpiano, entrambi devono soddisfare l'equazione:
+
+$$
+a^Tx=b
+$$
+
+e
+
+$$
+a^Ty=b.
+$$
+
+Pertanto:
+
+$$
+a^Tx=a^Ty.
+$$
+
+Portando tutto a sinistra:
+
+$$
+a^Tx-a^Ty=0.
+$$
+
+Per la linearità del prodotto scalare:
+
+$$
+a^T(x-y)=0.
+$$
+
+Poiché il prodotto scalare tra due vettori è nullo se e solo se essi sono ortogonali, otteniamo:
+
+$$
+a\perp(x-y).
+$$
+
+\textbf{($x-y$ è il vettore che va dal punto $x$ al punto $y$)}
+
+Quindi il vettore $a$ è ortogonale al vettore che collega due qualsiasi punti $x$ e $y$ dell'iperpiano.
+
+In altre parole, $a$ è un \textbf{vettore normale all'iperpiano}:
+
+$$
+\boxed{a\text{ è ortogonale a ogni direzione contenuta nell'iperpiano, cioè è ortogonale a ogni vettore giacente sul piano.}}
+$$
+
+\subsection{Insiemi convessi}
+
+\begin{definition}{Insieme convesso}
+
+Un insieme $S\subset\mathbb{R}^n$ è detto \textbf{convesso} se
+
+$$
+\forall x,y\in S,\quad \forall\lambda\in[0,1],
+$$
+
+risulta
+
+$$
+v = \lambda x+(1-\lambda)y\in S.
+$$
+
+\end{definition}
+
+In altre parole, un insieme è convesso se, presi \textbf{due qualsiasi punti} $x,y\in S$, tutti i punti del segmento che li collega appartengono ancora a $S$.
+
+
+$v$ \textbf{rappresenta un punto fra il segmento che collega $y$ e $x$ e adesso vedremo perchè:}
+
+
+Possiamo riscrivere
+
+$$
+v=\lambda x+(1-\lambda)y
+$$
+
+come
+
+$$
+v=y+\lambda(x-y).
+$$
+
+In questa forma possiamo interpretare i diversi elementi come segue:
+
+$$
+\boxed{
+\underbrace{y}_{\text{punto di partenza}}
++
+\underbrace{\lambda}_{\text{fattore di scala}}
+\underbrace{(x-y)}_{\text{vettore direzione}}
+=
+\underbrace{v}_{\text{punto raggiunto}}
+}
+$$
+
+In particolare:
+\begin{itemize}
+\item $y$ rappresenta il \textbf{punto di partenza};
+\item $x-y$ rappresenta la \textbf{direzione} e il magnitudo per spostarmi, da $y$ a $x$;
+\item $\lambda$ rappresenta l'\textbf{ampiezza dello spostamento} lungo tale direzione (se voglio raggiungere $x$, faccio tutto lo spostamento quindi $\lambda$ = 1,
+altrimenti se voglio rimanere in $y$, scelgo $\lambda$ = 0);
+\item $v$ rappresenta il \textbf{punto raggiunto}.
+\end{itemize}
+
+Poiché $\lambda\in[0,1]$, il punto $v$ rimane sul segmento che collega $y$ a $x$.
+
+\paragraph{Esempio}
+Consideriamo due punti $x = (1,1)$ e $y = (2,4)$, consideriamo $x-y$, questo è il puntino grigio nello sfondo, cioè $(-1,-3)$,
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.2\textwidth]{_files/_images/15.png}
+    \caption{$x = (1,1)$ e $y = (2,4)$, sono rispettivamente il verde e il viola, e il vettore marrone che raggiunge il punto grigio,
+    indica il vettore differenza,con direzione e magnitudo per spostarsi da $y$ a $x$}
+    \label{fig:mia_immagine}
+\end{figure}
+
+Se vedi quel vettore indica la direzione e il magnitudo per spostarmi da $y$ a $x$, \textbf{per spostarmi però non mi basta solo questo vettore, ma devo prendere un punto di inizio, in questo caso prendo $y = (1,1)$ (dato che mi voglio spostare da $y$ a $x$)}
+Tramite solo questi due elementi, io riuscirei a spostarmi da $y$ a $x$, in modo completo. \textbf{Ma dato che voglio rappresentare tutti i punti sul segmento da $y$ a $x$, quello
+che faccio è aggiungere un fattore di scala}, chiamato $\lambda$,questo mi permette di inviduare tutti i punti su quel segmento, in particolare:
+\begin{itemize}
+    \item $\lambda$ = 0, indica che resto fermo sul punto $y$.
+    \item $\lambda$ = 1, sfrutto tutto il vettore e identifico il punto $x$.
+\end{itemize} 
+\begin{center}
+    In un insieme convesso, tutti i punti su quel segmento, quindi $\forall \lambda \in [0,1]$ devono appartenere a $S$.
+\end{center}
+Questo poi \textbf{deve valere} per ogni segmento che prendo fra due punti arbitrari in $S$
+
+
+
 
 
 
