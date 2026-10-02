@@ -823,6 +823,75 @@ Cioè che l'insieme S abbia un numero infinito di soluzioni
 L'\textbf{ipotesi 3}, invece, riguarda direttamente la funzione obiettivo e si suppone anche essa sempre vera. Essa garantisce che il problema di ottimizzazione non sia \textbf{illimitato inferiormente}, ossia che la funzione obiettivo sia limitata inferiormente sulla regione ammissibile.
 
 \section{ Interpretazione e soluzione grafica di un problema di PL}
+\begin{warning}{Gradiente funzione Lineare}
+Per una funzione lineare della forma
+\[
+f(x) = c^T x,
+\]
+il gradiente è costante in ogni punto:
+\[
+\nabla f(x) = c.
+\]
+
+Ad esempio, consideriamo la funzione
+\[
+f(x_1,x_2) = 3x_1 + 2x_2.
+\]
+Il suo gradiente è
+\[
+\nabla f(x_1,x_2)
+=
+\begin{pmatrix}
+\frac{\partial f}{\partial x_1}\\
+\frac{\partial f}{\partial x_2}
+\end{pmatrix}
+=
+\begin{pmatrix}
+3\\
+2
+\end{pmatrix}.
+\]
+Quindi, indipendentemente dal punto considerato,
+\[
+\nabla f(0,0)
+=
+\nabla f(1,5)
+=
+\nabla f(100,-20)
+=
+\begin{pmatrix}
+3\\
+2
+\end{pmatrix}.
+\]
+
+Nel contesto della programmazione lineare, se la funzione obiettivo è
+\[
+f(x) = c^T x,
+\]
+il vettore $c$ rappresenta quindi la direzione del gradiente, che è la stessa in ogni punto.
+
+Ad esempio, per
+\[
+\min -x_1-x_2
+\]
+si ha
+\[
+c =
+\begin{pmatrix}
+-1\\
+-1
+\end{pmatrix}
+\qquad\Longrightarrow\qquad
+\nabla f(x) =
+\begin{pmatrix}
+-1\\
+-1
+\end{pmatrix}
+\]
+in ogni punto dello spazio.
+\end{warning}
+
 Quando il problema di PL da dover risolvere è caratterizzato da due sole
 variabili decisionali, è possibile risolverlo immediatamente per via grafica.
 In questo paragrafo verranno illustrati alcuni semplici esempi di rappresentazione e soluzione grafica di problemi di PL in due variabili. Essi ci
@@ -1315,6 +1384,9 @@ Quindi si può definire:
 \begin{definition}{Poliedro}
     L'insieme $P$ = \{$x \in \mathbb{R} ^ n$ | $Ax >= b$\}, dove $A \in R^{m x n}$ e $b \in \mathbb{R}^m$ è detto \textbf{poliedro}
 \end{definition}
+\begin{warning}
+    Si scrive $>=$ nella definizione, perchè anche se abbiamo $<=$ si possono riportare alla forma di maggiore uguale.
+\end{warning}
 Un poliedro quindi è una regione di punti.
 \begin{definition}{Insieme Limitato}
 Un insieme $S \subset \mathbb{R}^n$ è detto \textbf{limitato} se esiste una costante $k$ tale che il valore assoluto di ogni componente di ogni elemento di $S$ sia minore o uguale a $k$, cioè:
@@ -1788,7 +1860,8 @@ $$
 \sum_{i=1}^{k}\lambda_i=1.
 $$
 
-Possiamo quindi interpretarlo geometricamente come la \textbf{regione convessa più piccola che contiene tutti i punti $x_1,\ldots,x_k$}.
+Possiamo quindi interpretarlo geometricamente come la \textbf{regione convessa più piccola che contiene tutti i punti $x_1,\ldots,x_k$}, quindi nel caso di due vettori,
+\textbf{l'inviluppo convesso coincide con il segmento chiuso e convesso $[x_1,x_2]$}. Se aggiungessi un terzo punto non allineato l'inviluppo convesso diventerebbe l'intera area del triangolo con vertici $x_1, x_2, x_3$.
 
 \begin{itemize}
 
@@ -1827,7 +1900,7 @@ Valgono le seguenti proprietà, di cui trascuriamo in questo contesto la verific
 
     \item Ogni poliedro è un insieme convesso.
 
-    \item Il vettore che esce fuori dallaa combinazione convessa di un numero finito di elementi di un insieme convesso $S$ appartiene all'insieme convesso $S$.
+    \item Il vettore che esce fuori dalla combinazione convessa di un numero finito di elementi di un insieme convesso $S$ appartiene all'insieme convesso $S$.
 
     \item L'inviluppo convesso di un numero finito di vettori è un insieme convesso.
 
@@ -1835,9 +1908,487 @@ Valgono le seguenti proprietà, di cui trascuriamo in questo contesto la verific
 
 \end{theorem}
 
+\newpage
+
 \subsection{Punti estremi, vertici e soluzioni di base ammissibili}
+In questo paragrafo daremo tre definizioni equivalenti di vertice.
+
+\begin{definition}{Punto estremo}
+Sia $P = \{x \in \mathbb{R}^n \mid A x \ge b\}$ (oppure $A x \le b$) un poliedro espresso da un sistema di disuguaglianze lineari. 
+Un vettore $x \in P$ è detto \emph{punto estremo} di $P$ se non esistono due vettori $y, z \in P$ ($y, z \neq x$) ed uno scalare $\lambda \in [0, 1]$, tali che $x = \lambda y + (1 - \lambda)z$.
+\end{definition}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{_files/_images/16.png}
+    \caption{Il vettore $w$ non è punto estremo di $P$, in quanto combinazione convessa di $u$ e $v$. $x$ è, invece, punto estremo di $P$}
+    \label{fig:mia_immagine}
+\end{figure}
 
 
 
+\begin{definition}{Vertice}
+Sia $P = \{x \in \mathbb{R}^n \mid A x \ge b\}$ (oppure $A x \le b$) un poliedro espresso da un sistema di disuguaglianze lineari. 
+Un vettore $x \in P$ è detto \emph{vertice} di $P$ se esiste un vettore $c$ tale che $c'x < c'y$, per ogni $y \in P, y \neq x$.
+\end{definition}
 
+La definizione di vertice può essere interpretata geometricamente nel seguente modo.
+
+In un poliedro, un punto \(x\) è un vertice se \textbf{esiste una funzione lineare}, descritta dal vettore \(c\), per la quale \(x\) è l'unico punto del poliedro in cui la funzione assume il valore minimo.
+
+In particolare, la funzione lineare è
+
+$$
+f(y)=c^T y.
+$$
+
+Il vettore \(c\) indica la direzione di massima crescita della funzione. Di conseguenza, il suo valore diminuisce muovendosi nella direzione opposta a \(c\). Se, muovendosi in questa direzione, si raggiunge un \textbf{unico punto} del poliedro, allora tale punto è un vertice.
+
+In altre parole, per un opportuno vettore \(c\), il vertice \(x\) soddisfa
+
+$$
+c^T x < c^T y,
+\qquad \forall y\in P,\ y\neq x.
+$$
+
+Quindi \(c^T x\) rappresenta il valore assunto dalla funzione lineare \(f(y)=c^T y\) nel punto \(x\), e il vertice è l'unico punto del poliedro che minimizza tale funzione.
+
+Nel nostro esempio che è questo : 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{_files/_images/18.png}
+    \label{fig:mia_immagine}
+\end{figure}
+
+
+se scegliamo
+
+$$
+c=(1,1),
+$$
+
+la funzione è
+
+$$
+f(x_1,x_2)=x_1+x_2.
+$$
+
+Muovendosi nella direzione opposta a \(c\), la funzione diminuisce. Il primo e unico punto del poliedro raggiunto in questa direzione è il vertice \(B\); pertanto \(B\) è un vertice secondo la definizione.
+
+Analogamente, scegliendo
+
+$$
+c=(0,3),
+$$
+
+la funzione diventa
+
+$$
+f(x_1,x_2)=3x_2.
+$$
+
+Le sue curve di livello sono rette orizzontali. Muovendosi nella direzione opposta a \(c\), cioè verso il basso, il valore della funzione diminuisce. In questo caso il punto \(C\) è l'unico punto del poliedro in cui la funzione raggiunge il valore minimo e, di conseguenza, anche \(C\) è un vertice.
+
+
+\subsection*{Notazione degli indici nei problemi di Programmazione Lineare}
+
+Consideriamo un generico problema di Programmazione Lineare (PL) con
+$n$ variabili decisionali
+
+\[
+x_1,x_2,\ldots,x_n
+\]
+
+e $m$ vincoli, indicizzati da
+
+\[
+i=1,\ldots,m.
+\]
+
+Gli indici vengono utilizzati per identificare in modo univoco i
+vincoli e le variabili. In particolare, è importante distinguere gli
+indici dei vincoli dagli indici delle variabili:
+
+\[
+\boxed{M=\text{insiemi di indici dei vincoli}}
+\]
+
+\[
+\boxed{N=\text{insiemi di indici delle variabili}}
+\]
+
+\subsubsection*{Indici dei vincoli: $M_1,M_2,M_3$}
+
+Gli insiemi $M_1,M_2,M_3$ sono insiemi di indici che permettono di
+classificare i vincoli in base al tipo di relazione che presentano.
+
+\begin{itemize}
+    \item $M_1$ contiene gli indici dei vincoli di tipo $\ge$;
+    \item $M_2$ contiene gli indici dei vincoli di tipo $\le$;
+    \item $M_3$ contiene gli indici dei vincoli di tipo $=$.
+\end{itemize}
+
+Pertanto, quando scriviamo
+
+\[
+a_i'x\ge b_i
+\qquad i\in M_1,
+\]
+
+stiamo dicendo che, per ogni indice $i$ appartenente all'insieme
+$M_1$, il vincolo corrispondente è di tipo $\ge$.
+
+Ad esempio, supponiamo di avere $5$ vincoli:
+
+\[
+\begin{aligned}
+a_1'x &\ge b_1\\
+a_2'x &\le b_2\\
+a_3'x &= b_3\\
+a_4'x &\ge b_4\\
+a_5'x &\le b_5.
+\end{aligned}
+\]
+
+In questo caso possiamo definire:
+
+\[
+M_1=\{1,4\},
+\]
+
+poiché i vincoli $1$ e $4$ sono di tipo $\ge$;
+
+\[
+M_2=\{2,5\},
+\]
+
+poiché i vincoli $2$ e $5$ sono di tipo $\le$;
+
+\[
+M_3=\{3\},
+\]
+
+poiché il vincolo $3$ è un'uguaglianza.
+
+Quindi la scrittura compatta
+
+\[
+a_i'x\ge b_i
+\qquad i\in M_1
+\]
+
+equivale, nell'esempio precedente, a scrivere
+
+\[
+\begin{cases}
+a_1'x\ge b_1\\
+a_4'x\ge b_4.
+\end{cases}
+\]
+
+Analogamente,
+
+\[
+a_i'x\le b_i
+\qquad i\in M_2
+\]
+
+equivale a
+
+\[
+\begin{cases}
+a_2'x\le b_2\\
+a_5'x\le b_5,
+\end{cases}
+\]
+
+mentre
+
+\[
+a_i'x=b_i
+\qquad i\in M_3
+\]
+
+equivale a
+
+\[
+a_3'x=b_3.
+\]
+
+\subsubsection*{Indici delle variabili: $N_1,N_2,N_3$}
+
+Gli insiemi $N_1,N_2,N_3$ svolgono un ruolo analogo, ma questa volta
+si riferiscono alle \emph{variabili} e non ai vincoli.
+
+Gli indici delle variabili sono
+
+\[
+j=1,\ldots,n.
+\]
+
+Gli insiemi $N_1,N_2,N_3$ classificano le variabili in base al
+vincolo imposto sul loro segno:
+
+\begin{itemize}
+    \item $N_1$ contiene gli indici delle variabili non negative;
+    \item $N_2$ contiene gli indici delle variabili non positive;
+    \item $N_3$ contiene gli indici delle variabili non vincolate
+    rispetto al segno.
+\end{itemize}
+
+In particolare,
+
+\[
+x_j\ge0
+\qquad j\in N_1
+\]
+
+significa che, per ogni indice $j$ appartenente a $N_1$, la variabile
+$x_j$ deve essere non negativa.
+
+Ad esempio, se
+
+\[
+N_1=\{1,3,5\},
+\]
+
+allora
+
+\[
+x_1\ge0,\qquad x_3\ge0,\qquad x_5\ge0.
+\]
+
+Analogamente,
+
+\[
+x_j\le0
+\qquad j\in N_2
+\]
+
+significa che le variabili i cui indici appartengono a $N_2$ devono
+essere non positive.
+
+Ad esempio, se
+
+\[
+N_2=\{2,6\},
+\]
+
+allora
+
+\[
+x_2\le0,\qquad x_6\le0.
+\]
+
+Infine,
+
+\[
+x_j\text{ non vincolata}
+\qquad j\in N_3
+\]
+
+significa che le variabili i cui indici appartengono a $N_3$ non hanno
+alcun vincolo sul segno. In altre parole,
+
+\[
+x_j\in\mathbb{R}.
+\]
+
+Una variabile non vincolata può quindi essere positiva, negativa
+oppure nulla.
+
+\subsubsection*{Differenza tra $M$ e $N$}
+
+È importante ricordare la seguente distinzione:
+
+\[
+\boxed{
+M_1,M_2,M_3
+\longrightarrow
+\text{insiemi di indici dei vincoli}
+}
+\]
+
+\[
+\boxed{
+N_1,N_2,N_3
+\longrightarrow
+\text{insiemi di indici delle variabili}
+}
+\]
+
+In particolare:
+
+\[
+\begin{array}{c|c|c}
+\text{Insieme} & \text{Indici di} & \text{Significato}\\
+\hline
+M_1 & \text{vincoli} & \ge\\
+M_2 & \text{vincoli} & \le\\
+M_3 & \text{vincoli} & =\\
+\hline
+N_1 & \text{variabili} & x_j\ge0\\
+N_2 & \text{variabili} & x_j\le0\\
+N_3 & \text{variabili} & x_j\text{ libera}
+\end{array}
+\]
+
+\subsubsection*{Esempio completo}
+
+Supponiamo di avere $4$ variabili
+
+\[
+x_1,x_2,x_3,x_4
+\]
+
+e $5$ vincoli:
+
+\[
+\begin{aligned}
+x_1+x_2&\ge2\\
+2x_1-x_3&\le5\\
+x_2+x_4&=3\\
+x_1-x_4&\ge1\\
+x_2+x_3&\le7.
+\end{aligned}
+\]
+
+Indicizziamo i vincoli con
+
+\[
+i=1,\ldots,5.
+\]
+
+I vincoli possono essere classificati nel seguente modo:
+
+\[
+M_1=\{1,4\},
+\]
+
+perché i vincoli $1$ e $4$ sono di tipo $\ge$;
+
+\[
+M_2=\{2,5\},
+\]
+
+perché i vincoli $2$ e $5$ sono di tipo $\le$;
+
+\[
+M_3=\{3\},
+\]
+
+perché il vincolo $3$ è di tipo $=$.
+
+Supponiamo inoltre che le variabili soddisfino:
+
+\[
+x_1\ge0,\qquad
+x_2\ge0,\qquad
+x_3\le0,\qquad
+x_4\in\mathbb{R}.
+\]
+
+In questo caso abbiamo:
+
+\[
+N_1=\{1,2\},
+\]
+
+perché $x_1$ e $x_2$ sono non negative;
+
+\[
+N_2=\{3\},
+\]
+
+perché $x_3$ è non positiva;
+
+\[
+N_3=\{4\},
+\]
+
+perché $x_4$ è una variabile non vincolata rispetto al segno.
+
+\subsubsection*{Idea fondamentale}
+
+La notazione utilizzata nel problema generale di PL serve quindi
+semplicemente a classificare in modo compatto vincoli e variabili.
+
+Gli insiemi
+
+\[
+M_1,M_2,M_3
+\]
+
+dividono i vincoli in base al tipo di relazione:
+
+\[
+\boxed{
+\ge,\quad \le,\quad =
+}
+\]
+
+mentre gli insiemi
+
+\[
+N_1,N_2,N_3
+\]
+
+dividono le variabili in base al loro vincolo sul segno:
+
+\[
+\boxed{
+x_j\ge0,\quad x_j\le0,\quad x_j\in\mathbb{R}.
+}
+\]
+
+Quindi, quando nel problema compare una scrittura come
+
+\[
+a_i'x\ge b_i
+\qquad i\in M_1,
+\]
+
+il simbolo $i\in M_1$ significa semplicemente:
+
+\[
+\boxed{\text{``considera tutti i vincoli il cui indice appartiene a }M_1\text{''.}}
+\]
+
+Analogamente,
+
+\[
+x_j\ge0
+\qquad j\in N_1
+\]
+
+significa:
+
+\[
+\boxed{\text{``considera tutte le variabili il cui indice appartiene a }N_1\text{''.}}
+\]
+
+\begin{definition}{Vincolo Attivo}
+Se un vettore $x^*$ soddisfa $a_i'x^* = b_i$ per qualche $i \in M_1 \cup M_2 \cup M_3$, allora il corrispondente vincolo si dice \textit{attivo} in $x^*$.
+\end{definition}
+
+\textbf{Esempio pratico}
+
+Immaginiamo un problema con due variabili $x = \begin{pmatrix} x_1 \\ x_2 \end{pmatrix}$ e due vincoli di tipo $\le$:
+\begin{enumerate}
+    \item $x_1 + x_2 \le 10$
+    \item $3x_1 + x_2 \le 15$
+\end{enumerate}
+
+Prendiamo un vettore specifico come punto di prova, ad esempio $x^* = \begin{pmatrix} 2 \\ 8 \end{pmatrix}$ (cioè $x_1 = 2$ e $x_2 = 8$). Sostituiamo questi valori all'interno dei vincoli per verificare se sono attivi:
+
+\begin{itemize}
+    \item \textbf{Analisi del Vincolo 1:}\\
+    $$ 2 + 8 \le 10 \implies 10 = 10 $$
+    L'equazione $a_1'x^* = b_1$ è perfettamente soddisfatta. Il punto esaurisce esattamente il termine noto. Pertanto, \textbf{il vincolo 1 è attivo in $x^*$}.
+
+    \item \textbf{Analisi del Vincolo 2:}\\
+    $$ 3(2) + 8 \le 15 \implies 6 + 8 \le 15 \implies 14 \le 15 $$
+    L'equazione $a_2'x^* = b_2$ non è soddisfatta perché $14 \neq 15$. C'è uno scarto rispetto al limite. Pertanto, \textbf{il vincolo 2 NON è attivo in $x^*$} (è un vincolo "lasco" o inattivo).
+\end{itemize}
 
