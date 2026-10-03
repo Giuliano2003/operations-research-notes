@@ -2018,6 +2018,19 @@ indici dei vincoli dagli indici delle variabili:
 \boxed{N=\text{insiemi di indici delle variabili}}
 \]
 
+\[
+\begin{aligned}
+\min \quad & c'x \quad \text{(P)} \\
+\text{s.a} \quad & \\
+& a'_i x \ge b_i \quad & i \in M_1 \\
+& a'_i x \le b_i \quad & i \in M_2 \\
+& a'_i x = b_i \quad & i \in M_3 \\
+& x_j \ge 0 \quad & j \in N_1 \\
+& x_j \le 0 \quad & j \in N_2 \\
+& x_j \text{ non vincolata} \quad & j \in N_3
+\end{aligned}
+\]
+
 \subsubsection*{Indici dei vincoli: $M_1,M_2,M_3$}
 
 Gli insiemi $M_1,M_2,M_3$ sono insiemi di indici che permettono di
@@ -2032,7 +2045,7 @@ classificare i vincoli in base al tipo di relazione che presentano.
 Pertanto, quando scriviamo
 
 \[
-a_i'x\ge b_i
+a_i^Tx\ge b_i
 \qquad i\in M_1,
 \]
 
@@ -2043,11 +2056,11 @@ Ad esempio, supponiamo di avere $5$ vincoli:
 
 \[
 \begin{aligned}
-a_1'x &\ge b_1\\
-a_2'x &\le b_2\\
-a_3'x &= b_3\\
-a_4'x &\ge b_4\\
-a_5'x &\le b_5.
+a_1^Tx &\ge b_1\\
+a_2^Tx &\le b_2\\
+a_3^Tx &= b_3\\
+a_4^Tx &\ge b_4\\
+a_5^Tx &\le b_5.
 \end{aligned}
 \]
 
@@ -2074,7 +2087,7 @@ poiché il vincolo $3$ è un'uguaglianza.
 Quindi la scrittura compatta
 
 \[
-a_i'x\ge b_i
+a_i^Tx\ge b_i
 \qquad i\in M_1
 \]
 
@@ -2082,15 +2095,17 @@ equivale, nell'esempio precedente, a scrivere
 
 \[
 \begin{cases}
-a_1'x\ge b_1\\
-a_4'x\ge b_4.
+a_1^Tx\ge b_1\\
+a_4^Tx\ge b_4.
 \end{cases}
 \]
+
+\textbf{Dove $a_i^T$} è l'intero vettore dell'$i-esimo$ vincolo.
 
 Analogamente,
 
 \[
-a_i'x\le b_i
+a_i^Tx\le b_i
 \qquad i\in M_2
 \]
 
@@ -2098,22 +2113,22 @@ equivale a
 
 \[
 \begin{cases}
-a_2'x\le b_2\\
-a_5'x\le b_5,
+a_2^Tx\le b_2\\
+a_5^Tx\le b_5,
 \end{cases}
 \]
 
 mentre
 
 \[
-a_i'x=b_i
+a_i^Tx=b_i
 \qquad i\in M_3
 \]
 
 equivale a
 
 \[
-a_3'x=b_3.
+a_3^Tx=b_3.
 \]
 
 \subsubsection*{Indici delle variabili: $N_1,N_2,N_3$}
@@ -2254,6 +2269,9 @@ x_2+x_3&\le7.
 \end{aligned}
 \]
 
+Dove ad esempio $a_1^T = (1,1)$ , $a_2^T = (2,-1)$ , $\dots$
+
+
 Indicizziamo i vincoli con
 
 \[
@@ -2309,68 +2327,17 @@ N_3=\{4\},
 
 perché $x_4$ è una variabile non vincolata rispetto al segno.
 
-\subsubsection*{Idea fondamentale}
 
-La notazione utilizzata nel problema generale di PL serve quindi
-semplicemente a classificare in modo compatto vincoli e variabili.
-
-Gli insiemi
-
-\[
-M_1,M_2,M_3
-\]
-
-dividono i vincoli in base al tipo di relazione:
-
-\[
-\boxed{
-\ge,\quad \le,\quad =
-}
-\]
-
-mentre gli insiemi
-
-\[
-N_1,N_2,N_3
-\]
-
-dividono le variabili in base al loro vincolo sul segno:
-
-\[
-\boxed{
-x_j\ge0,\quad x_j\le0,\quad x_j\in\mathbb{R}.
-}
-\]
-
-Quindi, quando nel problema compare una scrittura come
-
-\[
-a_i'x\ge b_i
-\qquad i\in M_1,
-\]
-
-il simbolo $i\in M_1$ significa semplicemente:
-
-\[
-\boxed{\text{``considera tutti i vincoli il cui indice appartiene a }M_1\text{''.}}
-\]
-
-Analogamente,
-
-\[
-x_j\ge0
-\qquad j\in N_1
-\]
-
-significa:
-
-\[
-\boxed{\text{``considera tutte le variabili il cui indice appartiene a }N_1\text{''.}}
-\]
 
 \begin{definition}{Vincolo Attivo}
-Se un vettore $x^*$ soddisfa $a_i'x^* = b_i$ per qualche $i \in M_1 \cup M_2 \cup M_3$, allora il corrispondente vincolo si dice \textit{attivo} in $x^*$.
+Se un vettore $x^*$ soddisfa $a_i^Tx^* = b_i$ per qualche $i \in M_1 \cup M_2 \cup M_3$, allora il corrispondente vincolo si dice \textit{attivo} in $x^*$.
+
+Un vincolo sulla variabile $j \in N_1 \cup N_2$ si dice attivo in $x^*$ se la variabile assume valore nullo, ossia se:   $$x_j^* = 0$$
+
+(Nota che anche questo vincolo si può scrivere con la notazione di prima, basta mettere $a_i^T = (0,...,1,...0) \text{ e } b_i = 0$)
+
 \end{definition}
+
 
 \textbf{Esempio pratico}
 
@@ -2392,3 +2359,335 @@ Prendiamo un vettore specifico come punto di prova, ad esempio $x^* = \begin{pma
     L'equazione $a_2'x^* = b_2$ non è soddisfatta perché $14 \neq 15$. C'è uno scarto rispetto al limite. Pertanto, \textbf{il vincolo 2 NON è attivo in $x^*$} (è un vincolo "lasco" o inattivo).
 \end{itemize}
 
+\clearpage
+
+Se $x^*$ attiva $n$ vincoli (\textbf{cioè gli stessi della sua dimensione}), allora $x^*$ soddisfa un certo \textbf{sistema di $n$ equazioni} lineari in $n$ incognite.
+Questo sistema ha un'unica soluzione, se e solo se le $n$ \textbf{equazioni}, sono \textbf{linearmente indipendenti}.
+Il seguente teorema da un preciso significato a questa affermazione
+
+
+\begin{example}{Vincoli attivi e sistema di equazioni}
+
+Consideriamo un problema di Programmazione Lineare con $n=2$ variabili
+e supponiamo che, in un punto $x^*$, siano attivi i seguenti due
+vincoli:
+
+\[
+\begin{cases}
+x_1+x_2\le3\\
+x_1-x_2\le-1.
+\end{cases}
+\]
+
+Poiché entrambi i vincoli sono attivi in $x^*$, devono essere
+soddisfatti con uguaglianza:
+
+\[
+\begin{cases}
+x_1+x_2=3\\
+x_1-x_2=-1.
+\end{cases}
+\]
+
+Abbiamo quindi un sistema di $n=2$ equazioni lineari in $n=2$
+incognite.
+
+La matrice dei coefficienti è
+
+\[
+A=
+\begin{pmatrix}
+1 & 1\\
+1 & -1
+\end{pmatrix}.
+\]
+
+Le due equazioni sono linearmente indipendenti, poiché i vettori
+
+\[
+(1,1)
+\qquad\text{e}\qquad
+(1,-1)
+\]
+
+non sono multipli l'uno dell'altro.
+
+Infatti,
+
+\[
+\det(A)
+=
+\begin{vmatrix}
+1 & 1\\
+1 & -1
+\end{vmatrix}
+=-2\neq0.
+\]
+
+Pertanto il sistema ammette un'unica soluzione:
+
+\[
+\begin{cases}
+x_1+x_2=3\\
+x_1-x_2=-1
+\end{cases}
+\quad\Longrightarrow\quad
+x^*=
+\begin{pmatrix}
+1\\
+2
+\end{pmatrix}.
+\]
+
+Quindi i due vincoli attivi e linearmente indipendenti determinano
+un unico punto $x^*$.
+
+\medskip
+
+Al contrario, se i due vincoli attivi fossero
+
+\[
+\begin{cases}
+x_1+x_2\le3\\
+2x_1+2x_2\le6,
+\end{cases}
+\]
+
+avremmo il sistema
+
+\[
+\begin{cases}
+x_1+x_2=3\\
+2x_1+2x_2=6.
+\end{cases}
+\]
+
+In questo caso le due equazioni sono linearmente dipendenti, poiché
+la seconda è il doppio della prima. Pertanto il sistema non determina
+un'unica soluzione, ma ammette infinite soluzioni.
+
+\[
+\boxed{
+\text{Per determinare un unico punto sono necessari $n$ vincoli attivi
+linearmente indipendenti.}
+}
+\]
+
+\end{example}
+
+\begin{theorem}{Teorema}
+Sia $x^* \in \mathbb{R}^n$ e sia $I = \{i \mid a^T_i x^* = b_i\}$ l'insieme degli indici dei vincoli che sono attivi in $x^*$. Allora, le seguenti affermazioni sono equivalenti fra loro:
+
+\begin{itemize}
+    \item $n$ vettori nell'insieme $\{a_i \mid i \in I\}$ sono linearmente indipendenti;
+    
+    (\textbf{Nota che però qui non stiamo dicendo che ci saranno sempre $n$ vettori linearmente indipendenti, MA CHE QUANDO CI SONO, allora c'è un uguaglianza logica fra queste tre punti})
+
+    \item $\{a_i \mid i \in I\}$ (l'insieme di vettori l.indipendenti del punto di sopra) è una base di $\mathbb{R}^n$, cioè ogni elemento di $\mathbb{R}^n$ può essere espresso come combinazione lineare dei vettori $a_i, \ i \in I$;
+    
+    \item il sistema di equazioni $a^T_i x = b_i, \ i \in I$, ha un'unica soluzione e quella soluzione è $x^*$
+\end{itemize}
+\end{theorem}
+
+Ora abbiamo tutti gli strumenti per definire un vertice di un poliedro come \textit{soluzione ammissibile che attiva $n$ vincoli linearmente indipendenti} (cioè la terza definizione uguale a quella
+di vertice e punto di estremo):
+
+\begin{definition}{Soluzione di Base e Soluzione di Base Ammissibile}
+Sia $P$ un poliedro definito da vincoli di uguaglianza e/o disuguaglianza come nel problema $(P)$ e sia $x^* \in \mathbb{R}^n$.
+\begin{itemize}[label=$\bullet$, leftmargin=2em]
+    \item Il vettore $x^*$ è una \textbf{soluzione di base} se:
+    \begin{itemize}[label=--, leftmargin=1.5em]
+        \item tutti i vincoli di uguaglianza (e si parla solo dei vincoli di uguaglianza) di $(P)$ sono attivi in $x^*$;
+        \item $x^*$ attiva $n$ vincoli linearmente indipendenti.
+    \end{itemize}
+    \item Se $x^*$ è una soluzione di base che soddisfa tutti i vincoli di $(P)$, allora $x^*$ è detta \textbf{soluzione di base ammissibile} (SBA).
+\end{itemize}
+\end{definition}
+
+\begin{example}{Soluzione di base e soluzione di base ammissibile}
+
+Consideriamo il poliedro
+
+$$
+P = \left\{x \in \mathbb{R}^2 \mid
+\begin{cases}
+x_1 + x_2 \leq 4\\
+x_1 \geq 0\\
+x_2 \geq 0
+\end{cases}
+\right\}.
+$$
+
+Una \emph{soluzione di base} è un punto che soddisfa un sistema formato da $n=2$ vincoli linearmente indipendenti presi tra i vincoli del problema, considerando come uguaglianze i vincoli attivi.
+
+\medskip
+
+Consideriamo, ad esempio, il punto
+
+$$
+x^* =
+\begin{pmatrix}
+4\\
+0
+\end{pmatrix}.
+$$
+
+Nel punto $x^*$ sono attivi i vincoli
+
+$$
+x_1+x_2=4
+\qquad\text{e}\qquad
+x_2=0.
+$$
+
+Essi formano il sistema
+
+$$
+\begin{cases}
+x_1+x_2=4\\
+x_2=0
+\end{cases}
+$$
+
+le cui due equazioni sono linearmente indipendenti e determinano un'unica soluzione:
+
+$$
+x^*=(4,0).
+$$
+
+Pertanto $x^*$ è una \emph{soluzione di base}.
+
+Inoltre, $x^*$ soddisfa anche tutti i vincoli del poliedro:
+
+$$
+4+0\leq4,\qquad 4\geq0,\qquad 0\geq0.
+$$
+
+Quindi
+
+$$
+x^*=(4,0)
+$$
+
+è una \emph{soluzione di base ammissibile}.
+
+\medskip
+
+Consideriamo invece il punto
+
+$$
+\bar{x}=
+\begin{pmatrix}
+4\\
+-1
+\end{pmatrix}.
+$$
+
+In $\bar{x}$ sono attivi i vincoli
+
+$$
+x_1+x_2=3
+$$
+
+e, in realtà, nessun altro vincolo del poliedro è attivo. Quindi non abbiamo $2$ vincoli attivi linearmente indipendenti e $\bar{x}$ non è una soluzione di base.
+\end{example}
+
+\subsection{Interpretazione Geometrica: Corrispondenza con i Vertici}
+
+L'idea fondamentale è che, in uno spazio $\mathbb{R}^n$, un sistema costituito da $n$ equazioni lineari indipendenti individua un unico punto.
+
+Esiste quindi una fondamentale corrispondenza tra l'algebra della Programmazione Lineare e la geometria dei poliedri:
+
+\begin{center}
+\textbf{Un punto $x^* \in P$ è una Soluzione di Base Ammissibile (SBA) $\iff$ $x^*$ è un vertice (punto estremo) di $P$.}
+\end{center}
+
+\subsubsection{Perché una SBA identifica un vertice?}
+
+Per comprendere intuitivamente questa corrispondenza, consideriamo prima il caso bidimensionale, cioè $\mathbb{R}^2$.
+
+\begin{enumerate}
+
+\item \textbf{Vincoli e rette di frontiera:}
+
+Ogni vincolo di disuguaglianza lineare
+\[
+a_i^T x \leq b_i
+\]
+individua un semispazio. La sua frontiera è la retta
+\[
+a_i^T x = b_i.
+\]
+
+\item \textbf{Vincoli attivi e intersezione:}
+
+Un vincolo si dice \emph{attivo} in $x^*$ quando è soddisfatto con l'uguaglianza:
+\[
+a_i^T x^* = b_i.
+\]
+
+In $\mathbb{R}^2$, se $x^*$ attiva due vincoli i cui vettori normali $a_i$ e $a_j$ sono linearmente indipendenti, le corrispondenti rette non sono parallele e si intersecano in un unico punto.
+
+Pertanto, il sistema
+\[
+\begin{cases}
+    a_i^T x = b_i\\
+    a_j^T x = b_j
+\end{cases}
+\]
+individua un unico punto $x^*$.
+
+\item \textbf{Ammissibilità:}
+
+Il punto di intersezione non è necessariamente un vertice del poliedro. Bisogna verificare che esso soddisfi anche tutti gli altri vincoli che definiscono $P$.
+
+\begin{itemize}
+    \item Se il punto non soddisfa tutti i vincoli, allora è una \emph{soluzione di base non ammissibile}.
+    \item Se il punto soddisfa tutti i vincoli, allora $x^* \in P$ e rappresenta un \emph{vertice} del poliedro.
+\end{itemize}
+
+\end{enumerate}
+
+\begin{center}
+    Una soluzione di base (\textbf{non ammissibile}) rappresenta invece, un'intersezione di rette lineramente indipendenti, che però non sono nella regione ammissibile.
+\end{center}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{_files/_images/19.png}
+    \label{fig:mia_immagine}
+\end{figure}
+Nell'esempio sopra, $A$ e $B$, sono soluzioni di base, ma non ammissibili, questo perchè non sono nel poliedro, però soddisfano sempre $n$ equazioni linearmente indipendenti.
+Se soddisfano tutti i vincoli del poliedro, invece staranno nel poliedro (come $E$, $D$,...)
+
+\begin{theorem}{Equaglianza fra definizioni}
+    Sia $P$ un poliedro non vuoto e sia $x^* \in P$. Le seguenti tre affermazioni sono equivalenti:
+    \begin{itemize}
+        \item $x^*$ è un vertice di $P$;
+        \item $x^*$ è un punto estremo di $P$;
+        \item $x^*$ è una soluzione di base ammissibile.
+    \end{itemize}
+\end{theorem}
+
+\begin{corollary}{Corollario}
+    Dato un numero finito di vincoli lineari di disequazioni e/o equazioni, pu`o esistere solo un numero finito di soluzioni di base e soluzioni di base ammissibili. 
+\end{corollary}
+
+
+\begin{definition}{Soluzioni di base adiacenti}
+Due distinte soluzioni di base di un poliedro $P \subseteq \mathbb{R}^n$ si dicono \textbf{adiacenti} se attivano gli stessi $n - 1$ vincoli. 
+
+Se due soluzioni di base adiacenti sono anche ammissibili, allora il segmento che le congiunge è detto \textbf{lato} (o \textbf{spigolo}) del poliedro.
+\end{definition}
+\begin{example}{Soluzione di base adiacente}
+    Nel seguente esempio
+    \begin{center}
+        \includegraphics[width=0.7\linewidth]{_files/_images/19.png}
+    \end{center}
+    \begin{itemize}
+        \item $B$ e $D$ sono adiacenti.
+        \item $B$ e $E$ sono adiacenti.
+        \item $D$ e $E$ sono adiacenti.
+    \end{itemize}
+\end{example}
