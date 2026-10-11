@@ -37,7 +37,7 @@ Sia $(b_1,b_2,\dots,b_m) = b \in \mathbb{R}^m$ un vettore a componenti scalari \
     \begin{center}
         $S = \{x \in \mathbb{R}^n \mid g_i(x) \approx b_i\}$
     \end{center}
-    dove con il simbolo $\approx$ si intende che per ogni $i = 1,2,\dots,m$ vale uno dei tre simboli $\leq,\geq,=$.
+    dove con il simbolo $\approx$ si intende che preso $x$,$\forall$ $i = 1,2,\dots,m$ vale uno dei tre simboli $\leq,\geq,=$, che sono dettati al problema.
 
     Cioè è l'insieme dei punti $x \in \mathbb{R} ^ n$ che soddisfano i vincoli sulle variabili dati da g e da b.
 \end{definition}
@@ -392,7 +392,8 @@ La precedente formulazione può essere scritta nella seguente forma compatta:
 \begin{align*}
 \min \quad z(x) &= c^\top x \\
 \text{s.a.}\quad & Ax = b \\
-& x \geq 0.
+& x \geq 0 \\
+& b \geq 0.
 \end{align*}
 
 Questo in \textbf{forma matriciale}.
@@ -1402,9 +1403,9 @@ Un insieme $S \subset \mathbb{R}^n$ è detto \textbf{limitato} se esiste una cos
 
 Prima di passare alla prossima definizione, ricordiamo che:
 \begin{equation}
-    a_1 x_1 + a_2 x_2 + \dots + a_n x_n = b
+    a_1 x_1 + a_2 x_2 = b
 \end{equation}
-Può essere vista come una curva di livello $L_k$ per la funzione, o come una funzione ad una variabile, \textbf{isolando $x_2$}.
+Può essere vista come una curva di livello $L_b$ per la funzione, o come una funzione ad una variabile, \textbf{isolando $x_2$}.
 Per ora per semplicità pensala a come una funzione ad una variabile.
 
 
@@ -1990,6 +1991,8 @@ $$
 
 Le sue curve di livello sono rette orizzontali. Muovendosi nella direzione opposta a \(c\), cioè verso il basso, il valore della funzione diminuisce. In questo caso il punto \(C\) è l'unico punto del poliedro in cui la funzione raggiunge il valore minimo e, di conseguenza, anche \(C\) è un vertice.
 
+Non sono nè \(B\) nè \(A\) perchè le loro \textbf{curve di livello hanno un valore maggiore}.
+
 
 \subsection*{Notazione degli indici nei problemi di Programmazione Lineare}
 
@@ -2269,7 +2272,7 @@ x_2+x_3&\le7.
 \end{aligned}
 \]
 
-Dove ad esempio $a_1^T = (1,1)$ , $a_2^T = (2,-1)$ , $\dots$
+Dove ad esempio $a_1^T = (1,1,0,0)$ , $a_2^T = (2,,0-1,0)$ , $\dots$
 
 
 Indicizziamo i vincoli con
@@ -2334,7 +2337,6 @@ Se un vettore $x^*$ soddisfa $a_i^Tx^* = b_i$ per qualche $i \in M_1 \cup M_2 \c
 
 Un vincolo sulla variabile $j \in N_1 \cup N_2$ si dice attivo in $x^*$ se la variabile assume valore nullo, ossia se:   $$x_j^* = 0$$
 
-(Nota che anche questo vincolo si può scrivere con la notazione di prima, basta mettere $a_i^T = (0,...,1,...0) \text{ e } b_i = 0$)
 
 \end{definition}
 
@@ -2602,6 +2604,11 @@ Esiste quindi una fondamentale corrispondenza tra l'algebra della Programmazione
 \textbf{Un punto $x^* \in P$ è una Soluzione di Base Ammissibile (SBA) $\iff$ $x^*$ è un vertice (punto estremo) di $P$.}
 \end{center}
 
+Questo perché una soluzione di base è determinata dall'attivazione di \(n\) vincoli linearmente indipendenti. In uno spazio \(\mathbb{R}^n\), tali vincoli identificano un unico punto, come intersezione degli \(n\) iperpiani corrispondenti. Il punto soddisfa quindi le uguaglianze associate ai vincoli attivi e si troverà sull'intersezione di questi iperpiani.
+Quindi si troverà ai "bordi", dato che si trova sugli iperpiani.
+
+Se, inoltre, questo punto è ammissibile, allora appartiene all'insieme ammissibile (il poliedro) e, di conseguenza, è un vertice del poliedro, poiché è individuato dall'intersezione di \(n\) vincoli linearmente indipendenti.
+
 \subsubsection{Perché una SBA identifica un vertice?}
 
 Per comprendere intuitivamente questa corrispondenza, consideriamo prima il caso bidimensionale, cioè $\mathbb{R}^2$.
@@ -2658,7 +2665,7 @@ Il punto di intersezione non è necessariamente un vertice del poliedro. Bisogna
     \includegraphics[width=0.6\textwidth]{_files/_images/19.png}
     \label{fig:mia_immagine}
 \end{figure}
-Nell'esempio sopra, $A$ e $B$, sono soluzioni di base, ma non ammissibili, questo perchè non sono nel poliedro, però soddisfano sempre $n$ equazioni linearmente indipendenti.
+Nell'esempio sopra, $A$ e $B$, sono soluzioni di base, ma non ammissibili, questo perchè non sono nel poliedro, però soddisfano sempre $n$ equazioni linearmente indipendenti (una è quello della retta e una sarà quella della condizione sulle variabili, cioè che una componente è uguale a 0, o comunque basta guardare il grafico).
 Se soddisfano tutti i vincoli del poliedro, invece staranno nel poliedro (come $E$, $D$,...)
 
 \begin{theorem}{Equaglianza fra definizioni}
