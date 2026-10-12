@@ -2698,3 +2698,288 @@ Se due soluzioni di base adiacenti sono anche ammissibili, allora il segmento ch
         \item $D$ e $E$ sono adiacenti.
     \end{itemize}
 \end{example}
+
+\section{Poliedri in Forma Standard}
+Sia $P$ = \{$x \in \mathbb{R}^n$ | $Ax = b$ , $x$ >= 0\} un poliedro rappresentato in forma standard.
+Abbiamo già osservato in precedenza che senza
+perdita di generalità è possibile assumere che m < n e che gli m vincoli
+siano linearmente indipendenti.
+
+Un poliedro in forma standard geometricamente, può rappresentare varie cose:
+
+\begin{enumerate}
+    \item Se siamo in $\mathbb{R}^2$, e abbiamo $m$ = 1 vincolo di uguaglianza, allora il poliedro è una retta.
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.4\textwidth]{_files/_images/20.png}
+        \caption{Il vincolo $x_1 + x_2 = 4$ identifica una retta, con i due ulteriori non vincoli di uguaglianza $x_1 >= 0$ e $x_2 >= 0$, si ha quello in foto}
+        \label{fig:mia_immagine}
+    \end{figure}
+    \item Se siamo in $\mathbb{R}^2$, e abbiamo $m$ = 2 vincoli di uguaglianza, lineramente indipendenti (come da ipotesi), allora l'interesezione fra questi due è un punto.
+    Supponiamo di avere:
+    \[
+    \begin{cases}
+    x_1+x_2=4\\
+    x_1-x_2=0\\
+    x_1,x_2\geq 0
+    \end{cases}
+    \]
+    Allora graficamente si ha:
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.4\textwidth]{_files/_images/21.png}
+        \caption{L'intersezione di due rette lineramente indipendenti va a formare un punto in $\mathbb{R}^2$}
+        \label{fig:mia_immagine}
+    \end{figure}
+    \item Se siamo in $\mathbb{R}^3$ (quindi 3 variabili) e $m$ = 2 uguaglianze:
+    \[
+    \begin{cases}
+    x_1+x_2+x_3=4\\
+    x_1-x_2=0\\
+    x_1,x_2,x_3\geq0
+    \end{cases}
+    \]
+    Qui non rappresentiamo un punto, perchè abbiamo $m$ = 2 equazioni, ma $n$ = 3 variabili.
+    In questo caso $x_1 - x_2 = 0$ rappresenta un piano, perchè lo vedi come $x_1 - x_2 + 0 x_3 = 0$ quindi va bene qualsiasi valore di $x_3$
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.4\textwidth]{_files/_images/22.png}
+        \caption{L'intersezione di due piani non paralleli è una retta}
+        \label{fig:mia_immagine}
+    \end{figure}
+    \\
+    In \(\mathbb{R}^3\), ciascuna uguaglianza rappresenta un piano. L'intersezione di due piani non paralleli è generalmente una retta.
+\end{enumerate}
+
+\newpage
+
+Ora nota che $x = 0$ in $\mathbb{R}^2$, indica una retta:
+\begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.4\textwidth]{_files/_images/23.png}
+        \caption{Retta individuata da $x$ = 0, questo perchè lo puoi pensare come $x + 0 * y = 0$, quindi $y$ può assumere qualsiasi valore}
+        \label{fig:mia_immagine}
+\end{figure}
+
+\newpage
+
+In $\mathbb{R}^3$, indica un piano:
+\begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.4\textwidth]{_files/_images/24.png}
+        \caption{Piano individuata da $x$ = 0, questo perchè lo puoi pensare come $x + 0 * y + 0 * z= 0$, quindi $y$ e $z$ possono assumere qualsiasi valore}
+        \label{fig:mia_immagine}
+\end{figure}
+
+\newpage
+
+Abbiamo definito una **soluzione di base** come un punto che rende attivi \(n\) vincoli linearmente indipendenti.
+
+Nel caso di un poliedro in forma standard, oltre agli \(m\) vincoli di uguaglianza, che sono linearmente indipendenti per ipotesi, per ottenere un totale di \(n\) vincoli attivi linearmente indipendenti, è necessario individuare \(n-m\) variabili di decisione \(x_j\) da porre uguali a zero, in modo da rendere attivi i corrispondenti vincoli di non negatività \(x_j\geq 0\).
+
+Questo perché, per identificare una soluzione di base, dobbiamo individuare \(n\) vincoli attivi linearmente indipendenti. Poiché gli \(m\) vincoli di uguaglianza sono già attivi, dobbiamo attivare altri \(n-m\) vincoli, imponendo che le corrispondenti variabili siano uguali a zero.
+
+Dal punto di vista geometrico, ciascun vincolo \(x_j=0\) identifica un iperpiano in \(\mathbb{R}^n\). Imponendo contemporaneamente le \(m\) equazioni originali e le ulteriori \(n-m\) equazioni introdotte, otteniamo un sistema di \(n\) equazioni lineari.
+
+Affinché questi vincoli individuino un unico punto, è necessario che siano complessivamente linearmente indipendenti.
+
+La scelta delle \(n-m\) variabili di decisione da porre uguali a zero, tuttavia, non è del tutto arbitraria: i corrispondenti vincoli devono essere linearmente indipendenti sia tra loro sia rispetto agli \(m\) vincoli di uguaglianza originali. Inoltre, affinché il punto individuato sia una soluzione di base ammissibile, deve soddisfare tutti i vincoli del poliedro.
+
+Queste considerazioni sono formalizzate dal seguente teorema.
+
+\begin{center}
+    Nel lungo procedimento che vedremo di seguito, si andranno a scegliere quali dei vincoli di $j$, saranno da mettere uguali a 0.
+    Una volta fatto, poi si risolverà il sistema.
+\end{center}
+
+
+\begin{theorem}{Teorema}
+    Si considerano i vincoli $Ax = b$ e $x$ >= 0 e si assuma che $A \in \mathbb{R}^{m \times n}$ sia una matrice a righe lineramente indipendenti (bisogna avere questi vincoli per applicare il teorema).
+    Un vettore $x^* \in \mathbb{R}^n$ è soluzione di base se e solo se:
+    \begin{itemize}
+        \item $A x^* = b;$ (questo dalla definizione di soluzione di base, dove tutti i vincoli di uguaglianza devono essere soddisfatti)
+        \item è possibile individuare $B(1),B(2),\dots,B(m)$ indici tali che:
+        \begin{enumerate}
+            \item le colonne $A_{B(1)},A_{B(2)},\dots,A_{B(m)}$ sono lineramente indipendenti;
+            \item se $j$ != $B(1),B(2),\dots,B(m)$, allora $x^*_j$ = 0
+        \end{enumerate}
+    \end{itemize}
+\end{theorem}
+Quello appena descritto si può descrivere in modo algoritmico in questo modo:
+\begin{center}
+\fbox{\parbox{0.9\linewidth}{
+    \textbf{Passo 1.}\\
+        Scegliere $m$ colonne di $A$ lineramente indipendenti. \\
+        Siano $A_{B(1)},A_{B(2)},\dots,A_{B(m)}$ dette colonne. \\
+    \textbf{Passo 2.}\\
+        Porre $x_j$ = 0, per ogni $j$ != $B(1),B(2),\dots,B(m)$ \\
+    \textbf{Passo 3.}\\
+        Risolvere il sistema ad $m$ equazioni $Ax = b$ nelle $m$ incognite $x_{B(1)},x_{B(2)},\dots,x_{B(M)}$, perchè le altre $n - m$ incognite saranno messe a 0 dal passo 2.
+}}
+\end{center}
+Facciamo un esempio per chiarire,consideriamo il sistema:
+\[
+\begin{cases}
+x_1+x_2+x_3=4\\
+2x_1+x_2+x_3=5\\
+x_1,x_2,x_3\geq 0
+\end{cases}
+\]
+La matrice dei coefficienti è:
+\[
+A=
+\begin{pmatrix}
+1&1&1\\
+2&1&1
+\end{pmatrix},
+\qquad
+b=\begin{pmatrix}4\\5\end{pmatrix}.
+\]
+
+\clearpage
+\paragraph{Passo 1 : Scegliere \(m\) colonne linearmente indipendenti}
+La matrice \(A\) ha \(m=2\) righe e \(n=3\) colonne. Dobbiamo quindi scegliere due colonne linearmente indipendenti.
+Scegliamo la prima e la seconda colonna:
+\[
+A_{B(1)}=\begin{pmatrix}1\\2\end{pmatrix},
+\qquad
+A_{B(2)}=\begin{pmatrix}1\\1\end{pmatrix}.
+\]
+
+Dove $B(1)$ = 1 e $B(2)$ = 2
+La matrice formata dalle colonne scelte è:
+\[
+B=\begin{pmatrix}
+1&1\\
+2&1
+\end{pmatrix}.
+\]
+Questa matrice è chiamata matrice di base, $B \in \mathbb{R}^{m \times m}$.
+
+
+\textbf{Nota: Si può sempre modificare la matrice originale A, in modo che le colonne lineramente indipendenti $A_{B(1)}...$ siano tutte vicine, quindi ottenere gli indici che partono da 1 e sono tutti attaccati} e quindi ottenere una sottomatrice $B$,
+
+\paragraph{Passo 2: Porre le variabili uguali a 0}
+Ora dobbiamo porre $j$ uguale a 0, ma quale $j$?
+abbiamo che B(1) = 1 e B(2) = 2, quindi $x_3$ = 0.
+
+Le variabili $x_{B(1)},x_{B(2)}$ sono chiamate \textbf{variabili di base, mentre $x_3$ è una variabile non di base}.
+
+
+\textbf{Attenzione}: non stiamo ponendo a zero tutte le variabili, ma soltanto quelle che non corrispondono alle colonne scelte al Passo 1.
+
+Quindi l'algoritmo troverà che la variabile $j$ da mettere uguale a 0, sarà $x_3$.
+Quindi si risolverà il sistema di $m$ equazioni originali, aggiungendo l'equazione $x_3 = 0$,il sistema però non sarà come era originariamente in $n$ incognite, ma in $m$ cioè le incognite che non sono state messe a zero dall'algoritmo, cioè $x_{B(1)},x_{B(2)},\dots,x_{B(m)}$.
+Quindi noi avevamo $n$ incognite iniziali, $m$ sono state scelte dall'algoritmo, e le restanti $n - m$ sono state messe a zero.
+
+\paragraph{Passo 3 : Risolvere il sistema nelle variabili di base}
+Sostituiamo \(x_3=0\) nel sistema originale:
+\[
+\begin{cases}
+x_1+x_2+0=4\\
+2x_1+x_2+0=5
+\end{cases}
+\]
+
+\textbf{NOTA: Dato che ora non ci sono i vincoli $x_1$ e $x_2$ sono >= 0, la soluzione di base trovata non è detto sarà ammissibile.}
+
+Otteniamo:
+\[
+\begin{cases}
+x_1+x_2=4\\
+2x_1+x_2=5
+\end{cases}
+\]
+
+Sottraendo la prima equazione dalla seconda:
+\[
+x_1=1.
+\]
+
+Sostituendo nella prima equazione:
+\[
+1+x_2=4
+\quad\Longrightarrow\quad x_2=3.
+\]
+
+Pertanto, la soluzione di base ottenuta è:
+\[
+\boxed{x^*=(1,3,0)}
+\]
+Poiché tutte le componenti sono non negative, questa è anche una soluzione di base ammissibile.
+
+
+Due matrici di base sono dette distinte se coinvolgono due insiemi di colonne linearmente indipendenti distinte.
+
+Si noti che la matrice di base $B$ è invertibile essendo costituita da colonne lineramente indipendenti.
+
+Analogamente possiamo costruire un vettore $x_B$ di variabili di decisione di base $x_{B(1)},x_{B(2)},\dots,x_{B(m)}$ ed un vettore $x_N$ di variabili di decisione non di base $x_j$
+con $j != B(1),B(2),\dots,B(m)$ :
+\begin{center}
+$B = [A_{B(1)},A_{B(2)},\dots,A_{B(m)}]$, \\
+$x_b$ = [$x_{B(1)}$ \\ $x_{B(2)}$ \\ \dots \\ $x_{B(m)}$].
+\end{center}
+
+Le variabili di decisione di base sono determinate risolvendo il sistema di $m$ equazioni in $m$ incognite.
+Quindi in generale risolvere il sistema al \textbf{passo 3}, equivale a risolvere:
+\begin{equation}
+    B x_B = b
+\end{equation}
+la cui unica soluzione è data da:
+\begin{equation}
+    x_B = B^{-1} b
+\end{equation}
+
+\paragraph{Esempio}Sia $P$ il poliedro in forma standard descritto dai seguenti vincoli di uguaglianza lineari:
+\begin{alignat*}{7}
+x_1 & + {} & x_2 & + {} & 2x_3 & + {} & x_4 &      &     &      &     &      &     & = 8 \\
+    &      & x_2 & + {} & 6x_3 & + {} &     & {} + & x_5 &      &     &      &     & = 12 \\
+x_1 &      &     &      &      &      &     & {} + &     & {} + & x_6 &      &     & = 4 \\
+    &      & x_2 &      &      &      &     &      &     & {} + &     & {} + & x_7 & = 6
+\end{alignat*}
+Dunque, la matrice $A$ e il vettore $b$, sono i seguenti:
+\[
+A = \begin{bmatrix}
+1 & 1 & 2 & 1 & 0 & 0 & 0 \\
+0 & 1 & 6 & 0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1
+\end{bmatrix},
+\]
+
+\[
+b = \begin{bmatrix}
+8 \\
+12 \\
+4 \\
+6
+\end{bmatrix}.
+\]
+Scegliamo le colonne $A_4, A_5, A_6, A_7$, come colonne di base. Si noti che esse sono sicuramente linearmente indipendenti, in quanto $B = \begin{bmatrix} A_4 & A_5 & A_6 & A_7 \end{bmatrix}$ è la matrice identità.
+Con tale scelta di matrice di base si deve risolvere:
+\[
+B x_B = b , \text{ dove }  x_B = \begin{bmatrix}
+x_4 \\
+x_5 \\
+x_6 \\
+x_7
+\end{bmatrix}.
+\]
+Si ha che $x_1$, $x_2$, $x_3$ = 0 (quindi si raggiungono le 7 equazioni nel sistema), quindi:
+\[
+x_N = \begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3
+\end{bmatrix}.
+\]
+e 
+\[
+x_B = \begin{bmatrix}
+8 \\
+12 \\
+4 \\
+6
+\end{bmatrix}.
+\]
+Fondendo queste soluzioni si ha una soluzione di base ammissibile.
