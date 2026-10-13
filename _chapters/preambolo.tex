@@ -1,0 +1,32 @@
+\chapter{Preambolo}
+\section{Rango di una matrice}
+Consideriamo una matrice $A \in \mathbb{R} ^ {m \times n}$
+\begin{definition}{Rango di una Matrice}
+    Il rango di una matrice indica il numero di righe (o colonne, dipende da che notazione usiamo), lineramente indipendenti.
+\end{definition}
+\begin{proposition}{Rango Massimo di una Matrice}
+Data una matrice \(A \in \mathbb{R}^{m \times n}\), il suo rango massimo è
+\[
+\boxed{\operatorname{rank}(A) \leq \min(m,n)}
+\]
+\end{proposition}
+Perchè intuitivamente si ha questa proprietà?
+Immagina avere una matrice dove i vettori sono sulle righe:
+\[
+A=
+\begin{pmatrix}
+1&0\\
+0&1\\
+1&1
+\end{pmatrix}
+\]
+In questa matrice il rango massimo è 2, questo perchè in $\mathbb{R}^2$, al massimo due vettori possono essere lineramente indipendenti, se ne aggiungo un terzo, questo sarà sicuramamente combinazione lineare degli altri due. \\
+Consideriamo questa altra matrice:
+\[
+A=
+\begin{pmatrix}
+1&0&1\\
+0&1&0
+\end{pmatrix}
+\]
+In questa matrice il rango massimo è sempre 2, questo perchè ci sono due vettori sulle righe.

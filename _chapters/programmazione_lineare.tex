@@ -2730,6 +2730,8 @@ Un poliedro in forma standard geometricamente, può rappresentare varie cose:
         \caption{L'intersezione di due rette lineramente indipendenti va a formare un punto in $\mathbb{R}^2$}
         \label{fig:mia_immagine}
     \end{figure}
+    \item In $\mathbb{R}^2$, posso rappresentare anche un'area, quello che si fa è \textbf{non avere vincoli}, ma solo quelli della positività sulle variabili:
+    Se abbiamo soltanto $x_1\geq 0$ e $x_2\geq 0$, otteniamo tutto il primo quadrante, che è una regione bidimensionale.
     \item Se siamo in $\mathbb{R}^3$ (quindi 3 variabili) e $m$ = 2 uguaglianze:
     \[
     \begin{cases}
@@ -2746,8 +2748,7 @@ Un poliedro in forma standard geometricamente, può rappresentare varie cose:
         \caption{L'intersezione di due piani non paralleli è una retta}
         \label{fig:mia_immagine}
     \end{figure}
-    \\
-    In \(\mathbb{R}^3\), ciascuna uguaglianza rappresenta un piano. L'intersezione di due piani non paralleli è generalmente una retta.
+    In $\mathbb{R}^3$, ciascuna uguaglianza rappresenta un piano. L'intersezione di due piani non paralleli è generalmente una retta.
 \end{enumerate}
 
 \newpage
@@ -2767,6 +2768,24 @@ In $\mathbb{R}^3$, indica un piano:
         \centering
         \includegraphics[width=0.4\textwidth]{_files/_images/24.png}
         \caption{Piano individuata da $x$ = 0, questo perchè lo puoi pensare come $x + 0 * y + 0 * z= 0$, quindi $y$ e $z$ possono assumere qualsiasi valore}
+        \label{fig:mia_immagine}
+\end{figure}
+
+In $\mathbb{R}^3$, si può anche identificare un "triangolo" tramite il sistema:
+\[
+\begin{cases}
+    x + y + z = 4,\\
+    x \ge 0,\\
+    y \ge 0,\\
+    z \ge 0.
+\end{cases}
+\]
+Il sistema descrive un triangolo in $\mathbb{R}^3$. Come puoi vedere, alcuni punti non corrispondono al triangolo perché non rispettano i vincoli del piano e delle variabili. Se dovessi trasformare $z$ (come quando faccio $y = x - 2$) in una funzione, il suo dominio diverrebbe
+$$D = \{ (x, y) \in \mathbb{R}^2 \mid x \ge 0, \, y \ge 0, \, x + y \le 4 \}$$
+\begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.4\textwidth]{_files/_images/27.png}
+        \caption{Triangolo individuato in blu (fra me e me, sotto non c'è niente)}
         \label{fig:mia_immagine}
 \end{figure}
 
@@ -3243,3 +3262,288 @@ Infatti, tutti i punti della forma
 
 sono ammissibili e ottimi.
 Questo esempio mostra perché il teorema più generale è utile: può garantire l'esistenza di una soluzione ottima finita anche quando il poliedro non ha vertici.
+
+\section{Il Metodo del Simplesso}
+
+Nel corso di questo paragrafo supporremo di dover risolvere il seguente generico problema di PL formulato in forma standard:
+\begin{equation}
+\begin{aligned}
+(Pr) \quad \min \quad & c'x \
+\text{s.a} \quad & Ax = b \
+& x \ge 0,
+\end{aligned}
+\end{equation}
+dove $A \in \mathbb{R}^{m \times n}$ può avere rango massimo $m$. Con $A_i$ indicheremo l'i-esima colonna di $A$, mentre con $a_i'$ ne indicheremo l'i-esima riga. Supporremo, inoltre, che $P$ sia la regione ammissibile corrispondente al problema.
+
+Da quanto detto nei precedenti paragrafi è emerso che se un problema di PL formulato in forma standard ammette una soluzione ottima finita, allora esiste una soluzione ammissibile di base ottima (\textbf{i teoremi di prima}). Il metodo del simplesso si basa su tale considerazione e cerca una soluzione ottima al problema muovendosi da una soluzione ammissibile di base ad una adiacente sempre nella direzione lungo la quale si verifica un decremento del valore corrente della funzione obiettivo. Nel momento in cui viene raggiunta una soluzione ammissibile di base a partire dalla quale non è possibile intraprendere più alcuna direzione migliorativa del valore corrente della funzione obiettivo, la soluzione ammissibile di base corrente è ottima e l'algoritmo termina.
+
+Obiettivo di questo paragrafo è analizzare il metodo del simplesso e la sua complessità computazionale, nonchè discutere di una sua particolare implementazione, nota come simplesso revisionato. Verranno anche sottolineate alcune difficoltà in cui può incorrere tale metodo in presenza di soluzioni degeneri.
+
+\subsection{Condizioni di ottimalità}
+
+Per risolvere un generico problema di ottimizzazione, specialmente se il problema da risolvere è NP-hard, molti algoritmi partono da una soluzione ammissibile $x$ ed esplorano soluzioni "vicine" ad $x$ (nel nostro caso, adiacenti) conservando in memoria la soluzione migliore trovata durante l'esplorazione. Tali algoritmi sono noti in letteratura come algoritmi di ricerca locale e producono in output una soluzione ottima localmente alla soluzione ammissibile iniziale $x$.
+
+Sfortunatamente, in generale una soluzione ottima localmente non è necessariamente ottima globalmente. Il metodo del simplesso, passando da una soluzione ammissibile di base ad una soluzione ammissibile di base adiacente e terminando quando non esiste una soluzione ammissibile di base migliore, può essere interpretato come algoritmo di ricerca locale. Fortunatamente, però, nel caso di problemi di PL, dal momento che si tratta di ottimizzare una funzione obiettivo convessa su una regione ammissibile convessa, si è certi che l'ottimo locale restituito in output dal metodo del simplesso è ottimo anche globalmente. Ma come è possibile individuare una direzione lungo la quale si verifica un decremento del valore corrente della funzione obiettivo a partire dalla soluzione ammissibile di base corrente? In altri termini, data la soluzione ammissibile di base corrente $x \in P$ a partire dalla quale vogliamo muoverci lungo la direzione di un certo vettore $d \in \mathbb{R}^n$, come va scelto detto vettore $d$?
+
+Innanzitutto, dobbiamo limitare la scelta di $d$ a quei vettori che non ci conducano fuori dalla regione ammissibile $P$. Tale osservazione porta immediatamente alla seguente definizione:
+
+\begin{definition}{Direzione ammissibile}
+Sia $x \in P \subset \mathbb{R}^n$. Un vettore $d \in \mathbb{R}^n$ è detto direzione ammissibile a partire da $x$ se esiste uno scalare $\theta > 0$ tale che $x + \theta d \in P$.
+\end{definition}
+
+Sia $x$ una soluzione ammissibile di base per il problema formulato in forma standard (Pr). In particolare, siano $B(1), B(2), \dots, B(m)$ gli indici delle variabili di base e sia $B = [A_{B(1)} \ A_{B(2)} \ \dots \ A_{B(m)}]$ la corrispondente matrice di base. Sappiamo che $x_B = (x_{B(1)} \ x_{B(2)} \ \dots \ x_{B(m)})^T = B^{-1}b$, mentre tutte le variabili non di base sono nulle, cioè $x_N = 0$.
+
+Consideriamo ora la possibilità di muoverci dalla soluzione $x$ e di ottenere la soluzione $x + \theta d$. Ciò può essere realizzato selezionando una variabile non di base $x_j$ ($j \neq B(1), B(2), \dots, B(m)$) inizialmente a livello 0 ed incrementando il suo valore di una quantità positiva $\theta$, mantenendo nulle le restanti $n - m - 1$ variabili non di base. Algebricamente ciò equivale a porre $d_j = 1$ e $d_i = 0$ per ogni $i \neq j, B(1), B(2), \dots, B(m)$. Al contempo, anche il vettore di base $x_B$ dovrà cambiare in $x_B + \theta d_B$, dove $d_B = (d_{B(1)}, d_{B(2)}, \dots, d_{B(m)})^T$ è il vettore le cui componenti sono le componenti di $d$ corrispondenti alle variabili di base.
+
+Innanzitutto, muovendoci da $x$ a $x + \theta d$ noi vogliamo comunque rimanere all'interno della regione ammissibile $P$:
+\begin{equation}
+A(x + \theta d) = b
+\end{equation}
+Intanto, $Ax = b$ dato che $x$ è ammissibile, per cui la relazione è equivalente a richiedere che $A \theta d = 0 \Rightarrow Ad = 0$. Dunque,
+\begin{equation}
+0 = Ad = \sum_{i=1}^m A_{B(i)} d_{B(i)} + \sum_{l \neq B(1),\dots,B(m)} A_l d_l.
+\end{equation}
+Ricordando che $d_j = 1$ e $d_i = 0$ per ogni $i \neq j, B(1), B(2), \dots, B(m)$, si ottiene:
+\begin{equation}
+0 = Ad = \sum_{i=1}^m A_{B(i)} d_{B(i)} + A_j = B d_B + A_j.
+\end{equation}
+Dal momento che la matrice $B$ è invertibile, è possibile concludere che:
+\begin{equation}
+d_B = -B^{-1} A_j
+\end{equation}
+Il vettore $d$ appena costruito è noto come \textbf{j-esima direzione di base}.
+
+Per quanto riguarda la non negatività delle variabili ($x + \theta d \ge 0$), distinguiamo due casi:
+\begin{itemize}
+\item[(a)] $x$ è una soluzione ammissibile di base \textbf{non degenere}. Ciò implica che $x_B > 0$, per cui per $\theta$ sufficientemente piccolo, la non negatività è preservata e $d$ è una direzione ammissibile.
+\item[(b)] $x$ è una soluzione ammissibile di base \textbf{degenere}. In questo caso, può accadere che una variabile di base $x_{B(i)}$ sia nulla, mentre la corrispondente componente $d_{B(i)}$ sia negativa. In tale ipotesi, se seguissimo la direzione $d$ abbandoneremmo la regione ammissibile $P$.
+\end{itemize}
+
+Supponiamo di aver individuato una direzione ammissibile $d$. La variazione del valore della funzione obiettivo passando da $x$ a $x + \theta d$ sarà $\theta c'd$. Valutiamo $c'd$:
+\begin{equation}
+c'd = c_B' d_B + c_j = c_j - c_B' B^{-1} A_j.
+\end{equation}
+
+\begin{definition}{Costo ridotto}
+Sia $x$ una soluzione di base, $B$ la matrice di base ad essa corrispondente e sia $c_B$ il vettore dei costi associati alle variabili di base. Per ogni $j$, si definisce costo ridotto $\bar{c}_j$ della variabile $x_j$ la seguente quantità:
+
+
+$$\bar{c}_j = c_j - c_B' B^{-1} A_j$$
+
+
+\end{definition}
+
+\begin{example}{Calcolo della direzione di base e del costo ridotto}
+Si consideri il seguente problema di PL:
+\begin{align*}
+\min \quad & c_1 x_1 + c_2 x_2 + c_3 x_3 + c_4 x_4 \
+\text{s.a} \quad & x_1 + x_2 + x_3 + x_4 = 2 \
+& 2x_1 + 3x_3 + 4x_4 = 2 \
+& x \ge 0
+\end{align*}
+Le prime due colonne della matrice $A$, $A_1 = [1 \ 2]^T$ e $A_2 = [1 \ 0]^T$, sono linearmente indipendenti, per cui possiamo scegliere $x_1$ e $x_2$ come variabili di base:
+
+
+$$B = \begin{bmatrix} 1 & 1 \\ 2 & 0 \end{bmatrix}$$
+
+
+Annulliamo le variabili non di base $x_3 = x_4 = 0$ e calcoliamo $x_B = B^{-1}b$, ottenendo $x_1 = x_2 = 1$. Dunque $x = (1, 1, 0, 0)$ è una soluzione ammissibile di base non degenere. Una direzione di base $d$ (facendo entrare $x_3$) avrà $d_3 = 1, d_4 = 0$ e:
+
+
+$$d_B = \begin{pmatrix} d_1 \\ d_2 \end{pmatrix} = -B^{-1} A_3 = -\begin{bmatrix} 0 & 1/2 \\ 1 & -1/2 \end{bmatrix} \begin{bmatrix} 1 \\ 3 \end{bmatrix} = \begin{bmatrix} -3/2 \\ 1/2 \end{bmatrix}$$
+
+
+Il costo per muoversi lungo $d$ è pari a $c'd = -\frac{3}{2}c_1 + \frac{1}{2}c_2 + c_3 = \bar{c}_3$.
+\end{example}
+
+Si noti che per ogni variabile di base $x_{B(i)}$, il suo costo ridotto è nullo:
+
+
+$$\bar{c}_{B(i)} = c_{B(i)} - c_B' B^{-1} A_{B(i)} = c_{B(i)} - c_B' e_i = c_{B(i)} - c_{B(i)} = 0$$
+
+\begin{theorem}{Condizioni di ottimalità}
+Sia $x$ una soluzione ammissibile di base, $B$ la matrice di base ad essa associata e sia $\bar{c}$ il corrispondente vettore dei costi ridotti.
+\begin{itemize}
+\item[(a)] Se $\bar{c} \ge 0$, allora $x$ è ottima.
+\item[(b)] Se $x$ è ottima e non degenere, allora $\bar{c} \ge 0$.
+\end{itemize}
+\end{theorem}
+
+\subsection{2.7.2 Il Metodo del Simplesso}
+
+Supponiamo di trattare soluzioni ammissibili di base non degeneri. Se esiste un costo ridotto $\bar{c}_j < 0$, allora la j-esima direzione di base $d$ porta ad un decremento del valore della funzione obiettivo. Vogliamo raggiungere il punto che massimizza tale decremento rimanendo ammissibili:
+
+
+$$\theta^* = \max \{ \theta > 0 \mid x + \theta d \in P \}$$
+
+
+Per calcolare $\theta^*$:
+\begin{itemize}
+\item Se $d \ge 0$, $x + \theta d$ non diventerà mai inammissibile e $\theta^* = \infty$ (il problema è illimitato).
+\item Se esiste $d_{B(i)} < 0$, la variabile $x_{B(i)}$ decrescerà fino a 0. Il valore massimo di $\theta$ è:
+\end{itemize}
+\begin{equation}
+\theta^* = \min_{{i = 1, 2, \dots, m \mid d_{B(i)} < 0}} \left\{ -\frac{x_{B(i)}}{d_{B(i)}} \right\}
+\end{equation}
+
+Sia $l$ l'indice della variabile di base per cui si raggiunge il minimo. La variabile $x_{B(l)}$ uscirà dalla base, e $x_j$ (che aveva $\bar{c}_j < 0$) entrerà.
+
+\begin{theorem}{Sostituzione della base}
+Valgono le seguenti proprietà:
+\begin{itemize}
+\item[(a)] Le colonne $A_{B(i)}$, $i \neq l$, e $A_j$ sono linearmente indipendenti e la nuova matrice $\bar{B}$ è una base;
+\item[(b)] Il punto $\bar{x} = x + \theta^* d$ è una soluzione di base ammissibile associata alla matrice di base $\bar{B}$.
+\end{itemize}
+\end{theorem}
+
+Ecco i passi formali di una iterazione del simplesso:
+\begin{enumerate}
+\item Sia $B = [A_{B(1)} \dots A_{B(m)}]$ una matrice di base associata alla soluzione ammissibile $x$.
+\item Calcolare il costo ridotto $\bar{c}_j = c_j - c_B' B^{-1} A_j$ per le variabili non di base. Se $\bar{c}_j \ge 0$ per ogni $j$, l'algoritmo termina ($x$ è ottima). Altrimenti, scegliere un $j$ con $\bar{c}_j < 0$.
+\item Calcolare $u = B^{-1} A_j$. Se $u \le 0$, allora $\theta^* = \infty$ e il costo ottimo è $-\infty$.
+\item Calcolare $\theta^* = \min_{\{i \mid u_i > 0\}} \left\{ \frac{x_{B(i)}}{u_i} \right\}$.
+\item Sia $l$ l'indice per cui si realizza il minimo. Rimpiazzare $A_{B(l)}$ con $A_j$ per formare $\bar{B}$ e aggiornare la soluzione.
+\end{enumerate}
+
+\begin{theorem}{Terminazione del Simplesso}
+Sia dato un problema di PL avente regione ammissibile $P$ non vuota. Supponiamo che ogni soluzione ammissibile al problema sia non degenere, allora il metodo del simplesso termina dopo un numero finito di iterazioni.
+\end{theorem}
+
+\textbf{Il Metodo del Simplesso per problemi degeneri: regole di pivoting}\
+In presenza di degenerazione, $\theta^*$ può risultare nullo. Ciò può portare a ciclare tra le basi. Per ovviare a questo problema si usa la Regola di Bland.
+
+\begin{example}{Regola di Bland}
+La regola di Bland risolve i casi di parità (ex aequo) scegliendo sempre l'indice minore.
+Se più variabili hanno costo ridotto negativo, entra in base la variabile $x_j$ con:
+
+
+$$j = \min \{ h \mid \bar{c}_h < 0 \}$$
+
+
+Se più variabili di base restituiscono lo stesso valore minimo di $\theta^*$, esce dalla base la variabile $x_{B(l)}$ tale che:
+
+
+$$B(l) = \min \left\{ B(h) \mid \frac{x_{B(h)}}{u_h} = \theta^* \right\}$$
+
+
+\end{example}
+
+\textbf{Complessità del Metodo del Simplesso}\
+La complessità di ogni singola iterazione dipende principalmente dalla risoluzione dei sistemi lineari e dal calcolo dei costi ridotti. Risolvere $p'B = c_B'$ e $Bu = A_j$ costa $O(m^3)$, mentre calcolare tutti i costi ridotti richiede $O(mn)$. Dunque, la complessità per iterazione è $O(m^3 + mn)$.
+
+\subsection{2.7.3 Il Metodo del Simplesso Revisionato}
+
+Il Simplesso Revisionato è un'implementazione che ad ogni passo aggiorna direttamente la matrice inversa $B^{-1}$ tramite operazioni elementari, evitando di risolvere $O(m^3)$ sistemi lineari da zero.
+
+\begin{definition}{Operazione elementare di riga}
+Data una matrice $A \in \mathbb{R}^{m \times n}$, si definisce operazione elementare di riga l'operazione di aggiungere ad una riga $r_i$ un multiplo di un'altra riga $r_j$.
+\end{definition}
+
+Invece di ricalcolare $\bar{B}^{-1}$, si affianca $B^{-1}$ alla colonna $u = B^{-1}A_j$ usata per il pivoting. Si opera sulla matrice affiancata $[B^{-1} \mid u]$ per trasformare la colonna $u$ nel vettore $e_l$ (dove $l$ è l'indice della variabile uscente).
+
+\begin{example}{Aggiornamento di $B^{-1}$}
+Supponiamo di avere:
+
+
+$$B^{-1} = \begin{bmatrix} 1 & 2 & 3 \\ -2 & 3 & 1 \\ 4 & -3 & -2 \end{bmatrix}, \quad u = \begin{bmatrix} -4 \\ 2 \\ 2 \end{bmatrix}$$
+
+
+e $l = 3$ (la terza riga è quella di pivot). Si costruisce la matrice aumentata:
+
+
+$$[B^{-1} \mid u] = \begin{bmatrix} 1 & 2 & 3 & -4 \\ -2 & 3 & 1 & 2 \\ 4 & -3 & -2 & 2 \end{bmatrix}$$
+
+
+Applicando operazioni elementari affinché l'ultima colonna diventi $[0, 0, 1]^T$:
+(Es: Moltiplichiamo la terza riga per 2 e aggiungiamola alla prima; sottraiamo la terza dalla seconda; dividiamo la terza per 2). Si ottiene:
+
+
+$$[\bar{B}^{-1} \mid e_3] = \begin{bmatrix} 9 & -4 & -1 & 0 \\ -6 & 6 & 3 & 0 \\ 2 & -3/2 & -1 & 1 \end{bmatrix}$$
+
+
+Le prime tre colonne formano la nuova $\bar{B}^{-1}$.
+\end{example}
+
+\subsection{2.7.4 Il Metodo del Simplesso Tabellare}
+
+Il simplesso tabellare mantiene in un'unica tabella, detta \textit{tableau}, tutte le informazioni, aggiornando iterativamente l'intera matrice $B^{-1}[b \mid A]$. La riga in alto (riga zero) contiene il valore della funzione obiettivo cambiato di segno e i costi ridotti $\bar{c}$.
+
+\begin{example}{Risoluzione con Simplesso Tabellare}
+Si consideri il seguente problema:
+\begin{align*}
+\min \quad & -10x_1 - 12x_2 - 12x_3 \\ 
+\text{s.a} \quad & x_1 + 2x_2 + 2x_3 \le 20 \\ 
+& 2x_1 + x_2 + 2x_3 \le 20 \\ 
+& 2x_1 + x_2 + x_3 \le 20 \\ 
+& x \ge 0
+\end{align*}
+Introdotte le variabili di slack $x_4, x_5, x_6$, la soluzione di base iniziale è $x_4=20, x_5=20, x_6=20$ (costo 0). Il tableau iniziale è:
+\begin{center}
+\begin{tabular}{c|cccccc}
+& $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ \\
+\hline
+$-c_B'x_B = 0$ & -10 & -12 & -12 & 0 & 0 & 0 \\
+\hline
+$x_4 = 20$ & 1 & 2 & 2 & 1 & 0 & 0 \\
+$x_5 = 20$ & $2^*$ & 1 & 2 & 0 & 1 & 0 \\
+$x_6 = 20$ & 2 & 1 & 1 & 0 & 0 & 1 \\
+\end{tabular}
+\end{center}
+Scegliamo $x_1$ come variabile entrante ($\bar{c}_1 = -10 < 0$). Calcolando i rapporti minimi, facciamo uscire $x_5$. L'elemento pivot è il 2. Applicando le operazioni di pivot si ottiene:
+\begin{center}
+\begin{tabular}{c|cccccc}
+& $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ \\
+\hline
+$-c_B'x_B = 100$ & 0 & -7 & -2 & 0 & 5 & 0 \\
+\hline
+$x_4 = 10$ & 0 & 3/2 & $1^*$ & 1 & -1/2 & 0 \\
+$x_1 = 10$ & 1 & 1/2 & 1 & 0 & 1/2 & 0 \\
+$x_6 = 0$ & 0 & 0 & -1 & 0 & -1 & 1 \\
+\end{tabular}
+\end{center}
+Iterando (entrano $x_3$ e poi $x_2$), si arriva al tableau finale ottimo:
+\begin{center}
+\begin{tabular}{c|cccccc}
+& $x_1$ & $x_2$ & $x_3$ & $x_4$ & $x_5$ & $x_6$ \\
+\hline
+$-c_B'x_B = 136$ & 0 & 0 & 0 & 18/5 & 8/5 & 8/5 \\
+\hline
+$x_3 = 4$ & 0 & 0 & 1 & 2/5 & 2/5 & -3/5 \\
+$x_1 = 4$ & 1 & 0 & 0 & -3/5 & 2/5 & 2/5 \\
+$x_2 = 4$ & 0 & 1 & 0 & 2/5 & -3/5 & 2/5 \\
+\end{tabular}
+\end{center}
+La soluzione ottima è $x_1=4, x_2=4, x_3=4$, con un valore della funzione obiettivo di 136 (che nel problema di minimo originario significa costo -136).
+\end{example}
+
+\subsection{2.7.5 Confronto fra il Simplesso Revisionato ed il Simplesso Tabellare}
+Il metodo tabellare aggiorna ad ogni passo l'intera matrice di dimensioni $(m+1) \times (n+1)$, con costo $O(mn)$. Il metodo revisionato aggiorna solo $B^{-1}$ (dimensione $m \times m$) e ricalcola i costi ridotti.
+
+\begin{center}
+\begin{tabular}{lcc}
+& Simplesso Tabellare & Simplesso Revisionato \\
+\hline
+Memoria & $O(mn)$ & $O(m^2)$ \\
+Caso peggiore & $O(mn)$ & $O(mn)$ \\
+Caso migliore & $O(mn)$ & $O(m^2)$ \\
+\end{tabular}
+\end{center}
+
+\subsection{2.7.6 Come trovare una soluzione di base ammissibile iniziale}
+
+Se il problema non possiede una base identità ovvia (ad esempio se ci sono vincoli di uguaglianza o di $\ge$), non è semplice trovare una soluzione di base ammissibile da cui far partire il simplesso. In questi casi si ricorre a un problema ausiliario.
+
+Dato il problema $\min \{ c'x \mid Ax = b, x \ge 0 \}$ con $b \ge 0$, si introducono delle variabili \textit{artificiali} $y_1, y_2, \dots, y_m \ge 0$ e si minimizza la loro somma:
+\begin{align*}
+\min \quad & y_1 + y_2 + \dots + y_m \
+\text{s.a} \quad & Ax + Iy = b \
+& x \ge 0, y \ge 0
+\end{align*}
+La base iniziale per questo problema ausiliario è fornita banalmente dalle variabili artificiali $y=b$. Si applica il simplesso; se il valore ottimo trovato è strettamente positivo, il problema originario è inammissibile. Se il valore ottimo è nullo, si è trovata una base ammissibile per il problema originale.
+
+\subsubsection*{Il metodo delle due fasi}
+Questo approccio strutturato divide il lavoro in:
+\begin{itemize}
+\item \textbf{Fase 1}: Si introducono le variabili artificiali e si risolve il problema ausiliario per minimizzarne la somma. Se all'ottimo la somma è 0, le variabili originali in base formano una soluzione ammissibile per il problema originale. (Eventuali variabili artificiali rimaste in base a livello 0 vengono scambiate con variabili originali tramite operazioni di pivot).
+\item \textbf{Fase 2}: Si usa la base trovata nella Fase 1 come punto di partenza per risolvere il problema originario, ignorando del tutto le variabili artificiali usate in precedenza.
+\end{itemize}
