@@ -1349,8 +1349,7 @@ La funzione obiettivo è: \[ z(x)=x_2. \] Poiché: \[ x_2\geq0, \] il valore min
 \caption{Curve di livello e vettore dei costi $c=(-1,-1)$.}
 \end{figure}
 
-La funzione obiettivo è: \[ z(x)=-x_1-x_2. \]
-Ricordiamoci sempre che la funzione obiettivo è definita su $\mathbb{R}^n$, un insieme infinito, quindi qualsiasi punto li dentro ha senso
+La funzione obiettivo è: \[ z(x)=-x_1-x_2. \], e i vincoli sono che $x_1 >= 0$ e $x_2$ >= 0, quindi ci troviamo nel quadrante a destra
 
 
 Vogliamo quindi risolvere: \[ \min_{x\in S}(-x_1-x_2). \] Consideriamo la successione di punti: \[ x^{(k)}=(k,0), \qquad k=1,2,3,\ldots \] Verifichiamo che questi punti siano ammissibili. Abbiamo: \[ x_1=k\geq0, \qquad x_2=0\geq0, \] e inoltre: \[ -x_1+x_2=-k\leq1. \] Pertanto: \[ x^{(k)}\in S \qquad\forall k\geq1. \] Calcoliamo ora il valore della funzione obiettivo: \[ z(x^{(k)}) = -k-0 = -k. \] Quindi: \[ \boxed{ z(x^{(k)})=-k\longrightarrow-\infty } \] Questo significa che possiamo trovare punti ammissibili il cui costo diventa arbitrariamente piccolo. Per esempio: \[ -1,\;-10,\;-100,\;-1000,\ldots \] non esiste quindi un valore minimo finito. Si dice che il problema è \textbf{illimitato inferiormente} e si scrive: \[ \boxed{ \inf_{x\in S}z(x)=-\infty. } \]
@@ -2983,3 +2982,264 @@ x_B = \begin{bmatrix}
 \end{bmatrix}.
 \]
 Fondendo queste soluzioni si ha una soluzione di base ammissibile.
+
+\subsection{Soluzioni di base degeneri}
+
+Abbiamo definito come soluzione di base un vettore che attiva $n$ vincoli linearmente indipendenti. Cosa accade se più di $n$ vincoli linearmente indipendenti sono attivati da uno stesso vettore $x^*$? In tal caso, si dice che $x^*$ è una soluzione degenere, in quanto attiva un numero di vincoli linearmente indipendenti superiore al minimo richiesto.
+
+\begin{definition}{Soluzione di base Degenere}
+Una soluzione di base $x^* \in \mathbb{R}^n$ è detta degenere se attiva più di $n$ vincoli. Fra di questi almeno $n$ vincoli devono essere lineramente indipendenti fra di loro, quindi devono identificare un punto.
+
+In $\mathbb{R}^2$ l'intersezione di 3 o più rette dà luogo ad una soluzione di base degenere; in $\mathbb{R}^3$ una soluzione degenere è in corrispondenza dell'intersezione di 4 o più piani. Esempi di soluzioni di base degeneri sono illustrati in Figura 2.9.
+\end{definition}
+\textbf{Esempio 2.6.3} Sia $P$ il poliedro descritto dai seguenti vincoli lineari:
+\begin{align*}
+x_1 + x_2 + 2x_3 &\le 8 \\
+x_2 + 6x_3 &\le 12 \\
+x_1 &\le 4 \\
+x_2 &\le 6 \\
+x &\ge 0
+\end{align*}
+
+Il vettore $x_{I} = (x_1, x_2, x_3) = (2, 6, 0)$ è una soluzione ammissibile di base non degenere, perchè attiva esattamente 3 vincoli linearmente indipendenti: $x_1 + x_2 + 2x_3 \le 8$, $x_2 \le 6$. Il vettore $x_{II} = (x_1, x_2, x_3) = (4, 0, 2)$ è una soluzione ammissibile di base degenere, perchè attiva 4 vincoli, 3 dei quali linearmente indipendenti: $x_1 + x_2 + 2x_3 \le 8$, $x_2 + 6x_3 \le 12$, $x_1 \le 4$ e $x_2 \ge 0$.
+
+\subsubsection*{Soluzioni di base degeneri per poliedri in forma standard}
+
+Qualunque soluzione di base per poliedri in forma standard deve necessariamente attivare tutti gli $m$ vincoli di uguaglianza. Dunque, l'unico modo per attivare più di $n$ vincoli è che più di $n-m$ variabili di decisione valgano 0.
+
+\begin{definition}{Soluzioni di base degeneri per poliedri in forma standard}
+Sia $P = \{x \in \mathbb{R}^n \mid Ax=b, x \ge 0\}$ un poliedro descritto in forma standard e sia $x^*$ una soluzione di base. Sia $m$ il numero di righe di $A$, allora $x^*$ è detta soluzione di base degenere se più di $n-m$ componenti di $x^*$ sono nulle.
+(Quindi alla fine attiva piu di $n$ vincoli, solo in modo alternativo)
+\end{definition}
+
+\textbf{Esempio 2.6.4} Consideriamo ancora una volta l'Esempio 2.6.3. Introducendo nella descrizione del poliedro $P$ le variabili di slack $x_4, x_5, \dots, x_7$ è possibile trasformare la sua descrizione nella seguente forma standard:
+\[
+P = \{x = (x_1, x_2, \dots, x_7) \mid Ax = b, x \ge 0\}
+\]
+dove
+\[
+A = \begin{bmatrix}
+1 & 1 & 2 & 1 & 0 & 0 & 0 \\
+0 & 1 & 6 & 0 & 1 & 0 & 0 \\
+1 & 0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 & 1
+\end{bmatrix}, \quad
+b = \begin{bmatrix}
+8 \\
+12 \\
+4 \\
+6
+\end{bmatrix}.
+\]
+
+Consideriamo la matrice di base costituita dalle colonne linearmente indipendenti $A_1$, $A_2$, $A_3$ ed $A_7$, cioè $B = [A_1 \; A_2 \; A_3 \; A_7]$. Sappiamo che per calcolare la corrispondente soluzione di base dobbiamo innanzitutto porre a $0$ le variabile non di base e poi risolvere il sistema di equazioni $Bx=b$. Nel caso in esame, poniamo $x_N = (x_4, x_5, x_6) = (0, 0, 0)$ mentre $x_B = (x_1, x_2, x_3, x_7) = B^{-1}b = (4, 0, 2, 6)$. Tale soluzione è una soluzione ammissibile di base degenere, poichè ha $4$ componenti nulle laddove $n-m = 7-4=3$. Dunque, mentre inizialmente abbiamo posto a $0$ le tre componenti di $x_N$, la soluzione $x_B$ al sistema $Bx=b$ ha un'ulteriore componente nulla o, in altre parole, essa attiva l'ulteriore vincolo $x_2 \ge 0$.
+
+Si noti, inoltre, che alla base $B_1 = [A_1 \; A_3 \; A_4 \; A_7] \neq B$ corrisponde la stessa soluzione di base ammissibile degenere $x_{B_1} = x_B = (x_1, x_2, x_3, x_7) = (4, 0, 2, 6)$ e $x_{N_1} = x_N = (x_4, x_5, x_6) = (0, 0, 0)$.
+
+\subsection{Esistenza di punti estremi}
+In questo paragrafo verranno enunciate le condizioni necessarie e sufficienti affinchè un poliedro abbia almeno un punto estremo. È chiaro che non tutti i poliedri hanno sempre almeno un punto estremo. Un semispazio in $\mathbb{R}^{n}$, $n>1$, ad esempio, pur essendo un poliedro non ha punti estremi.
+
+L'esistenza di almeno un punto estremo per un poliedro $P$ dipende dalla presenza o meno in $P$ di una retta.
+
+\begin{definition}{Retta in un Poliedro}
+Un poliedro $P\subseteq\mathbb{R}^{n}$ contiene una retta se esiste un vettore $x\in P$ ed un vettore non nullo $d\in\mathbb{R}^{n}$ tale che $x+\lambda d\in P$, $\forall \lambda$ scalare.
+
+La definizione afferma che un poliedro, contiene una retta se esistono:
+\begin{itemize}
+    \item Un punto \(x \in P\), cioè un punto appartenente al poliedro.
+    \item Un vettore \(d \in \mathbb{R}^n\), diverso dal vettore nullo.
+    \item Una proprietà che vale per ogni scalare \(\lambda \in \mathbb{R}\):
+\end{itemize}
+\[
+x+\lambda d\in P,\qquad \forall \lambda\in\mathbb{R}.
+\]
+Vediamo cosa significa ciascun elemento:
+\begin{enumerate}
+    \item \textbf{\(x\in P\)} : Il punto di partenza \(x\) è un punto del poliedro dal quale immaginiamo di iniziare a muoverci.
+    \item \textbf{\(d\neq 0\)} : Il vettore direzione \(d\) indica la direzione e il verso dello spostamento. Deve essere non nullo, altrimenti non ci muoveremmo affatto.
+    \item \textbf{\(\lambda\in\mathbb R\)} : Lo scalare \(\lambda\) stabilisce quanto ci spostiamo lungo la direzione \(d\). Può essere positivo, negativo oppure zero.
+    Quindi posso spostarmi nella direzione $d$, opposto alla direzione $d$, o rimanere fermo
+\end{enumerate}
+Il punto fondamentale è proprio quest'ultimo: \(\lambda\) può assumere qualsiasi valore reale, senza limitazioni.
+
+\begin{itemize}
+    \item Se \(\lambda=0\), rimaniamo nel punto \(x\).
+    \item Se \(\lambda>0\), ci spostiamo nella direzione di \(d\).
+    \item Se \(\lambda<0\), ci spostiamo nella direzione opposta.
+    \item Se \(|\lambda|\) cresce, ci allontaniamo sempre di più dal punto iniziale.
+\end{itemize}
+\end{definition}
+
+\paragraph{Esempio}
+Consideriamo il poliedro:
+\[
+P=\{(x_1,x_2)\in\mathbb R^2\mid x_2\geq 0\}.
+\]
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{_files/_images/25.png}
+    \caption{Poliedro semipiano sopra l'asse \(x_1\), asse compreso.}
+    \label{fig:mia_immagine}
+\end{figure}
+
+Scegliamo il punto:
+\[
+x=(1,2)
+\]
+
+e il vettore non nullo:
+\[
+d=(1,0).
+\]
+
+Variando $\lambda \in \mathbb{R}$ si hanno tutti i punti sulla retta orizzontale ad altezza $x_2 = 2$ e questi sono tutti contenuti nel Poliedro. Quindi il Poliedro contiene proprio quella retta orizzontale.
+
+\newpage
+
+Un importante risultato è espresso nel seguente teorema, di cui tralasciamo la dimostrazione.
+
+\begin{theorem}{Teorema}
+Sia $P=\{x\in\mathbb{R}^{n} \mid a_{i}^{\prime}x\ge b_{i}, i=1,2,...,m\}$ un poliedro non vuoto.
+
+Le seguenti affermazioni sono equivalenti fra loro:
+\begin{itemize}
+    \item[(a)] $P$ ha almeno un punto estremo.
+    \item[(b)] $P$ non contiene una retta.
+    \item[(c)] Oltre ad $a_{1},a_{2},...,a_{m}$, esistono altri $n-m$ vettori tutti linearmente indipendenti fra loro.
+\end{itemize}
+\end{theorem}
+
+
+Si noti che un poliedro \textbf{limitato non contiene una retta} e così anche il quadrante positivo $\{x \mid x\ge 0\}$. Dal momento che un poliedro descritto in forma standard è contenuto nel quadrante positivo, ne consegue che neanch'esso contiene una retta. Infatti, è valido il seguente corollario.
+
+\begin{corollary}{Corollario}
+Ogni poliedro limitato non vuoto ed ogni poliedro non vuoto descritto in forma standard ha almeno un punto estremo e, dunque, almeno una soluzione di base ammissibile.
+\end{corollary}
+
+
+\subsection{Ottimalità di punti estremi}
+Come abbiamo detto anche in paragrafi precedenti, quando si parla di \textbf{soluzione ottime} per un problema di PL, si parla di queste:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.4\textwidth]{_files/_images/26.png}
+    \caption{Descrizione grafica di un Problema di PL, dove devo minimizzare una funzione descritta dal vettore $c$.}
+    \label{fig:mia_immagine}
+\end{figure}
+Come vedi il vettore $c$, punta nella direzione di massima crescita, allora l'insieme di soluzioni ottime (rispettando i vincoli, quindi contenute nel poliedro, ovviamente), è tutto il segmento BC,
+dove BC, sono vertici/punti di estremo/SBA.
+
+
+
+
+
+In questo paragrafo verranno formalizzate le motivazioni per cui, come già accennato in precedenza, dato un poliedro $P$ che abbia almeno un punto estremo e che sia la regione ammissibile di un problema di PL che ammette soluzione ottima, sia sempre possibile individuare in un vertice (o, equivalentemente, in un punto estremo o soluzione ammissibile di base) di $P$ una soluzione ottima al problema stesso.
+
+Sono validi i seguenti risultati, di cui si trascura la verifica.
+
+\begin{theorem}{Teorema}
+Si consideri il problema di PL consistente nel minimizzare $c^{\prime}x$ su un poliedro $P$ che abbia almeno un punto estremo e si supponga che il problema ammetta almeno una soluzione ottima. Allora, esiste una soluzione ottima al problema che è punto estremo di $P$.
+\end{theorem}
+
+Questo teorema si può applicare nel caso di sopra di cui vedi l'immagine.
+
+Il risultato precedente si applica sia a poliedri in forma standard che a poliedri limitati, dato che essi non contengono una retta.
+
+
+\begin{theorem}{Teorema}
+Si consideri il problema di PL consistente nel minimizzare $c^{\prime}x$ su un poliedro $P$ che abbia almeno un punto estremo. Allora, o il valore della soluzione ottima è $-\infty$ oppure esiste un punto estremo di $P$ che è soluzione ottima finita del problema.
+\end{theorem}
+
+Il teorema dice che si verifica una delle seguenti due situazioni:
+\begin{itemize}
+    \item - Caso 1 — Problema illimitato inferiormente: il valore della funzione obiettivo può diminuire indefinitamente, fino a \(-\infty\). Non esiste un minimo finito.
+    \item - Caso 2 — Ottimo finito: esiste almeno un punto estremo del poliedro che è una soluzione ottima.
+\end{itemize}
+La differenza rispetto al teorema precedente è che qui non devi supporre che esista già una soluzione ottima: il teorema considera anche il caso in cui il problema sia illimitato inferiormente.
+2. Caso 1: problema illimitato inferiormente
+Consideriamo:
+\[
+\begin{aligned}
+\min \quad & z=-x_1\\
+\text{s.t.}\quad & x_1\geq 0\\
+&x_2\geq 0.
+\end{aligned}
+\]
+
+Il poliedro ammissibile è il primo quadrante, che possiede un punto estremo: l'origine \(O=(0,0)\).
+Tuttavia, possiamo scegliere \(x_1\) sempre più grande:
+\[
+\begin{array}{c|c}
+x_1 & z=-x_1\\ \hline
+10 & -10\\
+100 & -100\\
+1000 & -1000
+\end{array}
+\]
+
+Il valore della funzione obiettivo diminuisce indefinitamente.
+Pertanto, siamo nel Caso 1:
+\[
+\boxed{\inf_{x\in P}c'x=-\infty}
+\]
+
+Il teorema non garantisce un vertice ottimo finito, perché in questo caso tale vertice non esiste.
+3. Caso 2: esiste un vertice ottimo finito
+Consideriamo invece:
+\[
+\begin{aligned}
+\min \quad & z=x_1+x_2\\
+\text{s.t.}\quad & x_1\geq 0\\
+&x_2\geq 0.
+\end{aligned}
+\]
+
+Anche qui il poliedro è il primo quadrante e possiede il punto estremo \(O=(0,0)\).
+Poiché entrambe le variabili sono non negative:
+\[
+x_1+x_2\geq 0.
+\]
+
+Il valore minimo è quindi:
+\[
+\boxed{z^*=0}
+\]
+
+e viene raggiunto nell'origine. L'origine è un punto estremo ed è una soluzione ottima finita.
+Siamo nel Caso 2.
+
+
+Nel caso di problemi di PL generici, il Teorema 2.6.7 non si applica direttamente se la regione ammissibile non ha punti estremi. Tuttavia, sappiamo che un qualunque problema di PL può essere trasformato in un problema di PL equivalente formulato in forma standard, cui il Teorema 2.6.7 invece si applica. Vale, infatti, il seguente corollario.
+
+\begin{theorem}{Teorema}
+Si consideri il problema di PL consistente nel minimizzare $c^{\prime}x$ su un poliedro $P$ non vuoto. Allora, o il valore della soluzione ottima è $-\infty$ oppure esiste una soluzione ottima finita al problema.
+\end{theorem}
+
+Questo è il teorema piu generale e non richiede manco che il Poliedro abbia vertici.
+
+Consideriamo il problema:
+\[
+\begin{aligned}
+\min \quad & z=x_2\\
+\text{s.t.}\quad & x_2\geq 0.
+\end{aligned}
+\]
+
+La variabile \(x_1\) è libera, mentre \(x_2\geq 0\).
+Il poliedro ammissibile è:
+\[
+P=\{(x_1,x_2)\in\mathbb R^2\mid x_2\geq 0\}.
+\]
+
+È un semipiano e non possiede punti estremi: ogni suo punto appartiene a un segmento contenuto nel semipiano, quindi nessun punto è un vertice.
+Eppure il problema ha una soluzione ottima finita:
+\[
+z^*=0.
+\]
+
+Infatti, tutti i punti della forma
+\[
+(x_1,0),\qquad x_1\in\mathbb R
+\]
+
+sono ammissibili e ottimi.
+Questo esempio mostra perché il teorema più generale è utile: può garantire l'esistenza di una soluzione ottima finita anche quando il poliedro non ha vertici.
