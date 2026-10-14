@@ -3326,6 +3326,15 @@ Ipotizziamo di avere un singolo vincolo:$$x_1 + 2 x_2 = 10$$Stato iniziale:$x_1$
     Nel procedimento seguente quello che facciamo è ricavarci $d_B$ assumendo che $d$ già esista.
 \end{center}
 
+\begin{observation}{Osservazione}
+    $d$ è un vettore, e come tale ha i suoi componenti. Ricordati che con $x_B$ è un vettor e  indichiamo i componenti base di $x$, questi sono tipo:
+    \begin{center}
+        $x_1,x_2,x_4,...$
+    \end{center}
+    Questi contiene anche indici "sparpagliati".
+    Con $d_B$ si andranno a indicare i componenti che si andranno a sommare a quelli di $x$, quindi avranno gli stessi indici, ad esempio se $x_B = [x_1,x_4]^T$ allora $d_B = [d_1,d_4]^T$
+\end{observation}
+
 Quindi formalizzando il tutto:
 Innanzitutto, muovendoci da $x$ a $x + \theta d$ noi vogliamo comunque rimanere all'interno della regione ammissibile $P$:
 \begin{equation}
@@ -3345,12 +3354,52 @@ Dal momento che la matrice $B$ è invertibile, è possibile concludere che:
 d_B = -B^{-1} A_j
 \end{equation}
 Il vettore $d$ appena costruito è noto come \textbf{j-esima direzione di base}.
-
-Per quanto riguarda la non negatività delle variabili ($x + \theta d \ge 0$), distinguiamo due casi:
+Il vettore d appena costruito `e noto come j.ma direzione di base. Esso
+garantisce il rispetto dei vincoli di uguaglianza che descrivono la regione ammissibile P, ma cosa possiamo dire del rispetto dei vincoli di non negatività
+delle variabili di decisione $x + \theta d $ >= 0?
+Con l'introduzione di d sicuramente il valore della variabile non di base
+$x_j$ è passato da 0 a $\theta$ > 0, mentre il valore delle restanti $n-m-1$ variabili non
+di base è rimasto nullo. Dunque, nel rispondere alla domanda precedente,
+dobbiamo preoccuparci solo del nuovo valore delle variabili di base e cioè di
+$x_B + \theta d_B$ e distinguiamo due casi:
 \begin{itemize}
-\item[(a)] $x$ è una soluzione ammissibile di base \textbf{non degenere}. Ciò implica che $x_B > 0$, per cui per $\theta$ sufficientemente piccolo, la non negatività è preservata e $d$ è una direzione ammissibile.
-\item[(b)] $x$ è una soluzione ammissibile di base \textbf{degenere}. In questo caso, può accadere che una variabile di base $x_{B(i)}$ sia nulla, mentre la corrispondente componente $d_{B(i)}$ sia negativa. In tale ipotesi, se seguissimo la direzione $d$ abbandoneremmo la regione ammissibile $P$.
+\item[(a)] $x$ è una soluzione ammissibile di base \textbf{non degenere}. Ciò implica che $x_B > 0$.
+
+\paragraph{Motivazione:}
+Per definizione, una soluzione di base è \textbf{non degenere} se attiva \textbf{esattamente $n$ vincoli} linearmente indipendenti.
+
+Nel modello in forma standard ($Ax = b, \, x \ge 0$ con $m < n$ e $\text{rank}(A) = m$), la costruzione di una soluzione di base prevede di selezionare una matrice di base $B$ formata da $m$ colonne linearmente indipendenti di $A$, ponendo a zero le restanti $n - m$ variabili fuori base ($x_N = 0$).
+
+Ciò attiva già esattamente $n$ vincoli:
+\begin{itemize}
+    \item gli $m$ vincoli di uguaglianza strutturali ($Ax = b$);
+    \item gli $n - m$ vincoli di non-negatività per le variabili fuori base ($x_N = 0$).
 \end{itemize}
+
+Se una qualsiasi variabile di base fosse nulla ($x_{B(i)} = 0$), si otterrebbe l'attivazione di un $(n+1)$-esimo vincolo di non-negatività. Poiché per la non-degenerazione i vincoli attivi devono essere esattamente $n$, nessuna variabile di base può valere zero. Trattandosi di una soluzione ammissibile ($x \ge 0$), deve quindi valere strettamente $x_B > 0$.
+
+Per cui in questo caso:
+\begin{enumerate}
+    \item \textbf{$x_B$} è > 0
+    \item $\theta$ > 0
+    \item L'unico che può essere positivo o negativo è $d_B$ (\textbf{o meglio le sue componenti del vettore possono essere positive o negative}):
+    \begin{itemize}
+        \item \textbf{$d_{B(i)} >= 0$} : La variabile di base $x_{B(i)}$ aumenta (o rimane costante) man mano che si aumenta $\theta$:$$x_{B(i)} + \theta d_{B(i)} \ge x_{B(i)} > 0$$
+        \item \textbf{$d_{B(i)} < 0$} : La variabile di base $x_{B(i)}$ diminuisce man mano che si aumenta $\theta$:$$x_{B(i)} + \theta d_{B(i)}$$   
+    \end{itemize}
+\end{enumerate}
+
+per cui per $\theta$ sufficientemente piccolo, la non negatività è preservata e $d$ è una direzione ammissibile.
+\item[(b)] $x$ è una soluzione ammissibile di base \textbf{degenere}. In questo caso, può accadere che una variabile di base $x_{B(i)}$ sia nulla, mentre la corrispondente componente $d_{B(i)}$ sia negativa. In tale ipotesi, se seguissimo la direzione $d$ abbandoneremmo la regione ammissibile $P$.
+Questo perchè ci troveremo delle variabili negative che violano i vincoli del problema.
+\end{itemize}
+
+
+\begin{center}
+    La direzione in cui ci ritroviamo con il nuovo punto, non sarà un punto casuale, ma sarà un punto che si trova adiacente a $x$, sulla sua frontierà, questo perchè per scegliere la direzione $d$, fai entrare in base una sola variabile fuori base alla volta.
+    questo equivale a disattivare esattamente 1 vincolo di non-negatività, invece di avere $n$ vincoli attivi (che identificano un singolo punto $0$-dimensionale, il vertice), ti ritrovi con $n - 1$ vincoli attivi.
+    La nuova soluzione avrà proprio la definizione di adiacenza, questo perchè soddisfa gli $m$ vincoli originali (imposti nell'equazione \textbf{3.51}) e i restanti $n-m-1$ di non negatività, quindi in totale $n-1$ vincoli, quindi sarà adiacente a $x$.
+\end{center}
 
 Supponiamo di aver individuato una direzione ammissibile $d$. La variazione del valore della funzione obiettivo passando da $x$ a $x + \theta d$ sarà $\theta c'd$. Valutiamo $c'd$:
 \begin{equation}
