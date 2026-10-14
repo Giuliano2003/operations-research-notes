@@ -2823,6 +2823,7 @@ Queste considerazioni sono formalizzate dal seguente teorema.
         \end{enumerate}
     \end{itemize}
 \end{theorem}
+\label{teorema SBA}
 Quello appena descritto si può descrivere in modo algoritmico in questo modo:
 \begin{center}
 \fbox{\parbox{0.9\linewidth}{
@@ -2925,6 +2926,16 @@ Pertanto, la soluzione di base ottenuta è:
 \boxed{x^*=(1,3,0)}
 \]
 Poiché tutte le componenti sono non negative, questa è anche una soluzione di base ammissibile.
+\begin{center}
+    Questa è una soluzione di base,perchè mettendo la variabile $x_3$ = 0, si hanno $n$ vincoli lineramente indipendenti, e risolvendo il sistema si ha una soluzione che rispetta i vincoli $m$ originali (come vuole la definizione)
+    piu i restanti vincoli sempre lineramente indipendenti fra di loro, ma che ne sono $n$ in totale, e quindi identificano un punto.
+    \textbf{Quindi questo teorema è un se e solo se, nella direzione da destra verso sinistra, noi possiamo costruire una SBA, facendo questo procedimento descritto finora, e questa SBA, sarà costituita da:}
+    \begin{itemize}
+        \item \textbf{$x_B$} : che sarà fatto dalle variabili che non sono state messe a zero. Ha dimensione ($m$)
+        \item \textbf{$x_N$} : che sarà fatto dalle variabili messe a zero ($n-m$)
+    \end{itemize}
+\end{center}
+
 
 
 Due matrici di base sono dette distinte se coinvolgono due insiemi di colonne linearmente indipendenti distinte.
@@ -3274,6 +3285,7 @@ Nel corso di questo paragrafo supporremo di dover risolvere il seguente generico
 \end{aligned}
 \end{equation}
 dove $A \in \mathbb{R}^{m \times n}$ può avere rango massimo $m$. Con $A_i$ indicheremo l'i-esima colonna di $A$, mentre con $a_i'$ ne indicheremo l'i-esima riga. Supporremo, inoltre, che $P$ sia la regione ammissibile corrispondente al problema.
+Supponendo sempre che $m$ < $n$.
 
 Da quanto detto nei precedenti paragrafi è emerso che se un problema di PL formulato in forma standard ammette una soluzione ottima finita, allora esiste una soluzione ammissibile di base ottima (\textbf{i teoremi di prima}). Il metodo del simplesso si basa su tale considerazione e cerca una soluzione ottima al problema muovendosi da una soluzione ammissibile di base ad una adiacente sempre nella direzione lungo la quale si verifica un decremento del valore corrente della funzione obiettivo. Nel momento in cui viene raggiunta una soluzione ammissibile di base a partire dalla quale non è possibile intraprendere più alcuna direzione migliorativa del valore corrente della funzione obiettivo, la soluzione ammissibile di base corrente è ottima e l'algoritmo termina.
 
@@ -3291,21 +3303,42 @@ Innanzitutto, dobbiamo limitare la scelta di $d$ a quei vettori che non ci condu
 Sia $x \in P \subset \mathbb{R}^n$. Un vettore $d \in \mathbb{R}^n$ è detto direzione ammissibile a partire da $x$ se esiste uno scalare $\theta > 0$ tale che $x + \theta d \in P$.
 \end{definition}
 
-Sia $x$ una soluzione ammissibile di base per il problema formulato in forma standard (Pr). In particolare, siano $B(1), B(2), \dots, B(m)$ gli indici delle variabili di base e sia $B = [A_{B(1)} \ A_{B(2)} \ \dots \ A_{B(m)}]$ la corrispondente matrice di base. Sappiamo che $x_B = (x_{B(1)} \ x_{B(2)} \ \dots \ x_{B(m)})^T = B^{-1}b$, mentre tutte le variabili non di base sono nulle, cioè $x_N = 0$.
+\subsubsection{L'Idea del Simplesso per Costruire la Direzione $d$}
+Sia $x$ una soluzione ammissibile di base per il problema formulato in forma standard (Pr).Per il teorema \ref{teorema SBA} per una SBA esistono $B(1), B(2), \dots, B(m)$ gli indici delle variabili di base e $B = [A_{B(1)} \ A_{B(2)} \ \dots \ A_{B(m)}]$ la corrispondente matrice di base. Sappiamo che $x_B = (x_{B(1)} \ x_{B(2)} \ \dots \ x_{B(m)})^T = B^{-1}b$, mentre tutte le variabili non di base sono nulle, cioè $x_N = 0$.
 
-Consideriamo ora la possibilità di muoverci dalla soluzione $x$ e di ottenere la soluzione $x + \theta d$. Ciò può essere realizzato selezionando una variabile non di base $x_j$ ($j \neq B(1), B(2), \dots, B(m)$) inizialmente a livello 0 ed incrementando il suo valore di una quantità positiva $\theta$, mantenendo nulle le restanti $n - m - 1$ variabili non di base. Algebricamente ciò equivale a porre $d_j = 1$ e $d_i = 0$ per ogni $i \neq j, B(1), B(2), \dots, B(m)$. Al contempo, anche il vettore di base $x_B$ dovrà cambiare in $x_B + \theta d_B$, dove $d_B = (d_{B(1)}, d_{B(2)}, \dots, d_{B(m)})^T$ è il vettore le cui componenti sono le componenti di $d$ corrispondenti alle variabili di base.
+Quindi sempre per il teorema \ref{teorema SBA} in una Soluzione Ammissibile di Base (SAB) $x$:
+\begin{itemize}
+    \item $m$ variabili sono di base ($x_B$) e possono assumere valori maggiori o uguali a zero ($x_B = B^{-1}b \ge 0$).
+    \item $n - m$ variabili sono non di base ($x_N$) e valgono esattamente $0$
+\end{itemize}
 
+Per muoverci verso un nuovo punto ammissibile (nel poliedro), l'algoritmo fa entrare in base una sola variabile fuori base $x_j$, lasciando le altre $n - m - 1$ variabili fuori base ferme a $0$: 
+
+\begin{enumerate}
+    \item Per la variabile entrante $x_j$: Poniamo la sua direzione $d_j = 1$, così il suo valore passa da $0$ a $\theta \cdot 1 = \theta > 0$.
+    \item Per le altre variabili fuori base $x_i$ ($i \neq j$): Poniamo $d_i = 0$, quindi rimangono fisse a $0$.  
+    \item Per le variabili di base $x_B$: Il vettore delle variabili di base si modifica di $\theta d_B$ per compensare la crescita di $x_j$ e garantire che i vincoli rimangano soddisfatti ($A(x + \theta d) = b$).
+\end{enumerate}
+Quindi quando si fanno entrare le variabili fuori base, dobbiamo anche aggiustare le variabili della base, per rispettare i vincoli, faccio un esempio cosi si chiarisce:\\
+Ipotizziamo di avere un singolo vincolo:$$x_1 + 2 x_2 = 10$$Stato iniziale:$x_1$ è in base, $x_2$ è fuori base ($x_2 = 0$).Quindi $x_1 = 10$. Il vincolo è soddisfatto: $10 + 2(0) = 10$.Ora vogliamo far crescere $x_2$ di una quantità $\theta = 3$:La variabile $x_2$ passa da $0$ a $3$.Cosa succederebbe se $x_1$ NON cambiasse valore?$$10 + 2(3) = 16 \neq 10 \quad \text{(Vincolo violato!)}$$Per "compensare" l'aggiunta di $+6$ data da $2 x_2$, la variabile di base $x_1$ deve ridursi di $6$, passando da $10$ a $4$:$$4 + 2(3) = 10 \quad \text{(Vincolo di nuovo soddisfatto!)}$$
+\textbf{Questo perchè noi vogliamo sempre rimanere nei vincoli del Poliedro definito dal problema}
+\begin{center}
+    Nel procedimento seguente quello che facciamo è ricavarci $d_B$ assumendo che $d$ già esista.
+\end{center}
+
+Quindi formalizzando il tutto:
 Innanzitutto, muovendoci da $x$ a $x + \theta d$ noi vogliamo comunque rimanere all'interno della regione ammissibile $P$:
 \begin{equation}
 A(x + \theta d) = b
 \end{equation}
 Intanto, $Ax = b$ dato che $x$ è ammissibile, per cui la relazione è equivalente a richiedere che $A \theta d = 0 \Rightarrow Ad = 0$. Dunque,
+\[
+0 = Ad = \sum_{i = 1}^{m} A_{B(i)} \footnote{l'indice $i$ scorre semplicemente da $1$ ad $m$ per contare le $m$ componenti della base, ma le posizioni $B(i)$ all'interno della matrice $A$ possono essere sparse in qualsiasi punto} * d_{B(i)} + \sum_{l != B(1)...B(m)} A_l d_l
+\]
+Questo perchè la colonna ad esempio $A_1$ usa solo il primo elemento di $d$ ecc... \\
+Ricordando che $d_j = 1$ e $d_i = 0$ per ogni $i \neq j, \text{ e } i \neq B(1), B(2), \dots, B(m)$, si ottiene:
 \begin{equation}
-0 = Ad = \sum_{i=1}^m A_{B(i)} d_{B(i)} + \sum_{l \neq B(1),\dots,B(m)} A_l d_l.
-\end{equation}
-Ricordando che $d_j = 1$ e $d_i = 0$ per ogni $i \neq j, B(1), B(2), \dots, B(m)$, si ottiene:
-\begin{equation}
-0 = Ad = \sum_{i=1}^m A_{B(i)} d_{B(i)} + A_j = B d_B + A_j.
+B d_B + A_j.
 \end{equation}
 Dal momento che la matrice $B$ è invertibile, è possibile concludere che:
 \begin{equation}

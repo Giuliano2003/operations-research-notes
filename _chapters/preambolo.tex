@@ -30,3 +30,33 @@ A=
 \end{pmatrix}
 \]
 In questa matrice il rango massimo è sempre 2, questo perchè ci sono due vettori sulle righe.
+
+
+\section{Funzioni Convesse}
+
+\subsection{Definizione Matematica}
+
+Sia $I \subseteq \mathbb{R}$ un intervallo (limitato o illimitato). Una funzione $f: I \to \mathbb{R}$ si dice \textbf{convessa} su $I$ se, per ogni coppia di punti $x_1, x_2 \in I$ e per ogni $t \in [0, 1]$, si ha:
+\begin{equation}
+    f(t x_1 + (1-t) x_2) \le t f(x_1) + (1-t) f(x_2)
+\end{equation}
+
+Se la disuguaglianza vale in senso stretto per ogni $x_1 \neq x_2$ e per ogni $t \in (0, 1)$, ovvero:
+\begin{equation}
+    f(t x_1 + (1-t) x_2) < t f(x_1) + (1-t) f(x_2)
+\end{equation}
+la funzione si dice \textbf{strettamente convessa} su $I$.
+
+\newpage
+
+\paragraph{Interpretazione algebrica:} Il punto $x_t = t x_1 + (1-t) x_2$ rappresenta un generico punto compreso nell'intervallo $[x_1, x_2]$. La quantità $t f(x_1) + (1-t) f(x_2)$ rappresenta la quota corrispondente a $x_t$ sulla corda (segmento) che congiunge i punti $(x_1, f(x_1))$ e $(x_2, f(x_2))$.
+Invece la quantità $f(t x_1 + (1-t) x_2)$, rappresenta la quota della funzione di un punto compreso nell'intervallo $[x_1, x_2]$.
+
+Si deve avere che la quotà della funzione di un punto compreso nell'intervallo $[x_1, x_2]$, deve essere minore della quota corrispondente al segmento che congiunge $(x_1, f(x_1))$ e $(x_2, f(x_2))$.
+
+\begin{figure}[htbp]
+        \centering
+        \includegraphics[width=0.8\textwidth]{_files/_images/28.png}
+        \caption{Sopra vi è una funzione convessa, sotto no}
+        \label{fig:mia_immagine}
+\end{figure}
