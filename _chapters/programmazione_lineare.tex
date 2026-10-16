@@ -3401,10 +3401,56 @@ Questo perchè ci troveremo delle variabili negative che violano i vincoli del p
     La nuova soluzione avrà proprio la definizione di adiacenza, questo perchè soddisfa gli $m$ vincoli originali (imposti nell'equazione \textbf{3.51}) e i restanti $n-m-1$ di non negatività, quindi in totale $n-1$ vincoli, quindi sarà adiacente a $x$.
 \end{center}
 
-Supponiamo di aver individuato una direzione ammissibile $d$. La variazione del valore della funzione obiettivo passando da $x$ a $x + \theta d$ sarà $\theta c'd$. Valutiamo $c'd$:
+
+Supponiamo di aver individuato una direzione ammissibile $d$, e di essere pronti a spostarci da $x$ a $x + \theta d$.
+è chiaro che effettueremo effettivamente lo spostamento solo qualora esso fosse conveniente in termini di decremento del valore della funzione obiettivo, che ora sarà
 \begin{equation}
-c'd = c_B' d_B + c_j = c_j - c_B' B^{-1} A_j.
+c'(x + \theta d) = c'x + \theta c' d
 \end{equation}
+Valutiamo dunque $c'd$. Ricordando che per ipotesi le componenti $d_i = 0$ per ogni $i \neq j,B(1),\dots,B(m)$ e $d_j = 1$, si ha che:
+\begin{equation}
+    c'd = c'_B d_B + c_j =^{def} -B^{-1} A_j c'_B + c_j = c_j -B^{-1} A_j c'_B
+\end{equation}
+Portando a sinistra il termine si ha:
+$$\Delta \text{Costo} = c'(x + \theta d) - c'x = \theta \cdot (c'd)$$.
+La variazione di costo rappresenta quanto cambia il valore della funzione obiettivo quando ci spostiamo dalla soluzione corrente \(x\) a una nuova soluzione \(x+\theta d\).
+\paragraph{Esempio intuitivo}
+Supponiamo di voler minimizzare il costo di produzione di due prodotti.
+\begin{enumerate}
+    \item Situazione iniziale: costo pari a \(100\,€\).
+    \item Dopo uno spostamento lungo una direzione \(d\): costo pari a \(80\,€\).
+\end{enumerate}
+La variazione di costo è:
+\[
+\Delta Costo=80-100=-20\,€
+\]
+
+Il costo è diminuito di \(20\,€\), quindi lo spostamento è migliorativo.
+
+Questo spiega immediatamente il comportamento del sistema:
+\begin{itemize}
+    \item $c'd < 0$: Il tasso di variazione è negativo, quindi la funzione decresce (la direzione è di discesa).
+    \item $c'd > 0$: Il tasso di variazione è positivo, quindi la funzione cresce (la direzione è di salita).
+    \item $c'd = 0$: Il tasso di variazione è nullo, quindi ti muovi lungo una linea di livello in cui il costo non varia
+\end{itemize}
+
+\[
+\underbrace{\theta}_{\text{quanto ci spostiamo}}
+\cdot
+\underbrace{(c'd)}_{\text{variazione per unità di }\theta}
+=
+\underbrace{\Delta Costo}_{\text{variazione totale}}
+\]
+
+\begin{observation}{Derivata direzionale}
+La derivata (base, parziale e direzionale) misura il tasso di variazione istantaneo della funzione in un punto, indicando se essa sta crescendo, decrescendo o rimanendo stazionaria.Dal punto di vista geometrico, se la derivata parziale analizza la funzione restringendosi lungo l'asse di una coordinata, la derivata direzionale generalizza questo concetto sezionando il grafico della funzione con un piano verticale parallelo a una generica direzione $d$. Tale intersezione genera una curva unidimensionale, e la derivata direzionale rappresenta la pendenza (il coefficiente angolare della retta tangente) a questa curva nel punto considerato.Per una funzione lineare $f(x) = c'x$ (con $c, x \in \mathbb{R}^n$), il gradiente è costante in tutto il dominio:$$\nabla f(x) = c \quad \forall x \in \mathbb{R}^n$$Per ogni funzione differenziabile, la derivata direzionale nel punto $x_0$ lungo la direzione $d$ è espressa dal prodotto scalare:$$D_d f(x_0) = \nabla f(x_0)' d = c'd$$
+Ad esempio, consideriamo una determinata direzione individuata da un vettore unitario. Se la derivata direzionale della funzione in un punto, lungo quella direzione, è pari a \(5\), significa che la funzione sta aumentando, in quel punto e lungo quella direzione, con una pendenza pari a \(5\). 
+La derivata direzionale lungo la direzione \(d\) è \(c'd\). Questo valore rappresenta la variazione della funzione per unità di spostamento lungo tale direzione. Se ci spostiamo, a partire dal punto iniziale, di \(\theta d\), significa che percorriamo \(\theta\) volte la direzione \(d\). Di conseguenza, **la variazione della funzione, assumendo che la funzione sia lineare, è pari a**
+\[
+\theta c'd.
+\]
+\end{observation}
+
 
 \begin{definition}{Costo ridotto}
 Sia $x$ una soluzione di base, $B$ la matrice di base ad essa corrispondente e sia $c_B$ il vettore dei costi associati alle variabili di base. Per ogni $j$, si definisce costo ridotto $\bar{c}_j$ della variabile $x_j$ la seguente quantità:
@@ -3413,7 +3459,95 @@ Sia $x$ una soluzione di base, $B$ la matrice di base ad essa corrispondente e s
 $$\bar{c}_j = c_j - c_B' B^{-1} A_j$$
 
 
+è uno scalare.
+\textbf{Teoricamente si può calcolare per qualsiasi variabile di base e non.}
 \end{definition}
+\paragraph{Esempio per capire cosa sono i costi ridotti di una variabile $x_j$}
+Supponiamo di voler minimizzare:
+\[
+\min z=3x_1+5x_2+4x_3
+\]
+
+soggetto ai vincoli:
+\[
+\begin{cases}
+x_1+x_2+x_3=4\\
+x_1,x_2,x_3\geq 0
+\end{cases}
+\]
+
+I costi delle variabili sono:
+\[
+c_1=3,\qquad c_2=5,\qquad c_3=4
+\]
+Supponiamo di considerare la soluzione di base:
+\[
+x=(4,0,0)
+\]
+
+In questo caso, \(x_1\) è la variabile di base, mentre \(x_2\) e \(x_3\) sono variabili non di base.
+La matrice di base è semplicemente:
+\[
+B=[1]
+\]
+
+e il vettore dei costi delle variabili di base è:
+\[
+c_B=[3]
+\]
+\[
+\begin{aligned}
+\bar c_2
+&=5-[3][1][1]\\
+&=5-3\\
+&=\boxed{2}
+\end{aligned}
+\]
+
+Il costo ridotto di \(x_2\) è quindi \(2\).
+Ma cosa significa?
+Attualmente abbiamo:
+\[
+x=(4,0,0),\qquad z=3\cdot4=12
+\]
+Ora immaginiamo di aumentare \(x_2\) da \(0\) a \(1\).Quindi $\theta = 1$
+Otteniamo quindi:
+\[
+x=(3,1,0)
+\]
+\textbf{Vengono cambiate tramite $dB$ anche le variabile di base, per rispettare i vincoli}.
+Calcoliamo il nuovo costo della funzione obiettivo:
+\[
+z=3\cdot3+5\cdot1=14
+\]
+Il costo è passato da 12 a 14.
+Ritorniamo al costo ridotto che abbiamo calcolato prima:
+\[
+\bar c_2=5-3=2
+\]
+\begin{enumerate}
+    \item Inserire un'unità (1 proprio, perchè prima $x_2$ era 0) di \(x_2\) costa \(5\) (perchè nella funzione di costo vi è $5x_2$).
+    \item Per farle spazio, togliamo un'unità di \(x_1\), risparmiando \(3\) (perchè nella funzione di costo vi è $3x_1$)
+    \item La variazione netta del costo è \(5-3=2\) per quelle due variabili (di base e non) nella funzione di costo. Quindi introdurre \textbf{un'unita di $x_2$} (tramite $\theta = 1$), non fa diminuire il costo della funzione, perchè aggiungere $x_2$ (un'unità) mi costa troppo anche levando $x_1$, e quindi \textbf{aggiungere un'unita di $x_2$ mi costa 2}, e quindi la funzione obiettivo aumenta di 2, rispetto alla soluzione iniziale.
+\end{enumerate}
+Quindi il costo ridotto di una variabile mi indica proprio questo, però \textbf{in modo unitario}, cioè aggiungendo una copia di $x_2$ alla base, quanto varia il costo della funzione sul nuovo punto, rispetto alla soluzione originale.
+Di solito però non aggiungo una copia, ma ne aggiungo in generale $\theta$, quindi per calcolare la variazione totale della funzione di costo moltiplico il costo unitario ($c^-_j$) per quante copie aggiungo ($\theta$)
+,io in questo caso ho scelto $\theta = 1$ per semplicità perciò la variazione di $z$ e il costo ridotto combaciavano, ma in generale:
+\[
+\Delta z = z(x+\theta d) - z(x) = \theta \bar{c}_j
+\]
+Quindi il costo ridotto rispetto ad una variabile $j$ mi indica quanto costa aggiungere quella variabile alla base, (tenendo conto che sono cambiate anche le variabili di base grazie a $d_B$),in modo unitario cioè aggiungendo solo una copia.
+\\
+In generale, per un problema di minimizzazione, se consideriamo una variabile non di base:
+\begin{itemize}
+    \item \(\bar c_j<0\): muoversi in quella direzione (cioè nella direzione $d$ che viene fuori introducendo $x_j$) fa diminuire la funzione obiettivo (buono per problemi di minimizzazione).
+    $\theta$ indica quanto mi muovo in quella direzione, e se muoversi in quella direzione fa diminuire la funzione, dato che la funzione è lineare, è bene continuare ad aumentare la direzione in quella funzione.
+
+    \item \(\bar c_j=0\): muoversi in quella direzione lascia invariato il valore della funzione obiettivo.
+
+    \item \(\bar c_j>0\): muoversi in quella direzione fa aumentare la funzione obiettivo (peggioramento per problemi di minimizzazione).
+\end{itemize}
+
 
 \begin{example}{Calcolo della direzione di base e del costo ridotto}
 Si consideri il seguente problema di PL:
@@ -3446,34 +3580,170 @@ $$\bar{c}_{B(i)} = c_{B(i)} - c_B' B^{-1} A_{B(i)} = c_{B(i)} - c_B' e_i = c_{B(
 \begin{theorem}{Condizioni di ottimalità}
 Sia $x$ una soluzione ammissibile di base, $B$ la matrice di base ad essa associata e sia $\bar{c}$ il corrispondente vettore dei costi ridotti.
 \begin{itemize}
-\item[(a)] Se $\bar{c} \ge 0$, allora $x$ è ottima.
-\item[(b)] Se $x$ è ottima e non degenere, allora $\bar{c} \ge 0$.
+    \item[(a)] Se $\bar{c} \ge 0$, allora $x$ è ottima.
+    \item[(b)] Se $x$ è ottima e non degenere, allora $\bar{c} \ge 0$.
 \end{itemize}
 \end{theorem}
 
-\subsection{2.7.2 Il Metodo del Simplesso}
+\paragraph{Interpretazione delle condizioni di ottimalità.}
 
-Supponiamo di trattare soluzioni ammissibili di base non degeneri. Se esiste un costo ridotto $\bar{c}_j < 0$, allora la j-esima direzione di base $d$ porta ad un decremento del valore della funzione obiettivo. Vogliamo raggiungere il punto che massimizza tale decremento rimanendo ammissibili:
+Se tutti i costi ridotti sono non negativi, nessuna variabile non di base può essere incrementata, lungo la corrispondente direzione elementare del simplesso, per ridurre il valore della funzione obiettivo. Di conseguenza, la soluzione di base ammissibile corrente è ottima.
+
+Questo perché, una volta calcolato il vettore dei costi ridotti, abbiamo una panoramica delle variazioni della funzione obiettivo associate alle direzioni elementari del simplesso, ciascuna corrispondente all'introduzione di una variabile non di base.
+
+Ad esempio, per valutare l'introduzione della variabile non di base $x_3$, costruiamo una direzione $d$ in cui la componente associata a $x_3$ è posta uguale a $1$, mentre le altre componenti associate alle variabili non di base sono poste uguali a $0$. Le componenti $d_B$ relative alle variabili di base vengono determinate in modo da mantenere soddisfatti i vincoli di uguaglianza:
+
+Ripetiamo questo procedimento per ogni variabile non di base, ottenendo le rispettive direzioni elementari.
+
+Quindi ad esempio, se:
+\[
+\bar{c}=(0,0,2,5),
+\]
+e $x_3$ e $x_4$ sono le variabili non di base, abbiamo:
+\[
+\bar{c}_3=2, \qquad \bar{c}_4=5.
+\]
+
+Questo significa che, lungo la direzione elementare associata a $x_3$, ogni incremento di $\theta$ determina un aumento della funzione obiettivo pari a $2\theta$. Analogamente, introducendo $x_4$, la funzione obiettivo aumenta di $5\theta$.
+
+Pertanto, se tutti i costi ridotti sono non negativi, nessuna delle direzioni elementari del simplesso permette di migliorare la soluzione corrente. Per il teorema delle condizioni di ottimalità, la soluzione di base ammissibile corrente è quindi ottima.
+
+
+\paragraph{Nota} : Nella nuova direzione che considero, c'è anche $\theta$, cioè:
+\[
+x + \theta d
+\]
+ma $\theta$ non cambia la direzione, indica solo QUANTO mi sposto in quella direzione, se il vettore dei costi è tutto positivo (come prima) dato che $\theta \ge 0 $, i costi "possono" solo peggiorare.
+
+\subsection{Il Metodo del Simplesso}
+
+Supponiamo di trattare soluzioni ammissibili di base non degeneri. Se esiste un costo ridotto $\bar{c}_j < 0$, allora la j-esima direzione di base $d$ porta ad un decremento del valore della funzione obiettivo
+\textbf{Ora devo capire però quanto spostarmi, in quella direzione, tramite il parametro $\theta$.
+Io ho trovato la direzione in cui spostarmi, introducendo la variabile non di base nella base, e visualizzando il costo ridotto di quella variabile, ma ora devo capire quanto spostarmi, per rimanere ancora ammissibile, perchè potrei uscire fuori dai bordi}
+Infatti guarda:
+
+Supponiamo di avere una soluzione di base ammissibile \(x\) e di individuare una variabile non di base \(x_j\) con costo ridotto negativo:
+\[
+\bar c_j<0
+\]
+
+Questo significa che, lungo la direzione di base \(d\) associata all'introduzione di \(x_j\), la variazione della funzione obiettivo è:
+\[
+\Delta z=\theta\bar c_j
+\]
+
+Dato che \(\theta>0\) e \(\bar c_j<0\), la funzione obiettivo diminuisce.
+Quindi abbiamo individuato una direzione di miglioramento. Ma non sappiamo ancora quanto possiamo percorrerla restando ammissibili ($aumentare \theta$).
+\\
+Vogliamo quindi raggiungere il punto che massimizza tale decremento rimanendo ammissibili:
 
 
 $$\theta^* = \max \{ \theta > 0 \mid x + \theta d \in P \}$$
 
+Questo perchè dato che la funzione è lineare, una volta scelto la direzione $d$, se questa è peggiorativa, io posso seguirla, sapendo che il valore della funzione obiettivo continua a peggiorare.
+Ovviamente però posso seguirla solo fino ad un certo punto, altrimenti esco fuori dalla regione ammissibile.
 
-Per calcolare $\theta^*$:
-\begin{itemize}
-\item Se $d \ge 0$, $x + \theta d$ non diventerà mai inammissibile e $\theta^* = \infty$ (il problema è illimitato).
-\item Se esiste $d_{B(i)} < 0$, la variabile $x_{B(i)}$ decrescerà fino a 0. Il valore massimo di $\theta$ è:
-\end{itemize}
-\begin{equation}
-\theta^* = \min_{{i = 1, 2, \dots, m \mid d_{B(i)} < 0}} \left\{ -\frac{x_{B(i)}}{d_{B(i)}} \right\}
-\end{equation}
+\paragraph{Come calcolo \(\theta^*\)?}
+Nel simplesso in forma standard, le variabili devono essere non negative. Le variabili non di base partono da zero e, nella direzione associata all'ingresso di \(x_j\), quella variabile aumenta.
+Le variabili di base, invece, cambiano secondo le componenti \(d_B\) della direzione. Per ogni variabile di base \(x_{B(i)}\), dobbiamo rispettare:
+\[
+x_{B(i)}+\theta d_{B(i)}\geq 0
+\]
+Ora distinguiamo due casi.
+\begin{enumerate}
+    \item \textbf{Caso 1: tutte le componenti di $d_B$ sono non negative} : 
+    Se \(d_B\geq 0\), le variabili di base non diminuiscono: aumentano oppure rimangono invariate. Anche la variabile non di base entrante aumenta.
+    Di conseguenza, non incontriamo un limite dovuto ai vincoli di non negatività e possiamo aumentare \(\theta\) indefinitamente:
+    \[
+    \theta^*=+\infty
+    \]
+    Se il costo ridotto della variabile entrante è negativo, la funzione obiettivo continua a diminuire indefinitamente. Il problema è quindi illimitato inferiormente.
+    \textbf{Nota: Io posso aumentare $\theta$ a piacere basta che sia maggiore di 0, senza preoccuparmi del se vengono rispettati i vincoli del sè} $x+\theta d$ è una soluzione di base ammissibile,
+    questo perchè abbiamo già visto nella dimostrazione di prima, che questo dipende solo da $Ad = 0$, l'unica cosa da vedere è l'ammissilibtà, cioè che tutti gli elementi siano >=0, ma nel caso 1 è soddisfatto perchè le componenti di $d_B$ sono positive.
+    \item \textbf{Caso 2 : almeno una componente di $d_B$ è negativa} : 
+    Se \(d_{B(i)}<0\), la corrispondente variabile di base diminuisce quando aumentiamo \(\theta\).
+    Per mantenere la sua non negatività:
+    \[
+    x_{B(i)}+\theta d_{B(i)}\geq 0
+    \]
 
-Sia $l$ l'indice della variabile di base per cui si raggiunge il minimo. La variabile $x_{B(l)}$ uscirà dalla base, e $x_j$ (che aveva $\bar{c}_j < 0$) entrerà.
+    Isolando \(\theta\), otteniamo:
+    \[
+    \theta\leq-\frac{x_{B(i)}}{d_{B(i)}}
+    \]
+
+    Ogni variabile di base che diminuisce impone quindi un limite massimo allo spostamento. \textbf{Per non violare nessuno dei vincoli, scegliamo il limite più piccolo}:
+    \[
+    \boxed{
+    \theta^*=
+    \min_{\substack{i=1,\ldots,m\\d_{B(i)}<0}}
+    \left\{-\frac{x_{B(i)}}{d_{B(i)}}\right\}
+    }
+    \]
+\end{enumerate}
+\paragraph{Esempio}
+Supponiamo che le variabili di base siano inizialmente:
+\[
+x_B=\begin{pmatrix}6\\4\end{pmatrix}
+\]
+
+e che, lungo la direzione scelta, cambino secondo:
+\[
+d_B=\begin{pmatrix}-2\\-1\end{pmatrix}
+\]
+
+Le nuove variabili di base sono:
+\[
+x_B(\theta)=
+\begin{pmatrix}
+6-2\theta\\
+4-\theta
+\end{pmatrix}
+\]
+
+Calcoliamo i limiti imposti dalle due variabili:
+\(6-2\theta\geq0\) \text{ quindi }	\(\theta\leq3\) \text{ e }
+\(4-\theta\geq0\) \text{ quindi }	\(\theta\leq4\)
+Quindi:
+\[
+\theta^*=\min\{3,4\}=3
+\]
+
+Alla fine dello spostamento:
+\[
+x_B(3)=
+\begin{pmatrix}0\\1\end{pmatrix}
+\]
+
+La prima variabile di base raggiunge zero, quindi esce dalla base, mentre la variabile non di base che avevamo scelto inizialmente entra nella base.
+
+nel simplesso, quando effettuiamo il massimo spostamento ammissibile, almeno una variabile di base raggiunge zero cioè quella con vincolo minimo. Se più variabili raggiungono zero contemporaneamente, possiamo avere una situazione di degenerazione.
+
+Quindi ricapitolando:
+
+\begin{enumerate}
+    \item Condizione di Soluzione di Base (in $\mathbb{R}^n$):Un punto è una soluzione di base se sono attivi (ossia soddisfatti con il segno di uguaglianza) $n$ vincoli linearmente indipendenti:Gli $m$ vincoli di uguaglianza $Ax = b$.   $n - m$ vincoli di non-negatività $x_j = 0$ corrispondenti alle variabili non in base.
+    \item \textbf{Cosa succede durante lo spostamento nel simplesso:}
+    \begin{itemize}
+        \item  Inizio ($x$): Sulla soluzione corrente sono attivi $n$ vincoli ($m$ di uguaglianza e $n-m$ di non-negatività).
+        \item  Spostamento ($\theta > 0$): Scegliendo di far entrare in base una variabile $x_j$, rilasci il suo vincolo di non-negatività ($x_j$ diventa $>0$).  In questa fase ti stai muovendo lungo uno spigolo del poliedro e hai temporaneamente $n-1$ vincoli attivi
+        \item  Arrivo ($\theta = \theta^*$): Scegliendo il passo massimo ammissibile $\theta^* = \min \left\{ -\frac{x_{B(i)}}{d_{B(i)}} \right\}$, la prima variabile di base $x_{B(l)}$ che tocca zero attiva un nuovo vincolo di non-negatività ($x_{B(l)} = 0$)
+    \end{itemize}
+    \item Conteggio finale dei vincoli attivi in $\bar{x}$: 
+    \begin{itemize}
+        \item  $m$ vincoli di uguaglianza $A\bar{x} = b$.   
+        \item $n - m - 1$ vincoli di non-negatività delle variabili rimaste fuori base.
+        \item $1$ nuovo vincolo di non-negatività $x_{B(l)} = 0$ della variabile uscita dalla base.
+    \end{itemize}
+\end{enumerate}
+Quindi sostanzialmente si passa da una SBA ad un'altra, difatti durante un'iterazione del simplesso, il movimento da $x$ al nuovo punto $\bar{x} = x + \theta^* d$ corrisponde geometricamente a camminare lungo uno spigolo del poliedro per passare da un vertice al vertice adiacente che migliora (o non peggiora) il valore della funzione obiettivo. 
+L'algoritmo del simplesso non fa altro che esplorare la superficie del poliedro muovendosi di vertice in vertice lungo i bordi, finché non trova un vertice in cui nessuna direzione di movimento porta ad un miglioramento (l'ottimo).
 
 \begin{theorem}{Sostituzione della base}
+Consideriamo $l$ sia l'indice della variabile che è appena uscita dalla base (perchè diventata 0)
 Valgono le seguenti proprietà:
 \begin{itemize}
-\item[(a)] Le colonne $A_{B(i)}$, $i \neq l$, e $A_j$ sono linearmente indipendenti e la nuova matrice $\bar{B}$ è una base;
+\item[(a)] Le colonne $A_{B(i)}$, $i \neq l$, e $A_j$ ($j$ è l'indice della variabile che è entrata in base) sono linearmente indipendenti e la nuova matrice $\bar{B}$ è una base;
 \item[(b)] Il punto $\bar{x} = x + \theta^* d$ è una soluzione di base ammissibile associata alla matrice di base $\bar{B}$.
 \end{itemize}
 \end{theorem}
