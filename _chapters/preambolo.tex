@@ -123,6 +123,244 @@ Significa, invece, che la matrice possiede il massimo numero di vettori linearme
 Solo nel caso di una matrice quadrata a rango massimo si può affermare che tutte le righe e tutte le colonne sono contemporaneamente linearmente indipendenti.
 
 
+ \section{Linearmente Indipendenza}
+
+Due o più vettori si dicono **linearmente indipendenti** quando nessuno di essi può essere espresso come combinazione lineare degli altri. Nel caso particolare di due vettori, questo significa che uno non può essere ottenuto moltiplicando l'altro per uno scalare.
+
+Al contrario, due o più vettori si dicono **linearmente dipendenti** quando almeno uno di essi può essere espresso come combinazione lineare degli altri.
+
+\subsection{Interpretazione geometrica nel piano}
+
+Consideriamo due vettori appartenenti allo spazio \(\mathbb{R}^2\). Possiamo interpretarli geometricamente come frecce che partono dall'origine del piano cartesiano e terminano nei punti individuati dalle loro coordinate.
+
+\subsubsection{Vettori linearmente indipendenti}
+
+Consideriamo i seguenti vettori:
+
+\[
+v_1 =
+\begin{pmatrix}
+1\\
+0
+\end{pmatrix},
+\qquad
+v_2 =
+\begin{pmatrix}
+0\\
+1
+\end{pmatrix}.
+\]
+
+Il vettore \(v_1\) è diretto orizzontalmente verso destra, mentre il vettore \(v_2\) è diretto verticalmente verso l'alto. I due vettori hanno quindi direzioni differenti e non appartengono alla stessa retta passante per l'origine.
+
+Per verificare che siano linearmente indipendenti, consideriamo l'equazione:
+
+\[
+\alpha v_1+\beta v_2=
+\begin{pmatrix}
+0\\
+0
+\end{pmatrix}.
+\]
+
+Sostituendo i vettori otteniamo:
+
+\[
+\alpha
+\begin{pmatrix}
+1\\
+0
+\end{pmatrix}
++
+\beta
+\begin{pmatrix}
+0\\
+1
+\end{pmatrix}
+=
+\begin{pmatrix}
+0\\
+0
+\end{pmatrix}.
+\]
+
+Da cui segue:
+
+\[
+\begin{cases}
+\alpha=0\\
+\beta=0
+\end{cases}
+\]
+
+L'unica combinazione lineare che restituisce il vettore nullo è quindi quella in cui entrambi i coefficienti sono nulli. I due vettori sono pertanto linearmente indipendenti.
+
+\paragraph{Significato geometrico.}
+
+Due vettori linearmente indipendenti in \(\mathbb{R}^2\) individuano due direzioni distinte. Combinandoli linearmente, possiamo ottenere qualsiasi vettore del piano:
+
+\[
+\alpha v_1+\beta v_2
+=
+\begin{pmatrix}
+\alpha\\
+\beta
+\end{pmatrix}.
+\]
+
+Infatti, scegliendo opportunamente i coefficienti \(\alpha\) e \(\beta\), possiamo raggiungere qualsiasi punto del piano cartesiano.
+
+\subsubsection{Vettori linearmente dipendenti}
+
+Consideriamo ora i vettori:
+
+\[
+v_1 =
+\begin{pmatrix}
+1\\
+2
+\end{pmatrix},
+\qquad
+v_2 =
+\begin{pmatrix}
+2\\
+4
+\end{pmatrix}.
+\]
+
+Osserviamo che il secondo vettore è il doppio del primo:
+
+\[
+v_2=2v_1.
+\]
+
+Pertanto, i due vettori hanno la stessa direzione e appartengono alla medesima retta passante per l'origine.
+
+Per determinare l'equazione di questa retta, interpretiamo i vettori come punti del piano cartesiano.
+
+Il primo vettore individua il punto \(P_1=(1,2)\), mentre il secondo individua il punto \(P_2=(2,4)\).
+
+Entrambi i punti soddisfano la relazione:
+
+\[
+\boxed{y=2x}
+\]
+
+Infatti:
+\begin{itemize}
+    \item Per \(P_1=(1,2)\), abbiamo \(2=2\cdot 1\).
+    \item Per \(P_2=(2,4)\), abbiamo \(4=2\cdot 2\).
+\end{itemize}
+
+La retta \(y=2x\) passa anche per l'origine \((0,0)\), poiché \(0=2\cdot 0\).
+
+\paragraph{Verifica dell'indipendenza lineare.}
+
+Per verificare che i vettori siano linearmente dipendenti, cerchiamo una combinazione lineare che restituisca il vettore nullo con coefficienti non entrambi nulli:
+
+\[
+\alpha v_1+\beta v_2=
+\begin{pmatrix}
+0\\
+0
+\end{pmatrix}.
+\]
+
+Sostituendo:
+
+\[
+\alpha
+\begin{pmatrix}
+1\\
+2
+\end{pmatrix}
++
+\beta
+\begin{pmatrix}
+2\\
+4
+\end{pmatrix}
+=
+\begin{pmatrix}
+0\\
+0
+\end{pmatrix}.
+\]
+
+Otteniamo il sistema:
+
+\[
+\begin{cases}
+\alpha+2\beta=0\\
+2\alpha+4\beta=0
+\end{cases}
+\]
+
+Le due equazioni sono equivalenti. Esistono quindi infinite soluzioni non banali; ad esempio, scegliendo \(\alpha=-2\) e \(\beta=1\), si ottiene:
+
+\[
+-2v_1+v_2=
+\begin{pmatrix}
+0\\
+0
+\end{pmatrix}.
+\]
+
+I due vettori sono dunque linearmente dipendenti.
+
+\paragraph{Significato geometrico.}
+
+Combinando linearmente due vettori dipendenti, possiamo ottenere soltanto vettori appartenenti alla retta che li contiene. Non possiamo generare qualsiasi vettore del piano, perché i due vettori non introducono due direzioni distinte.
+
+\subsection{Riepilogo geometrico}
+
+Nel piano \(\mathbb{R}^2\), per due vettori non entrambi nulli, possiamo riassumere il concetto nel modo seguente:
+
+\begin{itemize}
+    \item \textbf{Vettori linearmente indipendenti:} i vettori non appartengono alla stessa retta passante per l'origine. Generano tutto il piano \(\mathbb{R}^2\).
+    \item \textbf{Vettori linearmente dipendenti:} i vettori appartengono alla stessa retta passante per l'origine. Generano al massimo una retta.
+\end{itemize}
+
+\textbf{Attenzione:} se almeno uno dei vettori è il vettore nullo, i vettori sono linearmente dipendenti. Inoltre, nel caso di due vettori non nulli, essere sulla stessa retta passante per l'origine equivale a essere multipli scalari l'uno dell'altro.
+
+\subsection{Collegamento con le matrici}
+
+Il concetto di indipendenza lineare è utile anche nello studio delle matrici, in particolare nella Ricerca Operativa.
+
+Consideriamo una matrice le cui colonne sono due vettori:
+
+\[
+A=
+\begin{pmatrix}
+1 & 2\\
+2 & 4
+\end{pmatrix}.
+\]
+
+Le colonne sono:
+
+\[
+A_1=
+\begin{pmatrix}
+1\\
+2
+\end{pmatrix},
+\qquad
+A_2=
+\begin{pmatrix}
+2\\
+4
+\end{pmatrix}.
+\]
+
+Poiché \(A_2=2A_1\), le colonne sono linearmente dipendenti e la matrice non ha rango massimo.
+
+Al contrario, se le colonne sono linearmente indipendenti, descrivono direzioni distinte. In particolare, una matrice quadrata \(2\times 2\) ha rango massimo pari a \(2\) se e solo se le sue due colonne sono linearmente indipendenti.
+
+Questo permette di collegare l'interpretazione geometrica dei vettori al concetto di rango di una matrice.
+
+
+
 \section{Funzioni Convesse}
 
 \subsection{Definizione Matematica}
