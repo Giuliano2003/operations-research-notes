@@ -32,6 +32,97 @@ A=
 In questa matrice il rango massimo è sempre 2, questo perchè ci sono due vettori sulle righe.
 
 
+\subsection{Cosa succede quando il rango è massimo ?}
+
+Sia $R \in \mathbb{R}^{N \times M}$ una matrice con $N$ righe e $M$ colonne.
+
+Il \textbf{rango} di una matrice è definito come il massimo numero di righe (o, equivalentemente, di colonne) linearmente indipendenti.
+
+Per qualsiasi matrice vale la seguente proprietà:
+
+\[
+    \operatorname{rank}(R) \leq \min\{N,M\}.
+\]
+
+Il rango non può quindi superare il numero di righe né il numero di colonne della matrice.
+
+Si dice che una matrice ha \textbf{rango massimo} (o \textit{full rank}) quando:
+
+\[
+    \boxed{\operatorname{rank}(R) = \min\{N,M\}.}
+\]
+
+In questo caso, la matrice contiene il massimo numero possibile di vettori linearmente indipendenti.
+
+\paragraph{Caso 1: $N < M$ (più colonne che righe)}
+
+Se la matrice ha più colonne che righe, il rango massimo è:
+
+\[
+    \operatorname{rank}(R) = N.
+\]
+
+Questo implica che:
+\begin{itemize}
+    \item Le $N$ righe sono tutte linearmente indipendenti.
+    \item Esistono $N$ colonne linearmente indipendenti.
+    \item Le $M$ colonne non possono essere tutte linearmente indipendenti, poiché $M > N$ e ciascuna colonna appartiene a $\mathbb{R}^N$.
+\end{itemize}
+
+Ad esempio, per una matrice $R \in \mathbb{R}^{3 \times 5}$, il rango massimo è $3$. Le tre righe possono essere tutte linearmente indipendenti, mentre tra le cinque colonne al massimo tre possono esserlo.
+
+\paragraph{Caso 2: $N > M$ (più righe che colonne)}
+
+Se la matrice ha più righe che colonne, il rango massimo è:
+
+\[
+    \operatorname{rank}(R) = M.
+\]
+
+Questo implica che:
+\begin{itemize}
+    \item Le $M$ colonne sono tutte linearmente indipendenti.
+    \item Esistono $M$ righe linearmente indipendenti.
+    \item Le $N$ righe non possono essere tutte linearmente indipendenti, poiché $N > M$ e ciascuna riga appartiene a $\mathbb{R}^M$.
+\end{itemize}
+
+\paragraph{Caso 3: $N = M$ (matrice quadrata)}
+
+Se la matrice è quadrata, il rango massimo è:
+
+\[
+    \operatorname{rank}(R) = N = M.
+\]
+
+In questo caso:
+\begin{itemize}
+    \item Tutte le righe sono linearmente indipendenti.
+    \item Tutte le colonne sono linearmente indipendenti.
+    \item La matrice è invertibile, ossia esiste $R^{-1}$.
+    \item Il determinante è diverso da zero: $\det(R) \neq 0$.
+\end{itemize}
+
+\paragraph{Interpretazione geometrica}
+
+Le colonne di una matrice $R \in \mathbb{R}^{N \times M}$ sono vettori appartenenti allo spazio $\mathbb{R}^{N}$, mentre le righe sono vettori appartenenti a $\mathbb{R}^{M}$.
+
+In uno spazio vettoriale di dimensione $d$, non possono esistere più di $d$ vettori linearmente indipendenti.
+
+Pertanto, se $M > N$, le $M$ colonne di $R$ non potranno mai essere tutte linearmente indipendenti, indipendentemente dai valori contenuti nella matrice.
+
+\paragraph{Osservazione fondamentale}
+
+Avere rango massimo \textbf{non significa necessariamente che tutte le righe e tutte le colonne siano linearmente indipendenti}.
+
+Significa, invece, che la matrice possiede il massimo numero di vettori linearmente indipendenti consentito dalle sue dimensioni:
+
+\[
+    \boxed{\operatorname{rank}(R) = \min\{N,M\}.}
+\]
+
+Solo nel caso di una matrice quadrata a rango massimo si può affermare che tutte le righe e tutte le colonne sono contemporaneamente linearmente indipendenti.
+
+
 \section{Funzioni Convesse}
 
 \subsection{Definizione Matematica}
