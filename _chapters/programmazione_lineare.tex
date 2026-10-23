@@ -3754,7 +3754,7 @@ Ecco i passi formali di una iterazione del simplesso:
 \begin{enumerate}
 \item Sia $B = [A_{B(1)} \dots A_{B(m)}]$ una matrice di base associata alla soluzione ammissibile $x$.
 \item Calcolare il costo ridotto $\bar{c}_j = c_j - c_B' B^{-1} A_j$ per le variabili non di base. Se $\bar{c}_j \ge 0$ per ogni $j$, l'algoritmo termina ($x$ è ottima). Altrimenti, scegliere un $j$ con $\bar{c}_j < 0$.
-\item Calcolare $d_B = B^{-1} A_j$. Se $u \le 0$, allora $\theta^* = \infty$ e il costo ottimo è $-\infty$.
+\item Calcolare $u = B^{-1} A_j$ $u = -d_B$. Se $u \le 0$, allora $\theta^* = \infty$ e il costo ottimo è $-\infty$.
 \item Calcolare $\theta^* = \min_{\{i \mid u_i > 0\}} \left\{ \frac{x_{B(i)}}{u_i} \right\}$.
 \item Sia $l$ l'indice per cui si realizza il minimo. Rimpiazzare $A_{B(l)}$ con $A_j$ per formare $\bar{B}$ e aggiornare la soluzione.
 \end{enumerate}
@@ -3801,6 +3801,18 @@ Quindi a livello algebrico, invece, cambia tutto il quadro di riferimento:
     \item Matrice di base $B$: La colonna della variabile uscente viene eliminata e sostituita dalla colonna $A_{\cdot j}$ della variabile entrante.
     \item Partizione degli indici dei vettori ($x_B$ e $x_N$): L'indice $j$ viene trasferito nell'insieme degli indici di base $B$, mentre l'indice della variabile uscente viene spostato tra quelli non di base $N$.
 \end{itemize}
+Nel pivot degenere sia la variabile entrante sia quella uscente hanno valore zero, ma appartengono a insiemi diversi.
+
+\textbf{Prima del pivot}:
+\begin{itemize}
+    \item La variabile entrante \(x_j=0\), perché è non di base (\(j\in N\)).
+    \item La variabile uscente \(x_i=0\), perché è una variabile di base degenere (\(i\in B\)).
+\end{itemize}
+\textbf{Dopo il pivot:}
+\begin{itemize}
+    \item La variabile entrante \(x_j=0\), ma ora è di base (\(j\in B'\)).
+    \item La variabile uscente \(x_i=0\), ma ora è non di base (\(i\in N'\))
+\end{itemize}
 \item  La soluzione ammissibile di base corrente $x$ non è degenere. Supponiamo di riuscire a calcolare un valore positivo per $\theta^*$, ma ottenendo una
 nuova soluzione $x$ degenere.
 
@@ -3835,8 +3847,10 @@ Per quanto riguarda il caso in cui più di una variabile non di base abbia un co
 Per quanto riguarda il caso in cui a più di una variabile di base corrisponda il minimo valore per $\theta^*$, si procede adottando la \textit{regola di Bland}, cioè fra tutte le variabili di base candidate ad uscire dalla base, si sceglie quella avente indice minore.
 
 Riassumendo: \\
+
+
 \fbox{
-\parbox{\textwidth}{
+\parbox{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}{
 \textbf{Regola di Bland}\\[0.5em]
 Se $\bar{c}_{j_1} < 0, \cdots, \bar{c}_{j_k} < 0, \quad j_1, \dots, j_k \notin \{B(1), \dots, B(m)\}$,\\[0.5em]
 si decide di far entrare in base la variabile
@@ -3851,18 +3865,45 @@ B(l) = \min \left\{ l_h \;\middle|\; -\frac{x_{B(l_h)}}{d_{B(l_h)}} = \theta^* \
 }
 }
 
+\newpage
+
 \textbf{Complessità del Metodo del Simplesso}\
 La complessità di ogni singola iterazione dipende principalmente dalla risoluzione dei sistemi lineari e dal calcolo dei costi ridotti. Risolvere $p'B = c_B'$ e $Bu = A_j$ costa $O(m^3)$, mentre calcolare tutti i costi ridotti richiede $O(mn)$. Dunque, la complessità per iterazione è $O(m^3 + mn)$.
 
 \subsection{Il Metodo del Simplesso Revisionato}
+Se fosse disponibile un metodo efficiente con il quale ottenere la matrice $B^{-1}$ all'inizio di ogni iterazione, del simplesso standard, i vettori $c'_BB^{-1}$ e $B^{-1}A_j$ sarebbero immediatamente ottenibili tramite semplice moltiplicazione vettoriale.
+L'implementazione alternativa descritta in questo paragrafo fornisce appunto tale metodo:
 
-Il Simplesso Revisionato è un'implementazione che ad ogni passo aggiorna direttamente la matrice inversa $B^{-1}$ tramite operazioni elementari, evitando di risolvere $O(m^3)$ sistemi lineari da zero.
+Sia la matrice di base all'inizio di un generica iterazione i
+\[
+B = \begin{bmatrix} A_{B(1)} & A_{B(2)} & \dots & A_{B(l-1)} & A_{B(l)} & A_{B(l+1)} & \dots & A_{B(m)} \end{bmatrix}
+\]
+e sia 
+\[
+\bar{B} = \begin{bmatrix} A_{B(1)} & A_{B(2)} & \dots & A_{B(l-1)} & A_j & A_{B(l+1)} & \dots & A_{B(m)} \end{bmatrix}
+\]  
+la matrice di base all'inizio dell'iterazione successiva $i+1$.
+Per poter eseguire tutti i passi previsti all'iterazione $i + 1$, dovremmo poter disporre della matrice inversa $\bar{B^{-1}}$.
+Come si può facilmente osservare le matrici $B$ e $\bar{B}$ differiscono per la colonna $l$.ma ($B$ contiene $A_{B(l)}$, mentre $\bar{B}$ contiene $A_j$ corrispondente alla variabile entrante in base).
+Dunque è logico pensare che anche le matrici $B^{-1}$ e $\bar{B^{-1}}$ siano simili.
+Infatti, come mostrato di seguito, la matrice $\bar{B^{-1}}$ è ottenibile da $B^{-1}$ attraverso una serie di operazioni matriciali elementari applicata alle righe di $B^{-1}$
 
 \begin{definition}{Operazione elementare di riga}
-Data una matrice $A \in \mathbb{R}^{m \times n}$, si definisce operazione elementare di riga l'operazione di aggiungere ad una riga $r_i$ un multiplo di un'altra riga $r_j$.
+Data una matrice $A \in \mathbb{R}^{m \times n}$, si definisce operazione elementare di riga effettuata su $A$ l'operazione di aggiungere ad una riga $r_i$, $i$ = 1,2,$\dots$,$m$ una costante moltiplicata per la riga $r_j$ $j$ = 1,2,$\dots$,$m$, con $j$ possibilmente anche coincidente con $i$ stesso (quindi proprio una costante moltiplicata per una riga).
 \end{definition}
 
-Invece di ricalcolare $\bar{B}^{-1}$, si affianca $B^{-1}$ alla colonna $u = B^{-1}A_j$ usata per il pivoting. Si opera sulla matrice affiancata $[B^{-1} \mid u]$ per trasformare la colonna $u$ nel vettore $e_l$ (dove $l$ è l'indice della variabile uscente).
+
+Ora, all'inizio dell'iterazione $i+1$ si dispone della matrice
+$B^{-1}$, a partire dalla quale si può ottenere la matrice
+$\bar{B}^{-1}$ effettuando una serie di operazioni elementari
+sulle righe della matrice $[B^{-1}\mid u]$.
+
+In particolare, supponendo che $l$ sia l'indice della variabile
+candidata ad uscire dalla base, allora si deve applicare alla
+matrice $[B^{-1}\mid u]$ una serie di operazioni elementari
+tese a trasformarne l'ultima colonna (quella contenente $u$)
+in una colonna contenente tutti $0$ ed un solo $1$ in
+corrispondenza della riga $l$-ma.
 
 \begin{example}{Aggiornamento di $B^{-1}$}
 Supponiamo di avere:
@@ -3886,6 +3927,8 @@ $$[\bar{B}^{-1} \mid e_3] = \begin{bmatrix} 9 & -4 & -1 & 0 \\ -6 & 6 & 3 & 0 \\
 
 Le prime tre colonne formano la nuova $\bar{B}^{-1}$.
 \end{example}
+
+\newpage
 
 \subsection{Il Metodo del Simplesso Tabellare}
 
