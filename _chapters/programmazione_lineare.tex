@@ -3285,7 +3285,7 @@ Nel corso di questo paragrafo supporremo di dover risolvere il seguente generico
 & x \ge 0,
 \end{aligned}
 \end{equation}
-dove $A \in \mathbb{R}^{m \times n}$ può avere rango massimo $m$. Con $A_i$ indicheremo l'i-esima colonna di $A$, mentre con $a_i'$ ne indicheremo l'i-esima riga. Supporremo, inoltre, che $P$ sia la regione ammissibile corrispondente al problema.
+dove $A \in \mathbb{R}^{m \times n}$ può ha rango $m$ (il massimo, perchè $m$ < $n$). Con $A_i$ indicheremo l'i-esima colonna di $A$, mentre con $a_i'$ ne indicheremo l'i-esima riga. Supporremo, inoltre, che $P$ sia la regione ammissibile corrispondente al problema.
 Supponendo sempre che $m$ < $n$.
 
 Da quanto detto nei precedenti paragrafi è emerso che se un problema di PL formulato in forma standard ammette una soluzione ottima finita, allora esiste una soluzione ammissibile di base ottima (\textbf{i teoremi di prima}). Il metodo del simplesso si basa su tale considerazione e cerca una soluzione ottima al problema muovendosi da una soluzione ammissibile di base ad una adiacente sempre nella direzione lungo la quale si verifica un decremento del valore corrente della funzione obiettivo. Nel momento in cui viene raggiunta una soluzione ammissibile di base a partire dalla quale non è possibile intraprendere più alcuna direzione migliorativa del valore corrente della funzione obiettivo, la soluzione ammissibile di base corrente è ottima e l'algoritmo termina.
@@ -3660,7 +3660,7 @@ Ora distinguiamo due casi.
     \]
     Se il costo ridotto della variabile entrante è negativo, la funzione obiettivo continua a diminuire indefinitamente. Il problema è quindi illimitato inferiormente.
     \textbf{Nota: Io posso aumentare $\theta$ a piacere basta che sia maggiore di 0, senza preoccuparmi del se vengono rispettati i vincoli del sè} $x+\theta d$ è una soluzione di base ammissibile,
-    questo perchè abbiamo già visto nella dimostrazione di prima, che questo dipende solo da $Ad = 0$, l'unica cosa da vedere è l'ammissilibtà, cioè che tutti gli elementi siano >=0, ma nel caso 1 è soddisfatto perchè le componenti di $d_B$ sono positive.
+    questo perchè abbiamo già visto nella dimostrazione di prima, che questo dipende solo da $Ad = 0$, l'unica cosa da vedere è l'ammissilibtà, cioè che tutti gli elementi siano >=0, ma nel caso 1 è soddisfatto perchè le componenti di $d_B$ sono positive, $x$ è non negativo e $\theta$ è maggiore di 0
     \item \textbf{Caso 2 : almeno una componente di $d_B$ è negativa} : 
     Se \(d_{B(i)}<0\), la corrispondente variabile di base diminuisce quando aumentiamo \(\theta\).
     Per mantenere la sua non negatività:
@@ -3709,6 +3709,7 @@ Quindi:
 \[
 \theta^*=\min\{3,4\}=3
 \]
+\textbf{$\theta$ indica lo spostamento massimo che io posso fare in quella direzione, mantenendo i vincoli}.
 
 Alla fine dello spostamento:
 \[
@@ -3730,9 +3731,9 @@ Quindi ricapitolando:
         \item  Spostamento ($\theta > 0$): Scegliendo di far entrare in base una variabile $x_j$, rilasci il suo vincolo di non-negatività ($x_j$ diventa $>0$).  In questa fase ti stai muovendo lungo uno spigolo del poliedro e hai temporaneamente $n-1$ vincoli attivi
         \item  Arrivo ($\theta = \theta^*$): Scegliendo il passo massimo ammissibile $\theta^* = \min \left\{ -\frac{x_{B(i)}}{d_{B(i)}} \right\}$, la prima variabile di base $x_{B(l)}$ che tocca zero attiva un nuovo vincolo di non-negatività ($x_{B(l)} = 0$)
     \end{itemize}
-    \item Conteggio finale dei vincoli attivi in $\bar{x}$: 
+    \item Conteggio finale dei vincoli attivi in $x + \theta d$: 
     \begin{itemize}
-        \item  $m$ vincoli di uguaglianza $A\bar{x} = b$.   
+        \item  $m$ vincoli di uguaglianza $A (x + \theta d) = b$. Questo perchè per la questione che abbiamo detto prima deve essere solo soddisfatto $Ad = 0$   
         \item $n - m - 1$ vincoli di non-negatività delle variabili rimaste fuori base.
         \item $1$ nuovo vincolo di non-negatività $x_{B(l)} = 0$ della variabile uscita dalla base.
     \end{itemize}
@@ -3753,38 +3754,107 @@ Ecco i passi formali di una iterazione del simplesso:
 \begin{enumerate}
 \item Sia $B = [A_{B(1)} \dots A_{B(m)}]$ una matrice di base associata alla soluzione ammissibile $x$.
 \item Calcolare il costo ridotto $\bar{c}_j = c_j - c_B' B^{-1} A_j$ per le variabili non di base. Se $\bar{c}_j \ge 0$ per ogni $j$, l'algoritmo termina ($x$ è ottima). Altrimenti, scegliere un $j$ con $\bar{c}_j < 0$.
-\item Calcolare $u = B^{-1} A_j$. Se $u \le 0$, allora $\theta^* = \infty$ e il costo ottimo è $-\infty$.
+\item Calcolare $d_B = B^{-1} A_j$. Se $u \le 0$, allora $\theta^* = \infty$ e il costo ottimo è $-\infty$.
 \item Calcolare $\theta^* = \min_{\{i \mid u_i > 0\}} \left\{ \frac{x_{B(i)}}{u_i} \right\}$.
 \item Sia $l$ l'indice per cui si realizza il minimo. Rimpiazzare $A_{B(l)}$ con $A_j$ per formare $\bar{B}$ e aggiornare la soluzione.
 \end{enumerate}
+Il metodo del simplesso è inizializzato con una qualunque soluzione di base
+ammissibile, che è garantita esistere per problemi ammissibili in forma standard.
+
+
+\newpage
 
 \begin{theorem}{Terminazione del Simplesso}
-Sia dato un problema di PL avente regione ammissibile $P$ non vuota. Supponiamo che ogni soluzione ammissibile al problema sia non degenere, allora il metodo del simplesso termina dopo un numero finito di iterazioni.
+Sia dato un problema di PL avente regione ammissibile $P$ non vuota. Supponiamo che ogni soluzione ammissibile al problema sia \textbf{non degenere}, allora il metodo del simplesso termina dopo un numero finito di iterazioni.
+Ricorda che : \\ 
+Una soluzione di base ammissibile è non degenere se tutte le sue \(m\) variabili di base sono strettamente positive:
+\[
+\boxed{x_{B_i}>0 \quad \forall i=1,\ldots,m}
+\]
 \end{theorem}
 
-\textbf{Il Metodo del Simplesso per problemi degeneri: regole di pivoting}\
-In presenza di degenerazione, $\theta^*$ può risultare nullo. Ciò può portare a ciclare tra le basi. Per ovviare a questo problema si usa la Regola di Bland.
+\subsection{Il Metodo del Simplesso per problemi degeneri: regole di pivoting}
+Supponiamo di applicare il metodo del simplesso per risolvere un problema
+di PL che ammetta qualche soluzione ammissibile di base degenere. Allora,
+nel corso dell'algoritmo possono verificarsi i seguenti due casi.
+\begin{enumerate}
+    \item La soluzione ammissibile di base corrente $x$ è \textbf{degenere}. In questo caso,
+$\theta^*$ può risultare nullo e di fatto la nuova soluzione $\hat{x}$ coinciderebbe
+con x stessa (due basi differenti cui corrisponde la stessa soluzione di
+base).
 
-\begin{example}{Regola di Bland}
-La regola di Bland risolve i casi di parità (ex aequo) scegliendo sempre l'indice minore.
-Se più variabili hanno costo ridotto negativo, entra in base la variabile $x_j$ con:
+Questo perchè se $x$ è degenere, significa che una sua variabile di base è uguale a 0, quindi quando si fa il test
+\[
+    \boxed{
+    \theta^*=
+    \min_{\substack{i=1,\ldots,m\\d_{B(i)}<0}}
+    \left\{-\frac{x_{B(i)}}{d_{B(i)}}\right\}
+    }
+\]
+per scegliere $\theta$ cioè l'ampiezza in cui devo muovermi, questo è 0, cioè $\theta = 0$, questo perchè il minimo è uguale a 0, e non ci può essere nessuno di piu piccolo.
+Quindi $x + \theta d$, $d = 0$ $\implies$ $x$.
+Quindi si annulla completamente la direzione $d$ che avevamo scelto per spostarci.
+\textbf{A livello di matrice di base però, la struttura cambia}. Una variabile esce dalla base (con indice $j$ relativa alla direzione $d$) e la variabile entrante vi subentra (assumendo valore pari a $0$, che è proprio quella variabile di base che aveva già valore pari a zero, ovviamente però il cambiamento non avviene perchè poi $\theta$ = 0). Si passa quindi da una base $B_1$ a una nuova base $B_2$, mantenendo però inalterata la soluzione di base associata.
+Quindi la matrice di base cambia, quindi la variabile che entra in base $j$ e quella che esce fuori base, cioè la variabile di base uguale a 0, questi cambiamenti sono riportati nella matrice di base, ma non vengono "attuati" perchè la direzione è uguale a 0.
+Quindi a livello algebrico, invece, cambia tutto il quadro di riferimento:
+\begin{itemize}
+    \item Matrice di base $B$: La colonna della variabile uscente viene eliminata e sostituita dalla colonna $A_{\cdot j}$ della variabile entrante.
+    \item Partizione degli indici dei vettori ($x_B$ e $x_N$): L'indice $j$ viene trasferito nell'insieme degli indici di base $B$, mentre l'indice della variabile uscente viene spostato tra quelli non di base $N$.
+\end{itemize}
+\item  La soluzione ammissibile di base corrente $x$ non è degenere. Supponiamo di riuscire a calcolare un valore positivo per $\theta^*$, ma ottenendo una
+nuova soluzione $x$ degenere.
 
+\end{enumerate}
+Dunque, ciò che può accadere è che si passi da una base ad un'altra rimanendo fermi alla stessa soluzione di base ammissibile degenere. Se si è fortunati, si può individuare nel frattempo una direzione ammissibile di
+miglioramento del valore della funzione obiettivo, ma può anche accadere
+che l'algoritmo cicli indefinitamente.
+Se l'algoritmo entra in un ciclaggio vero e proprio:
+\begin{enumerate}
+    \item Il ciclaggio si verifica quando la sequenza di cambi di base a passo nullo riporta l'algoritmo a una base già visitata in precedenza: $B_1 \to B_2 \to \dots \to B_k \to B_1$.
+    \item Poiché il metodo del simplesso classico è un algoritmo deterministico (se non diversamente istruito, applica sempre lo stesso criterio per scegliere la variabile entrante e uscente), una volta tornato in $B_1$ ripeterà esattamente la stessa sequenza all'infinito.
+    \item In questa condizione, non si troverà mai una nuova SBA né si migliorerà la funzione obiettivo, perché l'algoritmo è bloccato in un loop chiuso sullo stesso vertice.
+\end{enumerate}
 
-$$j = \min \{ h \mid \bar{c}_h < 0 \}$$
+Tutto ciò può essere ovviato adottando delle semplici regole nello scegliere le variabili che escono dalla base
+e quelle che entrano in caso di ex equo. Cioè \textbf{rispettivamente} nel caso in cui a piu di una
+variabile di base corrisponda il minimo valore per $\theta^*$ e nel caso in cui piu di
+una variabile non di base abbia un costo ridotto negativo.
+Per quanto riguarda il caso in cui più di una variabile non di base abbia un costo ridotto negativo, si può procedere adottando uno dei seguenti criteri:
 
+\begin{enumerate}
+    \item scegliere l'indice $j$ tale che $|\bar{c}_j|$ sia massimo.
+    Dal momento che il costo ridotto esprime il tasso di decremento del valore della funzione obiettivo, è del tutto logico pensare di scegliere come variabile entrante in base quella cui corrisponda il maggiore decremento.
 
-Se più variabili di base restituiscono lo stesso valore minimo di $\theta^*$, esce dalla base la variabile $x_{B(l)}$ tale che:
+    \item scegliere l'indice $j$ tale che $\theta^* |\bar{c}_j|$ sia massimo.
+    Questa regola se adottata fa in modo che il metodo termini dopo un minor numero di iterazioni, però ad ogni iterazione richiede un maggiore sforzo computazionale, dato che va calcolato $\theta^*$ per ogni $\bar{c}_j < 0$.
 
+    \item scegliere il più piccolo indice $j$ tale che $\bar{c}_j < 0$.
+    E' questa la regola più semplice e computazionalmente economica, nota come \textit{regola di Bland}.ì
+\end{enumerate}
 
-$$B(l) = \min \left\{ B(h) \mid \frac{x_{B(h)}}{u_h} = \theta^* \right\}$$
+Per quanto riguarda il caso in cui a più di una variabile di base corrisponda il minimo valore per $\theta^*$, si procede adottando la \textit{regola di Bland}, cioè fra tutte le variabili di base candidate ad uscire dalla base, si sceglie quella avente indice minore.
 
-
-\end{example}
+Riassumendo: \\
+\fbox{
+\parbox{\textwidth}{
+\textbf{Regola di Bland}\\[0.5em]
+Se $\bar{c}_{j_1} < 0, \cdots, \bar{c}_{j_k} < 0, \quad j_1, \dots, j_k \notin \{B(1), \dots, B(m)\}$,\\[0.5em]
+si decide di far entrare in base la variabile
+\[
+j = \min \{ j_h \mid \bar{c}_{j_h} < 0 \}.
+\]
+Se $B(l_1), \cdots, B(l_k) \in \{B(1), \dots, B(m)\}$ t.c. $\frac{x_{B(l_h)}}{d_{B(l_h)}} = \theta^*, \quad h = 1, \dots, k$,\\[0.5em]
+si decide di far uscire dalla base la variabile
+\[
+B(l) = \min \left\{ l_h \;\middle|\; -\frac{x_{B(l_h)}}{d_{B(l_h)}} = \theta^* \right\}.
+\]
+}
+}
 
 \textbf{Complessità del Metodo del Simplesso}\
 La complessità di ogni singola iterazione dipende principalmente dalla risoluzione dei sistemi lineari e dal calcolo dei costi ridotti. Risolvere $p'B = c_B'$ e $Bu = A_j$ costa $O(m^3)$, mentre calcolare tutti i costi ridotti richiede $O(mn)$. Dunque, la complessità per iterazione è $O(m^3 + mn)$.
 
-\subsection{2.7.3 Il Metodo del Simplesso Revisionato}
+\subsection{Il Metodo del Simplesso Revisionato}
 
 Il Simplesso Revisionato è un'implementazione che ad ogni passo aggiorna direttamente la matrice inversa $B^{-1}$ tramite operazioni elementari, evitando di risolvere $O(m^3)$ sistemi lineari da zero.
 
@@ -3817,7 +3887,7 @@ $$[\bar{B}^{-1} \mid e_3] = \begin{bmatrix} 9 & -4 & -1 & 0 \\ -6 & 6 & 3 & 0 \\
 Le prime tre colonne formano la nuova $\bar{B}^{-1}$.
 \end{example}
 
-\subsection{2.7.4 Il Metodo del Simplesso Tabellare}
+\subsection{Il Metodo del Simplesso Tabellare}
 
 Il simplesso tabellare mantiene in un'unica tabella, detta \textit{tableau}, tutte le informazioni, aggiornando iterativamente l'intera matrice $B^{-1}[b \mid A]$. La riga in alto (riga zero) contiene il valore della funzione obiettivo cambiato di segno e i costi ridotti $\bar{c}$.
 
@@ -3882,7 +3952,7 @@ Caso migliore & $O(mn)$ & $O(m^2)$ \\
 \end{tabular}
 \end{center}
 
-\subsection{2.7.6 Come trovare una soluzione di base ammissibile iniziale}
+\subsection{Come trovare una soluzione di base ammissibile iniziale}
 
 Se il problema non possiede una base identità ovvia (ad esempio se ci sono vincoli di uguaglianza o di $\ge$), non è semplice trovare una soluzione di base ammissibile da cui far partire il simplesso. In questi casi si ricorre a un problema ausiliario.
 
