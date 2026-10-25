@@ -4524,7 +4524,26 @@ La differenza è conseguenza delle incongruenze aritmetiche nei tableau pubblica
 \newpage
 
 \subsection{Confronto fra il Simplesso Revisionato ed il Simplesso Tabellare}
-Il metodo tabellare aggiorna ad ogni passo l'intera matrice di dimensioni $(m+1) \times (n+1)$, con costo $O(mn)$. Il metodo revisionato aggiorna solo $B^{-1}$ (dimensione $m \times m$) e ricalcola i costi ridotti.
+In questo paragrafo vengono descritti i vantaggi e gli svantaggi dell'utilizzo
+del simplesso revisionato e del simplesso tabellare in termini di complessità
+computazionale.
+Ad ogni iterazione il metodo tabellare effettua operazioni aritmentiche
+elementari per aggiornare il tableau:
+La complessità di una singola iterazione:
+\begin{enumerate}
+    \item Scegliere la variabile entrante: \(O(n)\), esaminando la riga dei costi ridotti.
+    \item Scegliere la variabile uscente: \(O(m)\), applicando il test del rapporto minimo.
+    \item Aggiornare il tableau alla fine dell'iterazione: \(O(mn)\), eseguendo le operazioni di pivot su tutte le righe e colonne.
+\end{enumerate}
+Il costo dominante è quindi:
+\[
+\boxed{O(mn)}
+\]
+Il simplesso revisionato effettua operazioni analoghe per aggiornare
+$B^{-1}$ e $c_B^{T}B^{-1}$ e, poiché solo $O(m^2)$ elementi sono
+aggiornati, la complessità di ogni sua iterazione è
+$O(m^2) + O(mn)$, dove $O(mn)$ è la complessità computazionale
+nel caso peggiore dovuta al calcolo dei costi ridotti.
 
 \begin{center}
 \begin{tabular}{lcc}
@@ -4537,16 +4556,117 @@ Caso migliore & $O(mn)$ & $O(m^2)$ \\
 \end{center}
 
 \subsection{Come trovare una soluzione di base ammissibile iniziale}
+Il metodo del simplesso prende in input una soluzione di base iniziale ammissibile.
+In alcuni casi è semplice individuare una siffatta soluzione, infatti prendiamo il caso di dover risolvere un problema di programmazione lineare definito da un insieme di vincoli del tipo $Ax <= b$, \textbf{con $b$ >= 0}.
+Ricordando che il simplesso risolve problemi di programmazione lineari, in forma standard, possiamo trasformare il problema originale in forma standard, introducendo un vettore di variabili di slack, $s \in \mathbb{R} ^m, s >= 0$.
+Moltiplicando le variabili di slack per la matrice identità $I \in \mathbb{R}^{m \times m}$, il sistema di vincoli viene riscritto come:
+$$Ax + Is = b$$
+Cioè parlando chiaramente il sistema viene riscritto cosi:
 
-Se il problema non possiede una base identità ovvia (ad esempio se ci sono vincoli di uguaglianza o di $\ge$), non è semplice trovare una soluzione di base ammissibile da cui far partire il simplesso. In questi casi si ricorre a un problema ausiliario.
+\[
+\begin{aligned}
+&\begin{pmatrix}
+a_{11} & a_{12} & \dots & a_{1n} \\
+a_{21} & a_{22} & \dots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{m1} & a_{m2} & \dots & a_{mn}
+\end{pmatrix}
+\begin{pmatrix}
+x_1 \\ x_2 \\ \vdots \\ x_n
+\end{pmatrix}
++
+\begin{pmatrix}
+1 & 0 & \dots & 0 \\
+0 & 1 & \dots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \dots & 1
+\end{pmatrix}
+\begin{pmatrix}
+s_1 \\ s_2 \\ \vdots \\ s_m
+\end{pmatrix}
+=
+\begin{pmatrix}
+b_1 \\ b_2 \\ \vdots \\ b_m
+\end{pmatrix}
+\\[10pt]
+&\Longleftrightarrow
+A =
+\begin{pmatrix}
+    a_{11} x_1 + a_{12} x_2 + \dots + a_{1n} x_n + s_1\\
+    a_{21} x_1 + a_{22} x_2 + \dots + a_{2n} x_n + s_2 \\
+    \dots \\
+    a_{m1} x_1 + a_{m2} x_2 + \dots + a_{mn} x_n + s_m\\
+\end{pmatrix} = 
+\begin{pmatrix}
+    b_1 \\ b_2 \\ \dots \\ b_m
+\end{pmatrix}
+\end{aligned}
+\]
+Quindi il sistema $A$ diventa il quel modo, trasformando la matrice dei vincoli in una matrice:
+\[
+A \in \mathbb{R} ^ {m \times (n + m)} =
+[A\mid I]=
+\begin{pmatrix}
+a_{11}&a_{12}&\dots&a_{1n}&1&0&0\dots&0\\
+a_{21}&a_{22}&\dots&a_{2n}&0&1&0\dots&0\\
+\dots \\
+a_{m1}&a_{m2}&\dots&a_{mn}&0&0&0\dots&1\\
+\end{pmatrix}
+\]
+e la soluzione x in :
+\[
+\begin{pmatrix}
+    x_1 \\ x_2 \\ \dots \\ x_n \\ s_1 \\ \dots \\ s_m
+\end{pmatrix}
+\]
+Ponendo $x_1,x_2,\dots,x_n$ = 0, si ottiene:
 
-Dato il problema $\min \{ c'x \mid Ax = b, x \ge 0 \}$ con $b \ge 0$, si introducono delle variabili \textit{artificiali} $y_1, y_2, \dots, y_m \ge 0$ e si minimizza la loro somma:
-\begin{align*}
-\min \quad & y_1 + y_2 + \dots + y_m \
-\text{s.a} \quad & Ax + Iy = b \
-& x \ge 0, y \ge 0
-\end{align*}
-La base iniziale per questo problema ausiliario è fornita banalmente dalle variabili artificiali $y=b$. Si applica il simplesso; se il valore ottimo trovato è strettamente positivo, il problema originario è inammissibile. Se il valore ottimo è nullo, si è trovata una base ammissibile per il problema originale.
+\[
+s=b.
+\]
+
+Pertanto, la soluzione di base ammissibile iniziale per il problema formulato in modo standard è:
+
+\[
+\boxed{
+\begin{pmatrix}x\\s\end{pmatrix}
+=
+\begin{pmatrix}0\\b\end{pmatrix}
+}
+\qquad \text{con } b\geq 0.
+\]
+,dove le $x$ attivano gli n vincoli del sistema cioè quei vincoli $x_1 >=0 ecc..$ e $s$ attiva gli $m$ vincoli del sistema trasformato, attivando cosi $n + m$ vincoli lineramenti indipendenti.
+
+La matrice di base associata è:
+
+\[
+\boxed{B=I_m}
+\]
+
+\begin{example}{Esempio}
+Introducendo le variabili di slack otteniamo:
+\[
+\begin{cases}
+2x_1+3x_2+s_1=12\\
+x_1+2x_2+s_2=8\\
+x_1,x_2,s_1,s_2\geq0
+\end{cases}
+\]
+
+Ora abbiamo 4 variabili e 2 vincoli di uguaglianza.
+
+La soluzione è:
+\[
+\boxed{(x_1,x_2,s_1,s_2)=(0,0,12,8)}
+\]
+Questo soddisfa $n + m$ vincoli lineramenti indipendenti, ad esempio soddisfa il primo $$
+2*0 + 3 * 0 + 12 + 8 * 0 = 12 
+$$
+\end{example}
+Tuttavia, in generale individuare una soluzione di base ammissibile iniziale non è semplice, in quanto, come
+vedremo tra breve, spesso richiede la soluzione di un problema di program
+mazione lineare ausiliario.
+
 
 \subsubsection*{Il metodo delle due fasi}
 Questo approccio strutturato divide il lavoro in:
