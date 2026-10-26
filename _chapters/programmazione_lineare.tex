@@ -4246,6 +4246,117 @@ sia reso nullo, questo perchè intuitivamente la variabile $j$-esima nella pross
 
 \newpage
 
+\begin{observation}{$B^{-1}B=I$}
+
+Ricordiamo una proprietà fondamentale del metodo del simplesso tabellare:
+
+\[
+\boxed{B^{-1}B=I}
+\]
+
+Sia $A \in \mathbb{R}^{m \times n}$ la matrice dei vincoli e sia $B \in \mathbb{R}^{m \times m}$ una matrice di base, ottenuta selezionando $m$ colonne linearmente indipendenti di $A$.
+
+Nel tableau del simplesso, la matrice dei coefficienti dei vincoli è rappresentata da:
+
+\[
+B^{-1}A.
+\]
+
+Poiché le colonne di $B$ sono anche colonne di $A$, quando vengono moltiplicate per $B^{-1}$ otteniamo:
+
+\[
+B^{-1}B=I.
+\]
+
+Questo significa che, \textbf{indipendentemente dalla base scelta}, le colonne del tableau associate alle variabili di base formano sempre una matrice identità.
+
+In particolare, se $x_{B(l)}$ è una variabile di base associata alla riga $l$, allora:
+
+\[
+\boxed{B^{-1}A_{B(l)}=e_l}
+\]
+
+dove $e_l$ è il vettore canonico avente valore $1$ nella posizione $l$ e $0$ in tutte le altre.
+
+Pertanto, nel tableau:
+\begin{itemize}
+    \item all'incrocio tra la riga $l$ e la colonna della variabile di base $x_{B(l)}$ troviamo sempre $1$;
+    \item in tutte le altre righe della stessa colonna troviamo $0$.
+\end{itemize}
+
+\textbf{Esempio numerico.}
+
+Supponiamo di avere la matrice dei vincoli:
+
+\[
+A=
+\begin{pmatrix}
+2 & 1 & 3\\
+1 & 1 & 2
+\end{pmatrix}.
+\]
+
+Scegliamo come variabili di base $x_1$ e $x_2$. La matrice di base è quindi:
+
+\[
+B=
+\begin{pmatrix}
+2 & 1\\
+1 & 1
+\end{pmatrix}.
+\]
+
+La sua inversa è:
+
+\[
+B^{-1}=
+\begin{pmatrix}
+1 & -1\\
+-1 & 2
+\end{pmatrix}.
+\]
+
+Calcolando la matrice trasformata dei vincoli otteniamo:
+
+\[
+B^{-1}A=
+\begin{pmatrix}
+1 & -1\\
+-1 & 2
+\end{pmatrix}
+\begin{pmatrix}
+2 & 1 & 3\\
+1 & 1 & 2
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 0 & 1\\
+0 & 1 & 1
+\end{pmatrix}.
+\]
+
+Osserviamo che le prime due colonne, associate alle variabili di base $x_1$ e $x_2$, formano la matrice identità:
+
+\[
+\underbrace{
+\begin{pmatrix}
+1 & 0\\
+0 & 1
+\end{pmatrix}
+}_{B^{-1}B=I}.
+\]
+
+Quindi:
+\begin{itemize}
+    \item $x_1$ è associata alla prima riga e presenta coefficiente $1$ nella prima riga e $0$ nella seconda;
+    \item $x_2$ è associata alla seconda riga e presenta coefficiente $1$ nella seconda riga e $0$ nella prima.
+\end{itemize}
+
+
+\end{observation}
+
+\newpage
+
 \subsection{Esempio del Metodo del simplesso tabellare}
 
 \paragraph{Problema originale.}
@@ -4556,6 +4667,7 @@ Caso migliore & $O(mn)$ & $O(m^2)$ \\
 \end{center}
 
 \subsection{Come trovare una soluzione di base ammissibile iniziale}
+\subsubsection{Metodo delle due fasi}
 Il metodo del simplesso prende in input una soluzione di base iniziale ammissibile.
 In alcuni casi è semplice individuare una siffatta soluzione, infatti prendiamo il caso di dover risolvere un problema di programmazione lineare definito da un insieme di vincoli del tipo $Ax <= b$, \textbf{con $b$ >= 0}.
 Ricordando che il simplesso risolve problemi di programmazione lineari, in forma standard, possiamo trasformare il problema originale in forma standard, introducendo un vettore di variabili di slack, $s \in \mathbb{R} ^m, s >= 0$.
@@ -4666,11 +4778,460 @@ $$
 Tuttavia, in generale individuare una soluzione di base ammissibile iniziale non è semplice, in quanto, come
 vedremo tra breve, spesso richiede la soluzione di un problema di program
 mazione lineare ausiliario.
+Si consideri il seguente problema:
+
+\[
+\begin{array}{ll}
+\min & c'x \\
+\text{s.a} & \\
+& Ax = b \\
+& x \ge 0.
+\end{array}
+\]
+
+Sappiamo che senza perdita di generalità possiamo assumere che $b \ge 0$. Introducendo un vettore di \textit{variabili ausiliarie} $y \in \mathbb{R}^m$, applichiamo il metodo del simplesso per risolvere il seguente problema ausiliario:
+
+\[
+\begin{array}{ll}
+\min & y_1 + y_2 + \dots + y_m \\
+\text{s.a} & \\
+& Ax + Iy = b \\
+& x \ge 0 \\
+& y \ge 0.
+\end{array}
+\]
+
+Possiamo riscrivere il sistema come come:
+\[
+\underbrace{
+\begin{bmatrix}
+A&I
+\end{bmatrix}
+}_{\widetilde A}
+\underbrace{
+\begin{bmatrix}
+x\\
+y
+\end{bmatrix}
+}_{\widetilde x}
+=b
+\]
+
+Quindi abbiamo per costruzione, la nuova matrice dei vincoli:
+\[
+\boxed{\widetilde A=[A\mid I]\in\mathbb{R}^{m\times(n+m)}}
+\]
+
+e il nuovo vettore delle variabili è:
+\[
+\boxed{
+\widetilde x=
+\begin{bmatrix}
+x\\y
+\end{bmatrix}
+\in\mathbb{R}^{n+m}
+}
+\]
+
+Questo si fa perchè adesso nel caso del problema ausiliario una soluzione di base iniziale ammissibile è semplicemente individuabile ponendo $x = 0$ ed $y = b$; soluzione questa cui è associata come matrice di base la matrice identità (\textbf{questo perchè prendendo la nuova matrice dei vincoli $\widetilde{A}$ e scegliendo le colonne lineramenti indipendenti, per costruire la base, le variabile associate sono quelle di $y$, quelle messe a zero, saranno quelle di $x$})
+Abbiamo così una soluzione di base ammissibile iniziale per il problema ausiliario, non necessariamente per quello originale
+.A questo punto, disponendo di una soluzione di base ammissibile iniziale, si applica il simplesso per trovare la soluzione ottima $(x^*, y^*)$ al problema ausiliario. Se $y^*$ ha qualche componente non nulla, è possibile senz'altro concludere che non esiste soluzione ammissibile per il problema originario;
+\\
+Abbiamo il problema:
+\[
+\begin{aligned}
+\min \quad & c^Tx\\
+\text{s.t.}\quad & Ax=b\\
+&x\geq 0
+\end{aligned}
+\]
+
+Il nostro obiettivo, \textbf{inizialmente}, è trovare almeno un vettore \(x\geq 0\) che soddisfi:
+\[
+Ax=b
+\]
+
+Il problema è che non sappiamo se un tale vettore esista.
+
+Per questo introduciamo le variabili ausiliarie \(y\) e costruiamo il problema:
+\[
+\begin{aligned}
+\min \quad & y_1+y_2+\cdots+y_m\\
+\text{s.t.}\quad & Ax+Iy=b\\
+&x\geq 0,\quad y\geq 0
+\end{aligned}
+\]
+Il problema ausiliario cerca di minimizzare:
+\[
+z_{\text{aux}}=y_1+y_2+\cdots+y_m
+\]
+
+Poiché ogni variabile ausiliaria è vincolata a essere non negativa:
+\[
+y_i\geq 0 \qquad \forall i
+\]
+
+la funzione obiettivo non può mai assumere valori negativi:
+\[
+z_{\text{aux}}\geq 0
+\]
+
+Il valore minimo teoricamente possibile è quindi:
+\[
+\boxed{z_{\text{aux}}=0}
+\]
+
+Ma quando può verificarsi questa condizione?
+
+Soltanto quando:
+\[
+y_1=y_2=\cdots=y_m=0
+\]
+
+Infatti, una somma di numeri non negativi può essere uguale a zero soltanto se tutti i suoi addendi sono nulli.
+
+Ora, se \(y=0\), i vincoli del problema ausiliario diventano:
+\[
+Ax+I\underbrace{y}_{0}=b
+\]
+
+ovvero:
+\[
+\boxed{Ax=b}
+\]
+
+Che sono esattamente i vincoli del problema originale!
+
+Quindi, se riusciamo a portare tutte le variabili ausiliarie a zero, abbiamo trovato un vettore \(x\) ammissibile per il problema originale.
+Cosa succede se, invece, qualche componente di \(y^*\) è diversa da zero?
+Supponiamo di aver applicato il simplesso e di aver trovato una soluzione ottima del problema ausiliario:
+\[
+(x^*,y^*)
+\]
+
+Se almeno una componente di \(y^*\) è diversa da zero, essendo tutte non negative, abbiamo:
+\[
+\boxed{\sum_{i=1}^m y_i^*>0}
+\]
+
+Ma attenzione: questa è la soluzione ottima, cioè quella che minimizza la somma delle variabili ausiliarie.
+
+Significa che, anche cercando la migliore soluzione possibile, non siamo riusciti a portare tutte le variabili ausiliarie a zero.
+
+Di conseguenza, non esiste alcun vettore \(x\geq0\) tale che:
+\[
+Ax=b
+\]
+
+Altrimenti, quel vettore \(x\), insieme a \(y=0\), sarebbe una soluzione ammissibile del problema ausiliario con funzione obiettivo uguale a zero, contraddicendo l'ottimalità di una soluzione con valore strettamente positivo.
 
 
-\subsubsection*{Il metodo delle due fasi}
-Questo approccio strutturato divide il lavoro in:
+Se invece $y^* = 0$, otteniamo:
+\[
+\boxed{Ax^*=b}
+\]
+quindi \textbf{$x^*$ è una soluzione ammissibile del problema originale}, anche perchè $x >= 0$.
+\begin{center}
+    Ma possiamo anche concludere che \(x^*\) è una soluzione di base ammissibile per il problema originale?
+\end{center}
+Ricordiamo che abbiamo risolto il problema ausiliario utilizzando il simplesso.
+
+Quindi la soluzione ottima \((x^*,y^*)\) che abbiamo ottenuto è una soluzione di base ammissibile del problema ausiliario.
+
+Questo significa che abbiamo individuato \(m\) colonne linearmente indipendenti nella matrice:
+\[
+\widetilde A=[A\ I].
+\]
+
+Ma non è detto che tutte queste colonne appartengano ad \(A\).
+
+Alcune potrebbero ancora appartenere alla matrice identità \(I\), cioè essere associate alle variabili artificiali.
+
+Ed ecco il problema:
+
+Una base del problema originale deve essere costituita esclusivamente da colonne della matrice \(A\).
+
+Non possiamo utilizzare le colonne artificiali, perché nel problema originale quelle variabili non esistono.
+
+Quindi si arriva alla conclusione che se una delle variabili artificiali rimane in base, e $y^* = 0$ significa che una variabile di base ha valore 0, quindi \textbf{la soluzione di base ammissibile del problema ausilario è degenere}.
+
+\begin{center}
+    È necessario verificare se possiamo completare la base con colonne di A, per ottenere appunto una base di A.
+\end{center}
+
+Ora supponiamo che di queste $m$ colonne lineramente indipendenti che abbiamo trovato da $\widetilde{A}$, solo $k$ < $m$ sia della matrice originale A.
+Questo significa che, delle \(m\) colonne della base del problema ausiliario:
+\begin{enumerate}
+    \item \(k\) appartengono alla matrice originale \(A\);
+    \item \(m-k\) appartengono alla matrice identità \(I\), che è in $\widetilde{A}$.
+\end{enumerate}
+Indichiamo le \(k\) colonne originali attualmente in base con:
+\[
+A_{B(1)},A_{B(2)},\ldots,A_{B(k)}.
+\]
+
+Poiché appartengono a una base, cioè quella del problema ausiliario, queste colonne sono linearmente indipendenti.
+
+Ma sappiamo anche da ipotesi di PL standard che:
+\[
+\operatorname{rank}(A)=m.
+\]
+
+Questo significa che nella matrice originale \(A\) esistono \(m\) colonne linearmente indipendenti.
+
+Quindi possiamo completare l'insieme delle nostre \(k\) colonne fino a ottenere \(m\) colonne linearmente indipendenti, tutte appartenenti ad \(A\).
+
+In simboli:
+\[
+\underbrace{
+\{A_{B(1)},\ldots,A_{B(k)}\}
+}_{k\text{ colonne}}
+\]
+
+può essere completato con altre \(m-k\) colonne di \(A\), ottenendo:
+\[
+\underbrace{
+\{A_{B(1)},\ldots,A_{B(k)},
+A_{B(k+1)},\ldots,A_{B(m)}\}
+}_{m\text{ colonne linearmente indipendenti}}.
+\]
+
+Queste colonne costituiscono una matrice di base \(B\) per il problema originale.
+
+\paragraph{Ma siamo sicuri che questa nuova base restituisca proprio \(x^*\) ?}
+Se lo dimostriamo, potremmo avere le variabili di base della SBA del problema originale.
+
+Ricordiamo che:
+\[
+Ax^*=b.
+\]
+
+Inoltre, \textbf{nella soluzione di base del problema ausiliario, tutte le variabili originali fuori base di $x^*$ sono poste a zero}
+\\
+Pertanto:
+\[
+b = \sum_{j = 1}^{n} A_j x^*_j = \sum_{i = 1}^{k} A_{B(k)}x^*_{B(k)}
+\]
+Dato che le variabili fuori base della soluzione originale sono uguali a 0.
+
+
+Adesso completiamo la base aggiungendo le altre \(m-k\) colonne di \(A\), dobbiamo aggiungerle alle $k$ colonne che avevamo considerato.
+Le rispettive variabili di queste colonne che sto aggiungendo vengono messe a 0, questo perchè, la soluzione resta esattamente la stessa se assegniamo valore zero alle nuove variabili di base:
+\[
+x_{B(k+1)}^*=\cdots=x_{B(m)}^*=0.
+\]
+Dunque:
+\[
+b=
+\underbrace{
+\begin{bmatrix}
+A_{B(1)}&\cdots&A_{B(m)}
+\end{bmatrix}
+}_{B}
+\underbrace{
+\begin{bmatrix}
+x_{B(1)}^*\\
+\vdots\\
+x_{B(k)}^*\\
+0\\
+\vdots\\
+0
+\end{bmatrix}
+}_{x_B^*}.
+\]
+
+Quindi adesso abbiamo trovato una SBA del problema originale, $x^*$, questo perchè, le variabili di base, le abbiamo appena scelte e sono $m$ come vuole la definizioni, le restanti variabili sono fuori base $x_N$ e il loro valore è nullo, perciò:
+\[
+A x^* = b \implies B x^*_B = b
+\]
+
+Noi però possiamo usare anche il metodo del simplesso tabellare per fare queste operazioni, cioè per risolvere il problema di PL standard con variabili artificiali.
+Ricordarti che il tableau è fatto in questo modo:
+\[
+\boxed{
+\begin{array}{c|cccc}
+-c_B' x_B & \bar{c}_1 & \cdots & \bar{c}_n \\
+\hline
+x_{B(1)} & & & & \\
+\vdots & B^{-1}A_1 & \cdots & B^{-1}A_n & \\
+x_{B(m)} & & & &
+\end{array}
+}
+\]
+e supponiamo quindi che il simplesso tabellare abbia trovato una SBA $(x^*,y^*)$ per il problema formulato in modo ausiliario, con le variabili artificiali.
+Quindi nella prima colonna, ci saranno i valori delle variabili di base, che come abbiamo detto prima possono essere anche variabili artificiali, e il nostro obiettivo e levare queste variabili artificiali dalla base e sostituirle con variabili "originali".
+Invece lungo tutte le colonne, ci saranno i costi delle variabili originali $x_1,\dots,x_n$ e i valori delle variabili artificiali $y_1,\dots,y_n$.
+
+Ora ricordati una proprietà importante, cioè
+\[
+B^{-1} B = I
+\]
+Questo significa che per le colonne che fanno parte della base, da queste escono la base canonica.
+Quindi se io mi metto a incrociare la riga $l$ con la colonna della rispetta variabile $l$, mi darà come valore 1.
+Ora Supponiamo che la variabile artificiale \(y_i\) sia ancora in base e che sia associata alla riga \(l\) del tableau.
+
+Dal momento che:
+\[
+y_i^*=0,
+\]
+
+il termine noto della riga \(l\) è nullo:
+\[
+(B^{-1}b)_l=0.
+\]
+Poiché \(y_i\) è in base, la colonna corrispondente nel tableau è un vettore della matrice identità.
+Consideriamo, ad esempio, una situazione schematica:
+\[
+\begin{array}{c|ccc}
+ &x_1&x_2&y_i\\
+\hline
+0&2&1&0\\
+5&1&3&0\\
+0&\boxed{2}&-1&1
+\end{array}
+\]
+
+Ora dobbiamo distinguere due casi:
+
+\begin{enumerate}
+
+    \item \textbf{La riga $l$ contiene almeno un elemento non nullo in una colonna associata a una variabile originale.}
+
+    Supponiamo che la variabile artificiale $y_i$ sia ancora in base e sia associata alla riga $l$ del tableau.
+
+    Poiché abbiamo trovato una soluzione ottima del problema ausiliario con $y^*=0$, sappiamo che:
+
+    \[
+    y_i^*=0.
+    \]
+
+    Di conseguenza, il termine noto della riga $l$ è nullo:
+
+    \[
+    (B^{-1}b)_l=0.
+    \]
+
+    Supponiamo inoltre che esista una variabile originale $x_j$, attualmente fuori base, tale che:
+
+    \[
+    (B^{-1}A_j)_l\neq 0.
+    \]
+
+    Ad esempio:
+
+    \[
+    (B^{-1}A_1)_l=2\neq 0.
+    \]
+
+    Questo significa che possiamo utilizzare l'elemento $2$ come \textbf{pivot}, facendo entrare $x_1$ in base e uscire la variabile artificiale $y_i$.
+
+    \textbf{Come avviene la trasformazione del tableau?}
+
+    Attraverso le operazioni elementari sulle righe (pivot di Gauss-Jordan), trasformiamo la colonna associata a $x_1$ in un vettore canonico:
+
+    \[
+    B_{\mathrm{nuova}}^{-1}A_1=e_l.
+    \]
+
+    In particolare:
+    \begin{itemize}
+        \item dividiamo la riga $l$ per l'elemento pivot, rendendolo uguale a $1$;
+        \item utilizziamo la riga $l$ per annullare tutti gli altri coefficienti della colonna di $x_1$, compreso quello nella riga zero.
+    \end{itemize}
+
+    In questo modo, la colonna di $x_1$ presenta tutti coefficienti nulli, tranne un $1$ nella riga $l$.
+
+    Pertanto, $x_1$ diventa una variabile di base associata alla riga $l$, mentre $y_i$ esce dalla base.
+
+    \textbf{Perché la soluzione rimane ammissibile?}
+
+    Ricordiamo che, prima del pivot, il termine noto della riga $l$ è nullo:
+
+    \[
+    (B^{-1}b)_l=0.
+    \]
+
+    Durante le operazioni di pivot, la riga $l$ viene divisa per un numero non nullo. Il suo termine noto rimane quindi zero.
+
+    Inoltre, quando utilizziamo questa riga per annullare gli altri coefficienti della colonna entrante, tutti gli altri termini noti rimangono invariati, poiché stiamo sottraendo multipli di una riga avente termine noto nullo.
+
+    Di conseguenza:
+
+    \[
+    \boxed{x_1^{\mathrm{nuova}}=0}
+    \]
+
+    e i valori delle altre variabili di base rimangono invariati.
+
+    Quindi, \textbf{la soluzione ammissibile rappresentata dal tableau non cambia: cambia soltanto la base utilizzata per rappresentarla}.
+
+    Questo procedimento prende il nome di \textbf{pivot degenere}, poiché la variabile entrante assume valore zero.
+
+    Osserviamo inoltre che, in questo particolare procedimento, è sufficiente scegliere un elemento pivot non nullo, anche negativo, perché non stiamo effettuando uno spostamento verso una soluzione diversa.
+
+    \item \textbf{La riga $l$ contiene soltanto elementi nulli nelle colonne associate alle variabili originali.}
+
+    Supponiamo invece che:
+
+    \[
+    (B^{-1}A_j)_l=0
+    \qquad
+    \forall j=1,\ldots,n.
+    \]
+
+    Questo significa che, nella riga $l$ del tableau, tutti i coefficienti relativi alle variabili originali sono nulli.
+
+    Ricordiamo inoltre che la variabile artificiale $y_i$ è in base e vale zero, quindi:
+
+    \[
+    (B^{-1}b)_l=0.
+    \]
+
+    Consideriamo il sistema dei vincoli del problema ausiliario:
+
+    \[
+    Ax+Iy=b.
+    \]
+
+    Moltiplicando entrambi i membri per $B^{-1}$ otteniamo:
+
+    \[
+    B^{-1}Ax+B^{-1}Iy=B^{-1}b.
+    \]
+
+    Poiché vogliamo ricavare una base per il problema originale, consideriamo il sistema imponendo $y=0$:
+
+    \[
+    B^{-1}Ax=B^{-1}b.
+    \]
+
+    Nella riga $l$, tutti i coefficienti di $B^{-1}A$ sono nulli dall'ipotesi che avevamo detto e anche il termine noto è nullo, questo perchè $(B^{-1}b)_l$ corrisponde a $x_{B(l)}$ che è uguale a 0.
+
+    Pertanto, l'equazione corrispondente diventa:
+
+    \[
+    \boxed{0=0}.
+    \]
+
+    Questa uguaglianza è sempre verificata, indipendentemente dai valori assunti dalle variabili originali.
+
+    Di conseguenza, \textbf{la riga $l$ rappresenta un vincolo ridondante nel sistema trasformato}, poiché non introduce alcuna condizione aggiuntiva sulle variabili originali.
+
+    Possiamo quindi eliminare tale riga dal tableau, insieme alla colonna della variabile artificiale $y_i$.
+
+\end{enumerate}
+
+\medskip
+
+\textbf{Conclusione.}
+
+In entrambi i casi, l'obiettivo è eliminare le variabili artificiali ancora presenti in base, pur avendo valore zero.
+
 \begin{itemize}
-\item \textbf{Fase 1}: Si introducono le variabili artificiali e si risolve il problema ausiliario per minimizzarne la somma. Se all'ottimo la somma è 0, le variabili originali in base formano una soluzione ammissibile per il problema originale. (Eventuali variabili artificiali rimaste in base a livello 0 vengono scambiate con variabili originali tramite operazioni di pivot).
-\item \textbf{Fase 2}: Si usa la base trovata nella Fase 1 come punto di partenza per risolvere il problema originario, ignorando del tutto le variabili artificiali usate in precedenza.
+    \item Nel primo caso, sostituiamo la variabile artificiale con una variabile originale mediante un pivot degenere.
+    \item Nel secondo caso, eliminiamo un vincolo ridondante, poiché non è possibile individuare una colonna originale con cui effettuare il pivot.
 \end{itemize}
+
+Ripetendo il procedimento per tutte le variabili artificiali rimaste in base, otteniamo una base composta esclusivamente da colonne della matrice dei vincoli originali, eventualmente dopo aver eliminato i vincoli ridondanti.
+
+A questo punto possiamo eliminare tutte le colonne artificiali, ripristinare la funzione obiettivo originale e proseguire con il metodo del simplesso tabellare.
