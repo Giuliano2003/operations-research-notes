@@ -5235,3 +5235,391 @@ In entrambi i casi, l'obiettivo è eliminare le variabili artificiali ancora pre
 Ripetendo il procedimento per tutte le variabili artificiali rimaste in base, otteniamo una base composta esclusivamente da colonne della matrice dei vincoli originali, eventualmente dopo aver eliminato i vincoli ridondanti.
 
 A questo punto possiamo eliminare tutte le colonne artificiali, ripristinare la funzione obiettivo originale e proseguire con il metodo del simplesso tabellare.
+
+\subsubsection{Il metodo del Big-M}
+
+Il metodo del big-M costituisce un'alternativa al metodo
+delle due fasi. I due procedimenti sono equivalenti,
+ma il metodo del big-M riunisce in un'unica fase
+le operazioni necessarie alla risoluzione del problema.
+
+Anche questo metodo prevede l'introduzione di
+$m$ variabili artificiali $y_1,y_2,\ldots,y_m$,
+ma considera una funzione obiettivo della forma
+
+\[
+\min \quad
+\sum_{j=1}^{n}c_jx_j+
+M\sum_{i=1}^{m}y_i,
+\]
+
+dove $M$ è un numero positivo molto grande,
+utilizzato come coefficiente di penalità
+per le variabili artificiali.
+
+Ricordiamo che nel metodo del big-M la funzione obiettivo originale:
+\[
+\min z(x)=\sum_{j=1}^{n}c_jx_j
+\]
+
+viene modificata in:
+\[
+\boxed{\min_{(x,y)} z_M(x,y)=\sum_{j=1}^{n}c_jx_j+M\sum_{i=1}^{m}y_i}
+\]
+\begin{example}{Esempio di penalità}
+    Supponiamo di avere la funzione obiettivo:
+\[
+\min z(x)=2x_1+3x_2.
+\]
+
+Introducendo una variabile artificiale \(y_1\), otteniamo:
+\[
+\min z_M(x,y)=2x_1+3x_2+My_1.
+\]
+
+Consideriamo, per semplicità, \(M=1000\).
+\begin{enumerate}
+    \item Se \(y_1=0\), la penalità è \(1000\cdot0=0\).
+    \item Se \(y_1=1\), la penalità è \(1000\cdot1=1000\).
+    \item Se \(y_1=2\), la penalità è \(1000\cdot2=2000\).
+\end{enumerate}
+Questo significa \textbf{che più aumenta il valore della variabile artificiale, più aumenta il costo della soluzione}.
+
+Poiché stiamo minimizzando, il simplesso è incentivato a ridurre le variabili artificiali fino a portarle a zero, quando possibile.
+\end{example}
+
+
+
+Nell'applicazione del metodo non si attribuisce
+a $M$ un valore numerico specifico.
+Durante le iterazioni del simplesso, quindi,
+sia la funzione obiettivo sia i costi ridotti
+possono dipendere da $M$.
+
+Nei confronti necessari per stabilire il segno
+dei costi ridotti, $M$ viene considerato
+sufficientemente grande rispetto ai termini numerici
+con cui è confrontato.
+
+
+
+\begin{warning}
+    \textbf{Attenzione: l'ammissibilità non implica l'ottimalità.}
+
+    Ricorda che il metodo del simplesso procede per iterazioni,
+    passando da una soluzione di base ammissibile a un'altra,
+    fino a individuare una soluzione ottima del problema ausiliario.
+
+    Durante queste iterazioni, può accadere che tutte le variabili
+    artificiali diventino nulle, cioè:
+
+    \[
+    y=0.
+    \]
+
+    Questo, però, \textbf{non significa necessariamente che la
+    corrispondente soluzione $x$ sia già ottima per il problema
+    originale}.
+
+    Infatti, dalla condizione $y=0$ possiamo soltanto dedurre che:
+
+    \[
+    Ax+Iy=b
+    \quad\Longrightarrow\quad
+    Ax=b.
+    \]
+
+    Pertanto, essendo anche $x\geq 0$, abbiamo individuato
+    una \textbf{soluzione ammissibile del problema originale},
+    ma non necessariamente ottima.
+
+    Per garantire l'ottimalità, dobbiamo anche verificare
+    che tutti i costi ridotti delle variabili siano
+    \textbf{nonnegativi}:
+
+    \[
+    \boxed{\overline{c}_j\geq 0 \qquad \forall j.}
+    \]
+
+    Questa condizione garantisce che la soluzione corrente
+    sia ottima per il problema ausiliario.
+
+    Di conseguenza, se entrambe le condizioni sono soddisfatte:
+
+    \[
+    \boxed{
+    y=0
+    \quad\text{e}\quad
+    \overline{c}_j\geq 0 \;\; \forall j,
+    }
+    \]
+
+    allora possiamo concludere che la soluzione $x$ è
+    \textbf{ottima anche per il problema originale}.
+
+    \medskip
+    \noindent
+    \textbf{In sintesi:}
+    \begin{itemize}
+        \item $y=0$ garantisce l'\textbf{ammissibilità}
+        della soluzione $x$ per il problema originale.
+        \item $\overline{c}_j\geq 0$ per ogni variabile garantisce
+        l'\textbf{ottimalità} della soluzione corrente
+        per il problema ausiliario.
+        \item Le due condizioni insieme garantiscono
+        l'\textbf{ottimalità di $x$ per il problema originale}.
+    \end{itemize}
+\end{warning}
+
+Ricordati che però il simplesso non trova subito una SBA ottima, ma servono delle iterazioni
+\paragraph{Esempio 2.7.4}
+
+Consideriamo il seguente problema di
+Programmazione Lineare in forma standard:
+
+\[
+\begin{aligned}
+\min \quad & x_1+x_2+x_3\\
+\text{s.t.}\quad
+& x_1+2x_2+3x_3=3,\\
+& -x_1+2x_2+6x_3=2,\\
+& 4x_2+9x_3=5,\\
+& 3x_3+x_4=1,\\
+& x\geq 0.
+\end{aligned}
+\]
+
+Applichiamo il metodo del big-M.
+
+Il primo passaggio consiste nell'aggiungere
+le variabili artificiali e nel penalizzarle
+nella funzione obiettivo mediante il coefficiente $M$.
+
+Sebbene il problema presenti quattro vincoli,
+sono sufficienti tre variabili artificiali:
+il quarto vincolo contiene infatti la variabile $x_4$,
+la cui colonna può essere utilizzata direttamente
+per costruire la base iniziale.
+Questo perchè se scegliessi di mettere anche $y_4$ allora si avrebbe una matrice di vincoli in questo modo: \\
+\[
+\widetilde{A} = \begin{pmatrix}
+    1&2&3&0&1&0&0&0\\
+    -1&2&6&0&0&1&0&0\\
+    0&4&9&0&0&0&1&0\\
+    0&0&3&1&0&0&0&1 
+\end{pmatrix} \widetilde{x} = \begin{pmatrix}
+    x_1 \\ x_2 \\ \dots \\ x_n \\ y_1 \\ y_2 \\ y_m 
+\end{pmatrix}
+\]
+Come vedi ci sono due vettori colonna uguali, e le $y$ si aggiungono solo perchè vogliamo dei vettori lineramenti indipendenti, quindi $y_4$ è un'aggiunta superflua, perchè anche senza $y_4$ abbiamo i vettori lineramenti indipedendti.
+Levando $y_4$ si ha: \\ 
+\[
+\widetilde{A} = \begin{pmatrix}
+    1&2&3&0&1&0&0\\
+    -1&2&6&0&0&1&0\\
+    0&4&9&0&0&0&1\\
+    0&0&3&1&0&0&0 
+\end{pmatrix}
+\]
+Il problema modificato è:
+
+\[
+\begin{aligned}
+\min \quad &
+x_1+x_2+x_3+My_1+My_2+My_3\\
+\text{s.t.}\quad
+&x_1+2x_2+3x_3+y_1=3,\\
+&-x_1+2x_2+6x_3+y_2=2,\\
+&4x_2+9x_3+y_3=5,\\
+&3x_3+x_4=1,\\
+&x,y\geq 0.
+\end{aligned}
+\]
+
+Una soluzione di base ammissibile iniziale
+del problema modificato si ottiene scegliendo
+come variabili di base
+
+\[
+(y_1,y_2,y_3,x_4).
+\]
+
+mentre le variabili fuori base sono tutte 0
+
+I valori delle variabili di base  sono:
+
+\[
+(y_1,y_2,y_3,x_4)=(3,2,5,1).
+\]
+
+La matrice di base corrispondente è la matrice identità.
+
+Il vettore dei costi delle variabili di base è:
+
+\[
+c_B=
+\begin{pmatrix}
+M\\M\\M\\0
+\end{pmatrix}.
+\]
+
+Calcolando i costi ridotti delle variabili non di base:
+\[
+\boxed{\bar c_j=c_j-c_B^TB^{-1}A_j}
+\]
+si costruisce il tableau iniziale e si applica il metodo del simplesso tabellare sulla SBA iniziale che abbiamo trovato:
+
+\[
+\scriptsize
+\begin{array}{c|r|rrrrrrr}
+\text{Base}&b&
+x_1&x_2&x_3&x_4&y_1&y_2&y_3\\
+\hline
+z&-10M&
+1&1-8M&1-18M&0&0&0&0\\
+\hline
+y_1&3&1&2&3&0&1&0&0\\
+y_2&2&-1&2&6&0&0&1&0\\
+y_3&5&0&4&9&0&0&0&1\\
+x_4&1&0&0&\boxed{3}&1&0&0&0
+\end{array}
+\]
+
+Per $M$ sufficientemente grande,
+il costo ridotto della variabile $x_3$ è negativo.
+
+Si sceglie quindi di far entrare $x_3$ in base
+e di far uscire $x_4$.
+
+Eseguendo le operazioni di pivot,
+si ottiene il tableau:
+
+\[
+\scriptsize
+\begin{array}{c|r|rrrrrrr}
+\text{Base}&b&
+x_1&x_2&x_3&x_4&y_1&y_2&y_3\\
+\hline
+z&-4M-\frac13&
+1&1-8M&0&6M-\frac13&0&0&0\\
+\hline
+y_1&2&1&2&0&-1&1&0&0\\
+y_2&0&-1&\boxed{2}&0&-2&0&1&0\\
+y_3&2&0&4&0&-3&0&0&1\\
+x_3&\frac13&0&0&1&\frac13&0&0&0
+\end{array}
+\]
+
+Per $M$ sufficientemente grande,
+il costo ridotto della variabile $x_2$
+è negativo.
+
+Si fa quindi entrare $x_2$ in base
+e uscire $y_2$.
+
+Il tableau successivo è:
+
+\[
+\scriptsize
+\begin{array}{c|r|rrrrrrr}
+\text{Base}&b&
+x_1&x_2&x_3&x_4&y_1&y_2&y_3\\
+\hline
+z&-4M-\frac13&
+\frac32-4M&0&0&\frac23-2M&
+0&4M-\frac12&0\\
+\hline
+y_1&2&2&0&0&1&1&-1&0\\
+x_2&0&-\frac12&1&0&-1&0&\frac12&0\\
+y_3&2&\boxed{2}&0&0&1&0&-2&1\\
+x_3&\frac13&0&0&1&\frac13&0&0&0
+\end{array}
+\]
+
+Poiché il costo ridotto di $x_1$ è negativo
+per $M$ sufficientemente grande,
+si sceglie $x_1$ come variabile entrante
+e $y_1$ come variabile uscente.
+
+Il nuovo tableau è:
+
+\[
+\scriptsize
+\begin{array}{c|r|rrrrrrr}
+\text{Base}&b&
+x_1&x_2&x_3&x_4&y_1&y_2&y_3\\
+\hline
+z&-\frac{11}{6}&
+0&0&0&-\frac1{12}&
+2M-\frac34&2M+\frac14&0\\
+\hline
+x_1&1&1&0&0&\frac12&\frac12&-\frac12&0\\
+x_2&\frac12&0&1&0&-\frac34&\frac14&\frac14&0\\
+y_3&0&0&0&0&0&-1&-1&1\\
+x_3&\frac13&0&0&1&\boxed{\frac13}&0&0&0
+\end{array}
+\]
+
+Si procede facendo entrare $x_4$ in base
+e uscire $x_3$.
+
+Dopo l'operazione di pivot si ottiene:
+
+\[
+\scriptsize
+\begin{array}{c|r|rrrrrrr}
+\text{Base}&b&
+x_1&x_2&x_3&x_4&y_1&y_2&y_3\\
+\hline
+z&-\frac74&
+0&0&\frac14&0&
+2M-\frac34&2M+\frac14&0\\
+\hline
+x_1&\frac12&1&0&-\frac32&0&\frac12&-\frac12&0\\
+x_2&\frac54&0&1&\frac94&0&\frac14&\frac14&0\\
+y_3&0&0&0&0&0&-1&-1&1\\
+x_4&1&0&0&3&1&0&0&0
+\end{array}
+\]
+
+Per $M$ sufficientemente grande,
+tutti i costi ridotti sono nonnegativi.
+
+La soluzione ottenuta è quindi ottima
+per il problema modificato, quindi abbiamo trovato $(x,y)$ che minimizzano il problema
+
+Inoltre, tutte le variabili artificiali
+assumono valore nullo:
+
+\[
+y_1=y_2=y_3=0.
+\]
+
+La soluzione individuata è pertanto
+ottima anche per il problema originario, questo perchè con $y = 0$, diventa:
+\[
+Ax^* = b
+\]
+ed è ottima perchè i costi ridotti sono negativi, e quindi $x^*$ è ottimo, e quindi è una soluzione ottima anche per il problema originale.
+
+In particolare:
+
+\[
+\boxed{
+x^*=
+\begin{pmatrix}
+\frac12\\[2pt]
+\frac54\\[2pt]
+0\\[2pt]
+1
+\end{pmatrix}
+}
+\]
+
+e il valore ottimo della funzione obiettivo è:
+
+\[
+\boxed{
+z^*=\frac74.
+}
+\]
