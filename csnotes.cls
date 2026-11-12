@@ -160,6 +160,7 @@
 
 % Colors for environments
 \definecolor{defcolor}{RGB}{0,102,204}       % Definitions - Blue
+\definecolor{remcolor}{RGB}{0,110,255}       % Definitions - Blue
 \definecolor{thmcolor}{RGB}{46,139,87}       % Theorems - Dark green
 \definecolor{lemcolor}{RGB}{203,75,22}       % Lemmas - Orange
 \definecolor{propcolor}{RGB}{108,113,196}    % Propositions - Purple
@@ -231,6 +232,8 @@
 \crefname{proposition}{proposizione}{proposizioni}
 \Crefname{proposition}{Proposizione}{Proposizioni}
 \crefname{definition}{definizione}{definizioni}
+\crefname{remark}{Remark}{remarks}
+\crefname{remark}{Remark}{Remarks}
 \Crefname{definition}{Definizione}{Definizioni}
 \crefname{example}{esempio}{esempi}
 \Crefname{example}{Esempio}{Esempi}
@@ -477,6 +480,14 @@
     title={Definizione~\thetcbcounter\ifstrempty{#2}{}{:~#2}},
     before upper={\addcontentsline{thm.toc}{definition}{\protect\numberline{\thetcbcounter}Definizione\ifstrempty{\csnoteslisttitle}{#2}{:\ \csnoteslisttitle}}},
     label type=definition,
+    #1
+}
+\newtcolorbox[auto counter, number within=section]{remark}[2][]{
+    theorembox=remcolor,
+    listtitle={#2},
+    title={Remark~\thetcbcounter\ifstrempty{#2}{}{:~#2}},
+    before upper={\addcontentsline{thm.toc}{remark}{\protect\numberline{\thetcbcounter}Remark\ifstrempty{\csnoteslisttitle}{#2}{:\ \csnoteslisttitle}}},
+    label type=remark,
     #1
 }
 

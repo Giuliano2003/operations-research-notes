@@ -1,1 +1,1813 @@
 \chapter{Programmazione Lineare Intera}
+\label{chap:programmazione-lineare-intera}
+% Appunti relativi alle pp. 79--105 di RO_Dispense_Festa(2).pdf.
+% Capitolo da inserire con \input; non contiene preambolo o document.
+% Pacchetti: amsmath, amssymb, amsthm, tikz, caption, needspace.
+% Le figure non sono flottanti: sono compatibili con esempi a riquadro.
+% Non si usa FloatBarrier e non occorre il pacchetto placeins.
+% Librerie TikZ: arrows.meta, calc, positioning.
+% Gli ambienti degli enunciati accettano l'argomento obbligatorio {Titolo}.
+% I chiarimenti aggiuntivi e le correzioni sono dichiarati nelle osservazioni.
+
+\section{Introduzione}
+
+La \emph{Programmazione Lineare Intera}, abbreviata con \textbf{PLI},
+studia problemi di ottimizzazione nei quali la funzione obiettivo e i
+vincoli sono lineari, ma le variabili di decisione devono assumere valori
+interi. Il vincolo di interezza è essenziale quando le decisioni descrivono
+quantità indivisibili, come il numero di mezzi da utilizzare o l'assegnazione
+di una persona a un compito.
+
+\begin{definition}{Problema di Programmazione Lineare Intera in forma standard}
+Un problema di PLI in forma standard ha la forma
+\begin{align*}
+(\mathrm{Pli})\qquad \min \quad &z(x)=c^{\mathsf T}x\\
+\text{s.a.}\quad &Ax=b,\\
+&x\geq0,\qquad x\in\mathbb Z^n,
+\end{align*}
+dove
+\[
+A\in\mathbb R^{m\times n},\qquad b\in\mathbb R^m,\qquad c\in\mathbb R^n.
+\]
+La matrice \(A=(a_{ij})\), con \(i=1,\ldots,m\) e \(j=1,\ldots,n\),
+è la \emph{matrice dei coefficienti tecnologici}; \(b\) è il vettore
+dei termini noti; \(c\) contiene i coefficienti della funzione obiettivo,
+interpretabili come costi nei problemi di minimo e come profitti
+nei problemi di massimo. Il vettore \(x\) contiene le \(n\) variabili
+di decisione, nonnegative e intere.
+
+La funzione $z$ invece è definita da:
+\[
+z : \mathbb{Z}^n \to \mathbb{R}
+\]
+Quindi la funzione può assumere valori in $\mathbb{R}$, questo perchè 
+\[
+c\in\mathbb R^n
+\]
+Cioè i coefficienti della funzione obiettivo sono numeri reali.
+\end{definition}
+
+I soli vincoli lineari definiscono il poliedro
+\[
+P=\{x\in\mathbb R^n:Ax=b,\ x\geq0\}.
+\]
+L'interezza restringe le possibili decisioni al reticolo \(\mathbb Z^n\).
+La regione ammissibile del problema intero è quindi
+\[
+X=P\cap\mathbb Z^n\subseteq P.
+\]
+Non tutti i punti del reticolo sono ammissibili: appartengono a \(X\)
+soltanto quelli che soddisfano anche i vincoli lineari.
+
+L'insieme $X$ sarà quindi un sottoinsieme dell'insieme $P$, mentre l'insieme $P$ conterrà tutti i numeri reali là in mezzo, l'insieme $X$, sarà formato solo dai numeri interi, \textbf{cioè i pallini neri che vedi nel grafico sotto}.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[x=1.04cm,y=0.84cm,>=Stealth,font=\small]
+  \fill[blue!5] (0,0)--(4.5,0)--(4.5,4)--(2.25,4.75)--(0,2.5)--cycle;
+  \draw[->] (-0.6,0)--(8,0) node[right] {$x_1$};
+  \draw[->] (0,-0.6)--(0,7.2) node[above] {$x_2$};
+  \draw[gray] (-0.55,1.95)--(5.1,7.6);
+  \draw[gray] (-0.55,5.6833)--(8,2.8333);
+  \draw[gray] (4.5,-0.45)--(4.5,7.2);
+  \draw[->,gray] (4.8,7.3)--(5.4,6.7);
+  \draw[->,gray] (7.2,3.1)--(7.0,2.45);
+  \draw[->,gray] (-0.3,2.2)--(0.3,1.6);
+  \foreach \i in {0,...,7} {
+    \foreach \j in {0,...,6} {
+      \fill[gray!55] (\i,\j) circle (1.25pt);
+      \ifnum\i<5
+        \pgfmathtruncatemacro{\amm}{(\j<=\i+2.5)&&(\j<=5.5-\i/3)}
+        \ifnum\amm=1 \fill (\i,\j) circle (1.7pt); \fi
+      \fi
+    }
+  }
+  \foreach \i in {1,...,7} \node[below] at (\i,0) {\i};
+  \foreach \j in {1,...,6} \node[left] at (0,\j) {\j};
+  \node at (2.65,2.5) {$X$};
+  \node[blue!65!black] at (3.8,3.3) {$P$};
+\end{tikzpicture}
+\captionof{figure}{Regione ammissibile di un generico problema di PLI:
+\(X=P\cap\mathbb Z^2\subseteq P\). Sono rappresentati il reticolo,
+le rette dei vincoli e i semipiani ammissibili; solo i punti neri
+appartengono a \(X\).}
+\label{fig:pli-reticolo}
+\end{minipage}
+\end{center}
+
+\begin{remark}{Chiarimento sulla rappresentazione geometrica}
+La figura è schematica e rappresenta il poliedro nelle variabili originali,
+prima di introdurre eventuali variabili di scarto. In due dimensioni
+una regione poligonale si descrive usualmente tramite disequazioni;
+la scrittura \(Ax=b,\ x\geq0\) si riferisce alla forma standard,
+che può richiedere un numero maggiore di variabili.
+\end{remark}
+
+Come nella Programmazione Lineare continua, è possibile trasformare
+un problema di PLI in forma standard intervenendo sulla funzione obiettivo,
+sui vincoli e sulle variabili. Le trasformazioni sono quelle già note
+per la PL, ma occorre prestare attenzione all'interezza delle variabili
+ausiliarie.
+
+\begin{example}{Trasformazione in forma standard e variabili di scarto}
+Si consideri
+\begin{align*}
+\max\quad &x_2\\
+\text{s.a.}\quad &x_1\leq\frac12,\\
+&x_2\leq\frac12,\\
+&x_1,x_2\geq0,\qquad x_1,x_2\in\mathbb Z.
+\end{align*}
+Il passaggio da massimo a minimo usa l'identità
+\[
+\max_{x\in X}x_2=-\min_{x\in X}(-x_2).
+\]
+Introducendo direttamente gli scarti, il modello di minimizzazione diventa
+\begin{align*}
+\min\quad &-x_2\\
+\text{s.a.}\quad &x_1+s_1=\frac12,\\
+&x_2+s_2=\frac12,\\
+&x_1,x_2,s_1,s_2\geq0,\\
+&x_1,x_2\in\mathbb Z.
+\end{align*}
+Le variabili \(s_1,s_2\) non sono necessariamente intere:
+nell'unica soluzione ammissibile nelle variabili originali,
+\(x_1=x_2=0\), valgono \(s_1=s_2=\frac12\).
+Si ottiene dunque un problema di \emph{Programmazione Lineare
+Intera Mista}, in cui soltanto alcune variabili sono intere.
+
+Per mantenere una formulazione interamente intera si rendono prima
+interi i coefficienti e i termini noti (sia quindi $b$ sia i coefficienti della matrice) dei vincoli. Moltiplicando
+entrambi i vincoli per \(2\), il problema originale diventa
+\begin{align*}
+\max\quad &x_2\\
+\text{s.a.}\quad &2x_1\leq1,\\
+&2x_2\leq1,\\
+&x_1,x_2\geq0,\qquad x_1,x_2\in\mathbb Z.
+\end{align*}
+Si introducono ora gli scarti:
+\begin{align*}
+\min\quad &-x_2\\
+\text{s.a.}\quad &2x_1+s_1=1,\\
+&2x_2+s_2=1,\\
+&x_1,x_2,s_1,s_2\geq0,\\
+&x_1,x_2,s_1,s_2\in\mathbb Z.
+\end{align*}
+Questa è una formulazione di PLI pura equivalente a quella iniziale;
+il valore ottimo del massimo è l'opposto di quello del minimo.
+\end{example}
+
+\begin{remark}{Chiarimento sull'eliminazione dei denominatori}
+Se un vincolo ha dati razionali, si può moltiplicare per un comune
+multiplo positivo dei denominatori. In un'uguaglianza
+\[
+\sum_{j=1}^n a_{ij}x_j+s_i=b_i
+\]
+con \(a_{ij},b_i\in\mathbb Z\) e \(x_j\in\mathbb Z\), lo scarto
+\[
+s_i=b_i-\sum_{j=1}^n a_{ij}x_j
+\]
+è automaticamente intero. E quindi questo spiega perchè trasformando sia i coefficienti sia i vincoli in interi le variabili introdotte sono intere.
+\end{remark}
+
+Molti problemi di PLI sono difficili da risolvere. Il simplesso,
+applicato direttamente, risolve il problema continuo e non impone
+l'interezza; per la PLI si impiegano quindi diversi approcci.
+Come nella classificazione generale dei metodi di ottimizzazione,
+si distinguono tre categorie.
+
+\begin{description}
+\item[Metodi esatti.]
+Risolvono il problema all'ottimo e ne certificano l'ottimalità.
+Per i problemi difficili possono richiedere tempo esponenziale
+o, più in generale, superpolinomiale nel caso peggiore.
+Appartengono a questa famiglia Branch \& Bound, Branch \& Cut,
+metodi dei piani di taglio e programmazione dinamica.
+
+\item[Metodi approssimati.]
+Individuano una soluzione ammissibile, eventualmente subottima,
+accompagnata da una garanzia sulla sua qualità rispetto all'ottimo.
+Sono utili per problemi difficili; si ricercano in particolare
+algoritmi polinomiali con garanzie esplicite di approssimazione.
+Il vantaggio perseguito è ridurre il tempo di calcolo accettando
+una perdita controllata nella qualità.
+
+\item[Metodi euristici.]
+Cercano buone soluzioni in tempi contenuti, senza una garanzia generale
+sulla distanza dall'ottimo. Sono particolarmente utili per problemi
+reali di grandi dimensioni e per problemi per i quali non si dispone
+di adeguati metodi di approssimazione polinomiali.
+\end{description}
+
+\begin{remark}{Precisazione sulla complessità dei metodi}
+Le descrizioni del testo esprimono il comportamento tipico e gli
+obiettivi delle tre famiglie. Un'euristica non è necessariamente
+polinomiale per definizione; un algoritmo approssimato può anche
+trovare l'ottimo; la programmazione dinamica può essere
+pseudopolinomiale. Per la PLI generale non è noto un algoritmo
+polinomiale: questo non è una dimostrazione incondizionata
+che ogni metodo esatto debba essere superpolinomiale.
+\end{remark}
+
+\newpage
+
+\section{Rilassamento continuo}
+\label{sec:rilassamento-continuo}
+
+Un primo procedimento per affrontare \((\mathrm{Pli})\) consiste
+nel risolvere un problema più semplice, eliminando soltanto
+i vincoli di interezza.
+
+\begin{enumerate}
+\item Si ignorano i vincoli \(x\in\mathbb Z^n\), ottenendo
+\begin{align*}
+(\mathrm{Pli\text{-}c})\qquad \min\quad &z(x)=c^{\mathsf T}x\\
+\text{s.a.}\quad &Ax=b,\\
+&x\geq0.
+\end{align*}
+Questo problema è il \emph{rilassamento continuo} di
+\((\mathrm{Pli})\) ed è un problema di PL in forma standard.
+Si può risolvere con il simplesso o con altri metodi per la PL.
+
+Poiché \(X\subseteq P\), minimizzare su \(P\) permette di scegliere
+fra almeno tutti i punti disponibili in \(X\). Se gli ottimi
+sono finiti, si ha
+\[
+z^*_{(\mathrm{Pli\text{-}c})}
+=\min_{x\in P}c^{\mathsf T}x
+\leq\min_{x\in X}c^{\mathsf T}x
+=z^*_{(\mathrm{Pli})}.
+\]
+Il valore del rilassamento è un \emph{limite inferiore}
+o \emph{lower bound} per l'ottimo del problema intero di minimo.
+Questo perché \(P\) è più grande di \(X\), nel senso che contiene tutti i punti di \(X\) e, potenzialmente, anche altri punti.
+\begin{warning}{}
+    Nota che poi anche il dominio della funzione \(z\) cambia, in questo rilassamento, e passa ad essere \(\mathbb{R}^n\).
+\end{warning}
+
+\item Sia \(x^*\) una soluzione ottima del rilassamento.
+Se tutte le sue componenti sono intere cioè \(x^*\in X\), allora
+\[
+z^*_{(\mathrm{Pli\text{-}c})}(x^*)
+=z^*_{(\mathrm{Pli})}(x^*).
+\]
+Il problema intero è quindi risolto all'ottimo. Infatti, abbiamo trovato una **soluzione ottima del rilassamento continuo \(P\) che è anche intera**, e quindi appartiene a \(X\).
+
+Poiché \(X\subseteq P\), tale soluzione è necessariamente ottima anche per il problema intero: **non può esistere una soluzione migliore in \(X\)**, dato che ciò contraddirebbe l'ottimalità già raggiunta su \(P\), che è un insieme ammissibile più ampio.
+\end{enumerate}
+\newpage
+Se invece \(x^*\notin\mathbb Z^n\) (cioè $x^*$ è la soluzione del problema di PLI rilassato) e in teoria potremmo supporre che arrotondare le componenti non intere sia una buona idea!
+\\
+
+
+Invece non è corretto supporre
+che arrotondarne le componenti produca una soluzione del problema
+intero: il vettore arrotondato \(x^I\) può violare i vincoli
+lineari e non appartenere a \(X\).
+
+\begin{example}{L'arrotondamento può distruggere l'ammissibilità}
+\label{ex:arrotondamento}
+Si consideri
+\begin{align*}
+\max\quad &x_2\\
+\text{s.a.}\quad
+&x_1\geq\frac14 &&\text{(a)},\\
+&x_1\leq\frac34 &&\text{(b)},\\
+&x_2\leq2 &&\text{(c)},\\
+&x_1,x_2\geq0,\qquad x_1,x_2\in\mathbb Z.
+\end{align*}
+La regione del rilassamento la trovi sotto
+
+L'intervallo \([\frac14,\frac34]\) non contiene interi, quindi
+\[
+X=P\cap\mathbb Z^2=\varnothing.
+\]
+
+\textbf{Quindi non c'è proprio una soluzione intera a questo problema}.
+
+Il rilassamento ha invece un ottimo finito: ogni punto
+\((\xi,2)^{\mathsf T}\), con \(\frac14\leq\xi\leq\frac34\),
+ha valore ottimo \(2\). Per esempio
+\(x^*=(\frac14,2)^{\mathsf T}\) è ottimo e frazionario.
+Arrotondando la prima componente a \(0\) si viola (a);
+arrotondandola a \(1\) si viola (b). Nessun arrotondamento
+può dunque produrre un punto di \(X\).
+\end{example}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{_files/_images/photo_2026-11-12_17-15-25.jpg}
+    \caption{Regione ammissibile del rilassamento nell'esempio:
+\(x^*\notin\mathbb Z^2\) e il vettore arrotondato \(x^I\notin X\).
+Il problema intero ha \(X=\varnothing\); la freccia della funzione
+obiettivo indica il verso di crescita di \(x_2\).}
+    \label{fig:immagine}
+\end{figure}
+
+
+\subsection{Relazioni fra un problema di PLI ed il suo rilassamento continuo}
+
+Siano (Pli) un problema di programmazione lineare intera con regione ammissibile $X$, $X^*$ insieme di soluzioni ottime e sia $z^*_{(Pli)}$ il valore ottimo della funzione obiettivo,sempre nel problema di programmazione lineare intera.
+Consideriamo poi (Pli-c) il suo rilassamento continuo con regione ammissibile $P$,$P^*$ l'insieme di soluzioni ottime e il valore ottimo della funzione obiettivo del Pli-c, come $z^*_{(Pli-c)}$
+
+\begin{proposition}{Relazioni fondamentali}
+Fra il problema intero e il suo rilassamento valgono le seguenti relazioni.
+\begin{enumerate}
+\item \(P=\varnothing\Longrightarrow X=\varnothing\):
+se il rilassamento è inammissibile, lo è anche il problema intero.
+
+\item Se il problema intero è illimitato nel verso di ottimizzazione,
+anche il rilassamento è illimitato nello stesso verso.
+Per un problema di minimo,
+\[
+z^*_{(Pli)} = -\infty \implies z^*_{(Pli-c)} = -\infty  
+\]
+Per un problema di massimo, l'analoga relazione usa \(+\infty\).
+
+\item Se \(P^*\neq\varnothing\) (cioè appartiene all'insieme delle soluzioni ottime) e \(X^*\neq\varnothing\), nel caso
+di minimo si ha il lower bound
+\[
+z^*_{(\mathrm{Pli\text{-}c})}\leq z^*_{(\mathrm{Pli})}.
+\]
+Questo perchè $P$ è piu grande ed è un sottoinsieme di $X$
+
+
+\item Se \(y\in P^*\) e \(y\in\mathbb Z^n\), allora
+\[
+y\in X^*,\qquad
+z(y)=z^*_{(\mathrm{Pli\text{-}c})}=z^*_{(\mathrm{Pli})}.
+\]
+
+\item Può accadere che
+\[
+X=\varnothing,\qquad P^*\neq\varnothing.
+\]
+È il caso dell'esempio precedente: il problema intero è inammissibile,
+ma il rilassamento possiede un ottimo finito.
+
+\item Può accadere che \(X=\varnothing\) e il rilassamento sia illimitato.
+Un esempio è
+\begin{align*}
+\max\quad &x_2\\
+\text{s.a.}\quad
+&x_1\geq\frac14 &&\text{(a)},\\
+&x_1\leq\frac34 &&\text{(b)},\\
+&x_1,x_2\geq0,\qquad x_1,x_2\in\mathbb Z.
+\end{align*}
+Qui \(X=\varnothing\), mentre nel rilassamento continuo il valore della funzione obiettivo può crescere illimitatamente verso + $\infty$
+Questo perchè la regione ammissibile $P$ è illimtata verso l'alto, come vedi sotto.
+\end{enumerate}
+\end{proposition}
+
+
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[x=3.8cm,y=1.2cm,>=Stealth,font=\small]
+  \fill[blue!7] (.25,0) rectangle (.75,3.2);
+  \draw[->] (-.13,0)--(1.65,0) node[right] {$x_1$};
+  \draw[->] (0,-.25)--(0,3.3) node[above] {$x_2$};
+  \draw[->] (.25,-.12)--(.25,3.15) node[above] {(a)};
+  \draw[->] (.75,-.12)--(.75,3.15) node[above] {(b)};
+  \draw[->] (.25,2.8)--(.43,2.8);
+  \draw[->] (.75,2.6)--(.57,2.6);
+  \draw[brown!70!black] (-.1,1.6)--(1.5,1.6);
+  \draw[->,brown!70!black] (1.4,1.6)--(1.4,2)
+    node[right] {f.o.};
+  \foreach \x/\lab in {.25/{\frac14},.5/{\frac12},.75/{\frac34},1/1} {
+    \draw (\x,.035)--(\x,-.035);
+    \node[below] at (\x,-.04) {$\lab$};
+  }
+  \foreach \y in {1,2} \node[left] at (0,\y) {$\y$};
+  \node at (.5,1.1) {$P$};
+  \node at (1.12,.65) {$X=\varnothing$};
+\end{tikzpicture}
+\captionof{figure}{Regione del rilassamento nel caso 6: la striscia
+\(\frac14\leq x_1\leq\frac34,\ x_2\geq0\) è illimitata verso l'alto
+ma non contiene punti interi. Quindi \(X=\varnothing\), mentre
+il rilassamento di massimo ha valore \(+\infty\).}
+\label{fig:striscia-illimitata}
+\end{minipage}
+\end{center}
+
+\subsection{Matrice dei vincoli unimodulare}
+\label{subsec:unimodularita}
+
+In generale l'ottimo del rilassamento non risolve direttamente
+il problema intero. Esistono però strutture della matrice dei vincoli
+che garantiscono l'interezza delle soluzioni di base, quando
+i termini noti sono interi.
+
+\begin{definition}{Matrice unimodulare}
+Una matrice intera \(A\in\mathbb Z^{m\times n}\), con \(m\leq n\),
+si dice \emph{unimodulare}, nella terminologia adottata nel testo,
+se ogni sua sottomatrice quadrata \(B\in\mathbb Z^{m\times m}\)
+soddisfa
+\[
+\det(B)\in\{-1,0,1\}.
+\]
+La definizione riguarda quindi i minori di ordine massimo \(m\).
+\end{definition}
+
+Supponiamo che \(A\) e \(b\) siano interi e consideriamo una soluzione
+di base \(x^*\). Per il consueto ragionamento sulle basi si assume
+che le righe dei vincoli siano linearmente indipendenti,
+cioè \(\operatorname{rank}(A)=m\), eliminando prima
+le uguaglianze ridondanti.
+
+Se \(B\) è la matrice di base e \(A_N\) raccoglie le colonne non in base,
+ordinando coerentemente gli indici si ha
+\[
+A=\begin{bmatrix}B&A_N\end{bmatrix},
+\qquad
+x^*=
+\begin{bmatrix}x_B^*\\x_N^*\end{bmatrix}
+=
+\begin{bmatrix}B^{-1}b\\0\end{bmatrix}.
+\]
+Le componenti non di base sono già intere perché nulle.
+L'interezza di \(x^*\) dipende dunque da \(B^{-1}b\).
+Poiché \(b\in\mathbb Z^m\), una condizione sufficiente è che
+\(B^{-1}\) sia intera.
+
+La formula dell'inversa mediante la matrice aggiunta è
+\[
+B^{-1}
+=\frac{1}{\det(B)}
+\begin{bmatrix}
+\alpha_{11}&\alpha_{12}&\cdots&\alpha_{1m}\\
+\alpha_{21}&\alpha_{22}&\cdots&\alpha_{2m}\\
+\vdots&\vdots&\ddots&\vdots\\
+\alpha_{m1}&\alpha_{m2}&\cdots&\alpha_{mm}
+\end{bmatrix}^{\mathsf T},
+\]
+dove
+\[
+\alpha_{ij}=(-1)^{i+j}\det(M_{ij})
+\]
+e \(M_{ij}\) si ottiene da \(B\) eliminando la riga \(i\)
+e la colonna \(j\).
+
+La matrice \(B\) è intera perché è estratta da \(A\).
+Ogni \(M_{ij}\) è intera, quindi il suo determinante e
+il cofattore \(\alpha_{ij}\) sono interi.
+Questo si verifica anche sviluppando ricorsivamente i determinanti
+fino ai minori di ordine \(1\). Se
+\[
+\det(B)\in\{-1,1\},
+\]
+la divisione per \(\det(B)\) cambia al più il segno dei cofattori:
+\(B^{-1}\) e \(B^{-1}b\) sono quindi interi.
+
+\begin{theorem}{Interezza dei vertici}
+\label{thm:vertici-interi}
+Sia \(A\in\mathbb Z^{m\times n}\) unimodulare e di rango \(m\),
+e sia \(b\in\mathbb Z^m\). Allora il poliedro
+\[
+P=\{x\in\mathbb R^n:Ax=b,\ x\geq0\}
+\]
+ha soltanto vertici interi.
+\end{theorem}
+
+\begin{proof}
+Ogni vertice del poliedro in forma standard è una soluzione
+di base ammissibile. La sua matrice di base \(B\) è non singolare
+e, per l'unimodularità di \(A\),
+\[
+\det(B)\in\{-1,0,1\}\setminus\{0\}=\{-1,1\}.
+\]
+La formula dei cofattori mostra che \(B^{-1}\) è intera.
+Segue \(x_B=B^{-1}b\in\mathbb Z^m\); inoltre \(x_N=0\).
+Ogni vertice appartiene quindi a \(\mathbb Z^n\).
+\end{proof}
+
+\begin{remark}{Precisazione sul rango e sulla portata del teorema}
+L'ipotesi di rango pieno, usuale quando si parla di matrici di base,
+è stata resa esplicita. Senza tale ipotesi, la sola condizione
+sui minori di ordine \(m\) può essere vacua. Per esempio
+\[
+A=\begin{bmatrix}2&0\\0&0\end{bmatrix},
+\qquad b=\begin{bmatrix}1\\0\end{bmatrix}
+\]
+ha determinante nullo, ma il poliedro associato ha
+il vertice \((\frac12,0)^{\mathsf T}\), che non è intero.
+
+Il teorema riguarda i \emph{vertici}, non tutti i punti del poliedro.
+Inoltre \(\det(B)=\pm1\) è sufficiente per l'interezza
+con qualunque \(b\) intero; non è necessario per un particolare \(b\).
+Per esempio \(B=\begin{bmatrix}2\end{bmatrix}\),
+\(b=\begin{bmatrix}2\end{bmatrix}\) danno
+\(B^{-1}b=\begin{bmatrix}1\end{bmatrix}\), benché
+\(B^{-1}=\begin{bmatrix}\frac12\end{bmatrix}\).
+\end{remark}
+
+Se il rilassamento ha un ottimo finito, se ne può scegliere uno
+di base: sotto le ipotesi del teorema è intero e risolve
+anche il problema di PLI.
+
+\subsubsection*{Esempi di problemi di PLI con matrice dei vincoli unimodulare}
+
+Due problemi classici hanno una struttura particolarmente favorevole:
+il \emph{Problema del Trasporto} e il \emph{Problema dell'Assegnamento}.
+In entrambi i termini noti sono interi e la matrice dei vincoli
+possiede una proprietà ancora più forte dell'unimodularità,
+che sarà dimostrata di seguito.
+
+\begin{example}{Il Problema del Trasporto: problema di Hitchcock}
+\label{ex:trasporto}
+Sono dati \(m\) fornitori di un bene \(M\) e \(n\) clienti.
+Il fornitore \(i\), con \(i=1,\ldots,m\), dispone di
+\(s_i\in\mathbb Z_{\geq0}\) unità di bene; il cliente \(j\),
+con \(j=1,\ldots,n\), richiede \(d_j\in\mathbb Z_{\geq0}\) unità.
+Il costo di trasporto di un'unità dal fornitore \(i\) al cliente \(j\)
+è \(c_{ij}\). Si assume inizialmente il \emph{bilanciamento}:
+\begin{equation}
+\sum_{i=1}^m s_i=\sum_{j=1}^n d_j.
+\tag{3.1}\label{eq:bilanciamento}
+\end{equation}
+L'obiettivo è minimizzare il costo totale del trasporto rispettando
+le disponibilità dei fornitori e le richieste dei clienti.
+
+Indichiamo con \(f_{ij}\) la quantità trasportata da \(i\) a \(j\).
+La formulazione è
+\begin{align*}
+\min\quad &\sum_{i=1}^m\sum_{j=1}^n c_{ij}f_{ij}\\
+\text{s.a.}\quad
+&\sum_{i=1}^m f_{ij}=d_j,
+&&j=1,\ldots,n \qquad\text{(a)},\\
+&\sum_{j=1}^n f_{ij}=s_i,
+&&i=1,\ldots,m \qquad\text{(b)},\\
+&f_{ij}\geq0,
+&&i=1,\ldots,m,\quad j=1,\ldots,n.
+\end{align*}
+I vincoli (a) sono i \emph{vincoli di destinazione};
+i vincoli (b) sono i \emph{vincoli di origine}.
+Si osservi quanto segue.
+\begin{enumerate}
+\item[i.] Le variabili sono \(mn\), una per coppia fornitore--cliente.
+
+\item[ii.] Sommando i vincoli di destinazione e quelli di origine,
+\[
+\sum_{j=1}^n d_j
+=\sum_{j=1}^n\sum_{i=1}^m f_{ij}
+=\sum_{i=1}^m\sum_{j=1}^n f_{ij}
+=\sum_{i=1}^m s_i.
+\]
+Il bilanciamento \eqref{eq:bilanciamento} è quindi necessario
+per l'ammissibilità del modello con tutte le uguaglianze.
+
+\item[iii.] La matrice dei vincoli ha la proprietà di interezza
+che sarà dimostrata attraverso la totale unimodularità.
+Con \(s_i,d_j\) interi, ogni soluzione di base ammissibile
+è intera: si può ottenere un ottimo intero imponendo soltanto
+i vincoli di segno \(f_{ij}\geq0\).
+
+\item[iv.] Ogni istanza si rappresenta con un grafo bipartito completo
+\[
+K_{m,n}=(F\cup C,E),
+\]
+nel quale:
+\begin{itemize}
+\item \(F=\{1,\ldots,m\}\) è l'insieme dei fornitori;
+\item \(C=\{1,\ldots,n\}\) è l'insieme dei clienti, distinto da \(F\);
+\item \(E=\{[i,j]:i\in F,\ j\in C\}\);
+\item \(c:E\longrightarrow\mathbb R_{\geq0}\) associa
+il costo \(c_{ij}\) al collegamento \([i,j]\).
+\end{itemize}
+Le frecce nelle figure indicano il trasporto dal fornitore
+al cliente.
+\end{enumerate}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[>=Stealth,font=\small,
+  forn/.style={circle,draw=blue!65!black,minimum size=7mm,inner sep=1pt},
+  cli/.style={circle,draw=red!70!black,minimum size=7mm,inner sep=1pt}]
+  \node[forn] (f1) at (0,3.6) {$1$};
+  \node[forn] (fi) at (0,1.8) {$i$};
+  \node[forn] (fm) at (0,0) {$m$};
+  \node[cli] (c1) at (5,3.6) {$1$};
+  \node[cli] (cj) at (5,1.8) {$j$};
+  \node[cli] (cn) at (5,0) {$n$};
+  \node[above,blue!65!black] at (f1.north) {$F$};
+  \node[above,red!70!black] at (c1.north) {$C$};
+  \foreach \f in {f1,fi,fm}
+    \foreach \c in {c1,cj,cn}
+      \draw[->,gray!75] (\f)--(\c);
+  \draw[->] (fi)--node[above,fill=white,inner sep=2pt] {$c_{ij}$}(cj);
+  \node at (0,2.7) {$\vdots$};
+  \node at (0,.9) {$\vdots$};
+  \node at (5,2.7) {$\vdots$};
+  \node at (5,.9) {$\vdots$};
+\end{tikzpicture}
+\captionof{figure}{Grafo bipartito completo rappresentante una generica istanza
+del Problema del Trasporto. Ogni fornitore è collegato a ogni cliente;
+il collegamento \([i,j]\) ha costo \(c_{ij}\).}
+\label{fig:trasporto-generico}
+\end{minipage}
+\end{center}
+
+La matrice dei coefficienti tecnologici ha dimensioni
+\[
+(m+n)\times mn
+\]
+e coincide con la matrice di incidenza nodo--arco \emph{non orientata}
+del grafo bipartito: nella colonna di \(f_{ij}\) si trovano
+un \(1\) nella riga del fornitore \(i\), un \(1\)
+nella riga del cliente \(j\) e \(0\) nelle altre righe.
+
+Consideriamo concretamente \(m=3\) fornitori e \(n=2\) clienti:
+\begin{align*}
+\min\quad
+&c_{11}f_{11}+c_{12}f_{12}
++c_{21}f_{21}+c_{22}f_{22}
++c_{31}f_{31}+c_{32}f_{32}\\
+\text{s.a.}\quad
+&f_{11}+f_{12}=s_1,\\
+&f_{21}+f_{22}=s_2,\\
+&f_{31}+f_{32}=s_3,\\
+&f_{11}+f_{21}+f_{31}=d_1,\\
+&f_{12}+f_{22}+f_{32}=d_2,\\
+&f_{ij}\geq0,\qquad i=1,2,3,\quad j=1,2.
+\end{align*}
+Nell'ordine di colonne
+\[
+f_{11},\ f_{12},\ f_{21},\ f_{22},\ f_{31},\ f_{32},
+\]
+la matrice è
+\[
+A=
+\begin{bmatrix}
+1&1&0&0&0&0\\
+0&0&1&1&0&0\\
+0&0&0&0&1&1\\
+1&0&1&0&1&0\\
+0&1&0&1&0&1
+\end{bmatrix}\in\mathbb Z^{5\times6}.
+\]
+Le prime tre righe rappresentano i fornitori, le ultime due
+i clienti. Il grafo associato è \(K_{3,2}\), con
+\(F=\{1,2,3\}\) e \(C=\{1,2\}\).
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[>=Stealth,font=\small,
+  forn/.style={circle,draw=blue!65!black,minimum size=8mm},
+  cli/.style={circle,draw=red!70!black,minimum size=8mm}]
+  \node[forn] (f1) at (0,4) {$1$};
+  \node[forn] (f2) at (0,2) {$2$};
+  \node[forn] (f3) at (0,0) {$3$};
+  \node[cli] (c1) at (5,3.5) {$1$};
+  \node[cli] (c2) at (5,.5) {$2$};
+  \node[above,blue!65!black] at (f1.north) {$F$};
+  \node[above,red!70!black] at (c1.north) {$C$};
+  \draw[->] (f1)--node[pos=.35,above,fill=white,inner sep=1pt] {$c_{11}$}(c1);
+  \draw[->] (f1)--node[pos=.25,below,fill=white,inner sep=1pt] {$c_{12}$}(c2);
+  \draw[->] (f2)--node[pos=.3,above,fill=white,inner sep=1pt] {$c_{21}$}(c1);
+  \draw[->] (f2)--node[pos=.32,below,fill=white,inner sep=1pt] {$c_{22}$}(c2);
+  \draw[->] (f3)--node[pos=.24,above,fill=white,inner sep=1pt] {$c_{31}$}(c1);
+  \draw[->] (f3)--node[pos=.35,below,fill=white,inner sep=1pt] {$c_{32}$}(c2);
+\end{tikzpicture}
+\captionof{figure}{Grafo \(K_{3,2}\) dell'istanza del trasporto con tre fornitori
+e due clienti. Sono rappresentati tutti i sei collegamenti
+e i rispettivi costi.}
+\label{fig:trasporto-32}
+\end{minipage}
+\end{center}
+\end{example}
+
+\paragraph{Importanti osservazioni.}
+La prima osservazione riguarda l'ipotesi di bilanciamento:
+essa non è restrittiva se si rappresentano esplicitamente
+la domanda insoddisfatta o l'offerta inutilizzata.
+Si distinguono due scenari alternativi.
+
+\begin{remark}{Scenario 1: offerta complessiva inferiore alla domanda}
+Supponiamo che
+\[
+\sum_{i=1}^m s_i<\sum_{j=1}^n d_j.
+\]
+I fornitori reali non possono soddisfare tutta la domanda.
+Per i soli flussi reali si considera quindi
+\[
+\sum_{i=1}^m f_{ij}\leq d_j,\qquad j=1,\ldots,n.
+\]
+Si procede così:
+\begin{enumerate}
+\item si introduce un fornitore fittizio \(m+1\);
+\item si introducono \(n\) ulteriori variabili
+\[
+f_{(m+1)j}\geq0,\qquad j=1,\ldots,n;
+\]
+\item si definiscono la sua disponibilità e i suoi costi:
+\[
+s_{m+1}=\sum_{j=1}^n d_j-\sum_{i=1}^m s_i,
+\qquad
+c_{(m+1)j}\ \text{da definire},\quad j=1,\ldots,n.
+\]
+\end{enumerate}
+Il modello bilanciato risultante è
+\begin{align*}
+\min\quad &\sum_{i=1}^{m+1}\sum_{j=1}^n c_{ij}f_{ij}\\
+\text{s.a.}\quad
+&\sum_{j=1}^n f_{ij}=s_i,
+&&i=1,\ldots,m+1 \qquad\text{(a)},\\
+&\sum_{i=1}^{m+1}f_{ij}=d_j,
+&&j=1,\ldots,n \qquad\text{(b)},\\
+&f_{ij}\geq0,
+&&i=1,\ldots,m+1,\quad j=1,\ldots,n.
+\end{align*}
+La quantità \(f_{(m+1)j}\) misura la domanda del cliente \(j\)
+non soddisfatta dai fornitori reali. I costi fittizi possono
+essere penalità per mancata consegna; la scelta dipende
+dall'applicazione.
+
+Per esempio, se l'offerta totale è \(5\) e la domanda totale è \(8\),
+il fornitore fittizio ha disponibilità \(3\): contabilizza
+tre unità di domanda insoddisfatta, senza creare prodotto reale.
+\end{remark}
+
+\begin{remark}{Scenario 2: offerta complessiva superiore alla domanda}
+Supponiamo che
+\[
+\sum_{i=1}^m s_i>\sum_{j=1}^n d_j.
+\]
+Per i soli clienti reali, ciascun fornitore può spedire meno
+della propria disponibilità:
+\[
+\sum_{j=1}^n f_{ij}\leq s_i,\qquad i=1,\ldots,m.
+\]
+Si procede così:
+\begin{enumerate}
+\item si introduce un cliente fittizio \(n+1\);
+\item si introducono \(m\) ulteriori variabili
+\[
+f_{i(n+1)}\geq0,\qquad i=1,\ldots,m;
+\]
+\item si definiscono la sua domanda e i suoi costi:
+\[
+d_{n+1}=\sum_{i=1}^m s_i-\sum_{j=1}^n d_j,
+\qquad
+c_{i(n+1)}\ \text{da definire},\quad i=1,\ldots,m.
+\]
+\end{enumerate}
+Il modello bilanciato è
+\begin{align*}
+\min\quad &\sum_{i=1}^m\sum_{j=1}^{n+1}c_{ij}f_{ij}\\
+\text{s.a.}\quad
+&\sum_{j=1}^{n+1}f_{ij}=s_i,
+&&i=1,\ldots,m \qquad\text{(a)},\\
+&\sum_{i=1}^m f_{ij}=d_j,
+&&j=1,\ldots,n+1 \qquad\text{(b)},\\
+&f_{ij}\geq0,
+&&i=1,\ldots,m,\quad j=1,\ldots,n+1.
+\end{align*}
+Il flusso verso il cliente fittizio rappresenta l'offerta inutilizzata.
+Il relativo costo può essere nullo oppure descrivere, per esempio,
+costi di stoccaggio o smaltimento.
+\end{remark}
+
+La seconda osservazione riguarda l'esistenza di un ottimo finito.
+
+\begin{theorem}{Esistenza di un ottimo finito per il trasporto}
+\label{thm:trasporto-ottimo}
+Ogni istanza bilanciata del Problema del Trasporto sul grafo bipartito
+completo, con disponibilità e domande nonnegative e costi finiti,
+ammette almeno una soluzione ottima finita.
+\end{theorem}
+
+\begin{proof}
+Poniamo
+\[
+\alpha=\sum_{i=1}^m s_i=\sum_{j=1}^n d_j.
+\]
+Se \(\alpha>0\), definiamo
+\begin{equation}
+f_{ij}=\frac{s_i d_j}{\alpha},
+\qquad i=1,\ldots,m,\quad j=1,\ldots,n.
+\tag{3.2}\label{eq:soluzione-proporzionale}
+\end{equation}
+Tali quantità sono nonnegative. Verifichiamo i vincoli.
+Per ogni fornitore \(i\), i vincoli di origine sono soddisfatti:
+\begin{align*}
+\sum_{j=1}^n f_{ij}
+&=\sum_{j=1}^n\left(\frac{s_i d_j}{\sum_{r=1}^m s_r}\right)\\
+&=\frac{s_i}{\sum_{r=1}^m s_r}\sum_{j=1}^n d_j\\
+&=\frac{s_i}{\alpha}\,\alpha
+\qquad\text{per il bilanciamento}\\
+&=s_i.
+\end{align*}
+Per ogni cliente \(j\), i vincoli di destinazione sono soddisfatti:
+\begin{align*}
+\sum_{i=1}^m f_{ij}
+&=\sum_{i=1}^m\left(\frac{s_i d_j}{\sum_{\ell=1}^n d_\ell}\right)\\
+&=\frac{d_j}{\sum_{\ell=1}^n d_\ell}\sum_{i=1}^m s_i\\
+&=\frac{d_j}{\alpha}\,\alpha
+\qquad\text{per il bilanciamento}\\
+&=d_j.
+\end{align*}
+La soluzione \eqref{eq:soluzione-proporzionale} è ammissibile.
+
+Se \(\alpha=0\), la nonnegatività implica che tutte le disponibilità
+e le domande sono nulle; \(f_{ij}=0\) è ammissibile,
+senza dividere per zero.
+
+Per ogni soluzione ammissibile e per ogni \(i,j\), si ha inoltre
+\begin{align*}
+&f_{ij}\geq0,\\
+&\sum_{\ell=1}^n f_{i\ell}=s_i
+\quad\Longrightarrow\quad f_{ij}\leq s_i,\\
+&\sum_{r=1}^m f_{rj}=d_j
+\quad\Longrightarrow\quad f_{ij}\leq d_j.
+\end{align*}
+Quindi
+\[
+0\leq f_{ij}\leq\min\{s_i,d_j\}.
+\]
+La regione ammissibile è non vuota, chiusa e limitata,
+dunque compatta. La funzione obiettivo è lineare e continua,
+perciò assume su di essa un minimo finito.
+\end{proof}
+
+\begin{remark}{Chiarimento sulla soluzione proporzionale e sugli indici}
+La formula \eqref{eq:soluzione-proporzionale} dimostra
+l'ammissibilità del problema continuo: non è necessariamente
+intera né ottima. Per esempio, con
+\(s_1=s_2=d_1=d_2=1\), dà \(f_{ij}=\frac12\).
+L'esistenza di un ottimo intero deriva invece dalla matrice.
+
+Nell'originale alcuni indici delle somme finali sono scambiati:
+si somma sui clienti per ottenere \(s_i\), sui fornitori
+per ottenere \(d_j\), come nelle formule corrette sopra.
+Sono stati esplicitati anche il bilanciamento e il caso \(\alpha=0\).
+\end{remark}
+
+La terza osservazione riguarda la matrice dei coefficienti tecnologici.
+Per il trasporto si può dimostrare la \emph{totale unimodularità},
+che riguarda tutti i minori quadrati, non soltanto quelli
+di ordine massimo.
+
+\begin{definition}{Matrice totalmente unimodulare}
+Una matrice intera \(A\in\mathbb Z^{m\times n}\), con \(m\leq n\),
+si dice \emph{totalmente unimodulare} se, per ogni sottomatrice
+quadrata \(B\) di qualunque ordine \(k=1,\ldots,m\), vale
+\[
+\det(B)\in\{-1,0,1\}.
+\]
+In generale, senza l'ipotesi \(m\leq n\), si considerano
+gli ordini \(k=1,\ldots,\min\{m,n\}\).
+\end{definition}
+
+\begin{remark}{Chiarimento sulla differenza fra le due proprietà}
+La totale unimodularità implica l'unimodularità nella definizione
+del testo. Il viceversa non vale in generale: controllare soltanto
+i minori massimi non controlla quelli più piccoli.
+In particolare, una matrice totalmente unimodulare ha tutti
+gli elementi in \(\{-1,0,1\}\), perché ogni elemento
+è un minore di ordine \(1\).
+\end{remark}
+
+\begin{theorem}{Totale unimodularità della matrice del trasporto}
+\label{thm:trasporto-tu}
+Sia \(A\) la matrice dei coefficienti tecnologici del Problema
+del Trasporto. Per ogni sua sottomatrice quadrata \(A^{(k)}\)
+di ordine \(k\), vale
+\[
+\det\!\left(A^{(k)}\right)\in\{-1,0,1\}.
+\]
+Quindi \(A\) è totalmente unimodulare.
+\end{theorem}
+
+\begin{proof}
+Ogni colonna di \(A\), corrispondente a \(f_{ij}\), contiene
+esattamente due \(1\): uno in una riga di origine e uno
+in una riga di destinazione. Gli altri elementi sono nulli.
+Una colonna di \(A^{(k)}\) può dunque contenere zero, uno o due \(1\).
+
+Procediamo per induzione sull'ordine \(k\). Per \(k=1\), l'elemento
+è \(0\) o \(1\), quindi l'affermazione è vera.
+Per \(k>1\), distinguiamo i tre casi del testo.
+\begin{enumerate}
+\item \textbf{Esiste una colonna interamente nulla.}
+Il determinante è immediatamente nullo:
+\[
+\det\!\left(A^{(k)}\right)=0.
+\]
+
+\item \textbf{Ogni colonna contiene due \(1\).}
+Sono presenti entrambi gli estremi di ciascun arco selezionato.
+La somma delle righe di origine coincide con quella
+delle righe di destinazione: ciascuna colonna contribuisce
+con un \(1\) a entrambe. Le righe sono linearmente dipendenti
+e il determinante è nullo.
+
+L'esempio del testo, con tre fornitori e due clienti, è
+\[
+A=
+\begin{bmatrix}
+1&1&0&0&0&0\\
+0&0&1&1&0&0\\
+0&0&0&0&1&1\\
+1&0&1&0&1&0\\
+0&1&0&1&0&1
+\end{bmatrix}
+\quad\Longrightarrow\quad
+A^{(4)}=
+\begin{bmatrix}
+1&1&0&0\\
+0&0&1&1\\
+1&0&1&0\\
+0&1&0&1
+\end{bmatrix}.
+\]
+Le prime due righe di \(A^{(4)}\) sono di origine e le ultime
+due di destinazione. Le somme sono
+\[
+\begin{array}{rrrr@{\quad}c}
+1&1&0&0&+\\
+0&0&1&1&\\ \cline{1-4}
+1&1&1&1&
+\end{array}
+\qquad\qquad
+\begin{array}{rrrr@{\quad}c}
+1&0&1&0&+\\
+0&1&0&1&\\ \cline{1-4}
+1&1&1&1&
+\end{array}.
+\]
+Ne segue
+\[
+\text{riga}_1+\text{riga}_2-\text{riga}_3-\text{riga}_4=0,
+\qquad \det\!\left(A^{(4)}\right)=0.
+\]
+Lo stesso ragionamento vale per qualunque \(k\) in questo caso.
+
+\item \textbf{Non vi sono colonne nulle e almeno una colonna
+contiene un solo \(1\).}
+Sviluppiamo il determinante lungo una di tali colonne.
+Se l'unico \(1\) è nella posizione \((r,s)\), lo sviluppo
+di Laplace dà
+\[
+\det\!\left(A^{(k)}\right)
+=(-1)^{r+s}\det\!\left(A^{(k-1)}\right).
+\]
+La matrice residua è ancora una sottomatrice di \(A\).
+Per induzione il suo determinante è \(0\), \(1\) o \(-1\),
+e lo stesso vale dopo la moltiplicazione per il segno.
+Equivalentemente, si ripete lo sviluppo fino a un minore
+di ordine \(1\) o fino a uno dei due casi precedenti.
+\end{enumerate}
+I tre casi esauriscono le possibilità e in tutti
+il determinante appartiene a \(\{-1,0,1\}\).
+\end{proof}
+
+\begin{corollary}{Interezza delle soluzioni di base del trasporto}
+\label{cor:trasporto-intero}
+Se tutte le disponibilità \(s_i\) e tutte le domande \(d_j\) sono intere,
+ogni soluzione di base del Problema del Trasporto, dopo
+l'eliminazione dei vincoli ridondanti, ha componenti intere.
+In particolare ogni soluzione di base ammissibile è intera
+ed esiste una soluzione ottima intera.
+\end{corollary}
+
+\begin{proof}
+La matrice completa del trasporto ha rango \(m+n-1\):
+la somma dei vincoli di origine coincide con la somma
+dei vincoli di destinazione; nel grafo bipartito completo
+questa è l'unica dipendenza indipendente fra le righe.
+Eliminando una riga ridondante si ottiene una matrice
+di rango pieno ancora totalmente unimodulare, perché
+ogni suo minore è anche un minore della matrice originale.
+
+Ogni matrice di base \(B\) è non singolare e ha determinante
+\(\pm1\). Con termini noti interi, \(B^{-1}b\) è quindi intero.
+L'esistenza di un ottimo finito e la possibilità di sceglierlo
+di base concludono la dimostrazione.
+\end{proof}
+
+\begin{remark}{Precisazione: soluzioni di base e soluzioni ammissibili}
+Le frasi del testo secondo cui una qualunque soluzione
+del trasporto sarebbe intera vanno riferite alle
+\emph{soluzioni di base}. Un poliedro con vertici interi
+contiene normalmente anche punti frazionari,
+ottenuti combinando convessamente i vertici.
+La garanzia utile è che si può scegliere un ottimo di base intero,
+senza imporre esplicitamente l'interezza nel problema continuo.
+
+La matrice completa del trasporto ha righe dipendenti;
+la totale unimodularità permette di applicare il risultato
+sulle basi dopo la rimozione della dipendenza.
+\end{remark}
+
+\begin{example}{Il Problema dell'Assegnamento}
+\label{ex:assegnamento}
+Il Problema dell'Assegnamento è il caso speciale del trasporto in cui:
+\begin{enumerate}
+\item[i.] \(m=n\): il numero di fornitori coincide con quello dei clienti;
+\item[ii.] \(s_i=d_j=1\) per ogni \(i,j=1,\ldots,n\).
+\end{enumerate}
+La formulazione è
+\begin{align*}
+\min\quad &\sum_{i=1}^n\sum_{j=1}^n c_{ij}f_{ij}\\
+\text{s.a.}\quad
+&\sum_{i=1}^n f_{ij}=1,
+&&j=1,\ldots,n \qquad\text{(a)},\\
+&\sum_{j=1}^n f_{ij}=1,
+&&i=1,\ldots,n \qquad\text{(b)},\\
+&f_{ij}\geq0,
+&&i=1,\ldots,n,\quad j=1,\ldots,n.
+\end{align*}
+La matrice è totalmente unimodulare e i termini noti
+sono interi. Ogni soluzione di base ammissibile è dunque intera.
+Dalle somme di riga e dalla nonnegatività segue anche
+\[
+0\leq f_{ij}\leq1.
+\]
+Ogni soluzione di base ammissibile è perciò un vettore booleano,
+con il significato
+\[
+f_{ij}=
+\begin{cases}
+1,&\text{se il fornitore \(i\) è assegnato al cliente \(j\)},\\
+0,&\text{altrimenti}.
+\end{cases}
+\]
+In una soluzione ammissibile \emph{intera}, fra le \(n^2\)
+variabili esattamente \(n\) valgono \(1\), una per riga
+e una per colonna; le altre \(n^2-n\) valgono \(0\).
+La matrice \((f_{ij})\) è una matrice di permutazione.
+
+Ogni istanza si rappresenta con
+\[
+K_{n,n}=(F\cup C,E),
+\]
+nel quale:
+\begin{itemize}
+\item \(F=\{1,\ldots,n\}\) rappresenta i fornitori;
+\item \(C=\{1,\ldots,n\}\) rappresenta i clienti ed è distinto da \(F\);
+\item \(E=\{[i,j]:i\in F,\ j\in C\}\);
+\item \(c:E\longrightarrow\mathbb R_{\geq0}\), con \(c([i,j])=c_{ij}\).
+\end{itemize}
+La matrice dei vincoli coincide con la matrice di incidenza
+nodo--arco non orientata del grafo bipartito completo.
+Una soluzione intera seleziona \(n\) collegamenti
+che coprono ogni nodo una sola volta.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[>=Stealth,font=\small,
+  forn/.style={circle,draw=blue!65!black,minimum size=7mm},
+  cli/.style={circle,draw=red!70!black,minimum size=7mm}]
+  \node[forn] (f1) at (0,3.6) {$1$};
+  \node[forn] (fi) at (0,1.8) {$i$};
+  \node[forn] (fn) at (0,0) {$n$};
+  \node[cli] (c1) at (5,3.6) {$1$};
+  \node[cli] (cj) at (5,1.8) {$j$};
+  \node[cli] (cn) at (5,0) {$n$};
+  \node[above,blue!65!black] at (f1.north) {$F$};
+  \node[above,red!70!black] at (c1.north) {$C$};
+  \foreach \f in {f1,fi,fn}
+    \foreach \c in {c1,cj,cn}
+      \draw[->,gray!75] (\f)--(\c);
+  \draw[->] (fi)--node[above,fill=white,inner sep=2pt] {$c_{ij}$}(cj);
+  \node at (0,2.7) {$\vdots$};
+  \node at (0,.9) {$\vdots$};
+  \node at (5,2.7) {$\vdots$};
+  \node at (5,.9) {$\vdots$};
+\end{tikzpicture}
+\captionof{figure}{Grafo bipartito completo di una generica istanza
+del Problema dell'Assegnamento: entrambe le parti hanno \(n\) nodi
+e il collegamento \([i,j]\) ha costo \(c_{ij}\).}
+\label{fig:assegnamento}
+\end{minipage}
+\end{center}
+\end{example}
+
+\begin{remark}{Chiarimento sull'interezza nell'assegnamento}
+Anche per l'assegnamento l'affermazione del testo riferita a
+\emph{qualunque soluzione ammissibile} va corretta:
+sono interi i vertici, e si può scegliere un ottimo intero;
+non tutti i punti ammissibili del rilassamento sono booleani.
+Per \(n=2\), per esempio,
+\[
+(f_{ij})=
+\begin{bmatrix}
+\frac12&\frac12\\
+\frac12&\frac12
+\end{bmatrix}
+\]
+soddisfa tutte le somme di riga e di colonna e la nonnegatività,
+ma è frazionaria. È la media delle due matrici di permutazione
+\[
+\begin{bmatrix}1&0\\0&1\end{bmatrix},
+\qquad
+\begin{bmatrix}0&1\\1&0\end{bmatrix}.
+\]
+\end{remark}
+
+In un problema di PLI generale la matrice non possiede necessariamente
+queste proprietà: l'ottimo del rilassamento può avere componenti
+frazionarie. Questo non significa che ogni matrice non unimodulare
+produca sempre un ottimo frazionario, ma che viene meno la garanzia
+generale di interezza. Occorrono quindi metodi esatti
+che gestiscano esplicitamente tale requisito.
+
+\section{Metodi dei Piani di Taglio}
+\label{sec:piani-taglio}
+
+Consideriamo nuovamente \((\mathrm{Pli})\), il poliedro \(P\)
+del suo rilassamento e l'insieme \(X=P\cap\mathbb Z^n\).
+I \emph{metodi dei piani di taglio} risolvono ripetutamente
+rilassamenti continui via via più restrittivi.
+Se l'ottimo corrente \(x^*\) ha una componente frazionaria,
+si cerca un vincolo soddisfatto da tutti i punti interi
+di \(P\), ma violato da \(x^*\). Il nuovo vincolo,
+aggiunto al rilassamento, prende il nome di \emph{taglio}.
+
+\begin{definition}{Taglio}
+\label{def:taglio}
+Dato \(x^*\in P\), una disequazione
+\[
+a^{\mathsf T}x\leq b_0
+\]
+è un taglio per \(x^*\) rispetto a \(X\) se:
+\begin{enumerate}
+\item[i.] è valida per tutti i punti interi ammissibili,
+\[
+a^{\mathsf T}x\leq b_0\qquad\forall x\in X;
+\]
+\item[ii.] è violata dal punto da eliminare,
+\[
+a^{\mathsf T}x^*>b_0.
+\]
+\end{enumerate}
+\end{definition}
+
+La prima condizione preserva tutte le soluzioni ammissibili
+del problema intero, comprese quelle ottime.
+La seconda elimina l'ottimo frazionario corrente.
+Individuare un adeguato taglio è il \emph{problema della separazione}
+di \(x^*\) da \(X\), che in generale può essere difficile
+dal punto di vista computazionale.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[x=1.04cm,y=.84cm,>=Stealth,font=\small]
+  \fill[blue!5] (0,0)--(4.5,0)--(4.5,4)--(2.25,4.75)--(0,2.5)--cycle;
+  \fill[red!14] (2,4.5)--(2.25,4.75)--(3,4.5)--cycle;
+  \draw[->] (-.6,0)--(8,0) node[right] {$x_1$};
+  \draw[->] (0,-.6)--(0,7.2) node[above] {$x_2$};
+  \draw[gray] (-.55,1.95)--(5.1,7.6);
+  \draw[gray] (-.55,5.6833)--(8,2.8333);
+  \draw[gray] (4.5,-.45)--(4.5,7.2);
+  \draw[->,gray] (4.8,7.3)--(5.4,6.7);
+  \draw[->,gray] (7.2,3.1)--(7,2.45);
+  \draw[->,gray] (-.3,2.2)--(.3,1.6);
+  \foreach \i in {0,...,7} {
+    \foreach \j in {0,...,6} {
+      \fill[gray!55] (\i,\j) circle (1.25pt);
+      \ifnum\i<5
+        \pgfmathtruncatemacro{\amm}{(\j<=\i+2.5)&&(\j<=5.5-\i/3)}
+        \ifnum\amm=1 \fill (\i,\j) circle (1.7pt); \fi
+      \fi
+    }
+  }
+  \draw[red!65!black] (-.5,4.5)--(8,4.5)
+    node[right] {$a^{\mathsf T}x=b_0$};
+  \fill (2.25,4.75) circle (2pt);
+  \node[above left] at (2.25,4.75) {$x^*$};
+  \foreach \i in {1,...,7} \node[below] at (\i,0) {\i};
+  \foreach \j in {1,...,6} \node[left] at (0,\j) {\j};
+  \node at (2.65,2.5) {$X$};
+\end{tikzpicture}
+\captionof{figure}{Il taglio \(a^{\mathsf T}x\leq b_0\) preserva tutti
+i punti di \(X\) ed elimina \(x^*\). Nello schema il taglio
+è orizzontale e la piccola porzione rossa viene esclusa.}
+\label{fig:taglio-generico}
+\end{minipage}
+\end{center}
+
+I metodi dei piani di taglio differiscono soprattutto per
+il modo in cui risolvono il problema della separazione,
+cioè per la scelta del vincolo aggiunto a ogni iterazione.
+Lo schema generale è il seguente.
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\fbox{\begin{minipage}{.94\linewidth}
+\small
+\textbf{algoritmo cutting-plane}\\[3pt]
+\begin{tabular}{@{}r@{\quad}p{.86\linewidth}@{}}
+1 & Dato \((\mathrm{Pli})\), trovare un ottimo \(x^*\)
+del rilassamento \((\mathrm{Pli\text{-}c})\).\\[2pt]
+2 & Porre \((\mathrm{Pli\text{-}c})_0:=(\mathrm{Pli\text{-}c})\),
+\(x_0^*:=x^*\), \(k:=0\).\\[2pt]
+3 & \textbf{while} \(x_k^*\) non è intero \textbf{do}\\
+  & \quad individuare un taglio \(a_k^{\mathsf T}x\leq b_k\)
+per \(x_k^*\);\\
+  & \quad aggiungerlo a \((\mathrm{Pli\text{-}c})_k\),
+ottenendo \((\mathrm{Pli\text{-}c})_{k+1}\);\\
+  & \quad trovare un ottimo \(x_{k+1}^*\)
+di \((\mathrm{Pli\text{-}c})_{k+1}\);\\
+  & \quad porre \(k:=k+1\);\\
+  & \textbf{endwhile}
+\end{tabular}\\[3pt]
+\textbf{end cutting-plane}
+\end{minipage}}
+\captionof{figure}{Schema del generico algoritmo dei piani di taglio,
+con gli stessi passi dello pseudocodice del testo.}
+\label{fig:algoritmo-cutting-plane}
+\end{minipage}
+\end{center}
+
+Se si introduce un taglio per iterazione, il numero di iterazioni
+del ciclo coincide con il numero di tagli aggiunti.
+Intuitivamente, tagli più profondi possono ridurre il numero
+di iterazioni; molti tagli ottenuti con le procedure classiche
+eliminano però soltanto piccole porzioni del poliedro.
+La profondità geometrica non garantisce, da sola,
+un determinato numero di iterazioni.
+
+\begin{remark}{Chiarimento sull'invariante e sulle condizioni dello schema}
+Se \(P_k\) è la regione del rilassamento all'iterazione \(k\),
+per ogni taglio valido si ha
+\[
+X\subseteq P_{k+1}\subseteq P_k,
+\qquad
+P_{k+1}\cap\mathbb Z^n=P_k\cap\mathbb Z^n=X.
+\]
+Per un problema di minimo con ottimi finiti,
+\[
+z^*_{(\mathrm{Pli\text{-}c})_0}
+\leq z^*_{(\mathrm{Pli\text{-}c})_1}
+\leq \cdots \leq z^*_{(\mathrm{Pli})}.
+\]
+Il miglioramento può non essere stretto, ad esempio in presenza
+di ottimi multipli.
+
+Lo pseudocodice presuppone che i rilassamenti considerati
+abbiano un ottimo finito. Se, aggiungendo soltanto tagli validi,
+un rilassamento diventa inammissibile, anche \(X\) è vuoto.
+Se il rilassamento iniziale è illimitato, la sola procedura
+scritta sopra non basta a classificare il problema intero.
+Infine, lo schema astratto non costituisce di per sé
+una dimostrazione di terminazione finita per qualunque
+regola di generazione dei tagli.
+\end{remark}
+
+\subsection{Algoritmo di Gomory}
+\label{subsec:gomory}
+
+L'idea proposta da Gomory nel 1958 è sfruttare le informazioni
+contenute nella base \(B\) associata a una soluzione ottima
+del rilassamento continuo.
+
+Consideriamo una generica iterazione \(k\). Se l'ottimo di base
+\(x_k^*\) è intero, l'algoritmo termina. Altrimenti scegliamo
+una sua componente frazionaria, di indice \(h\).
+La variabile \(x_h\) deve essere in base, perché tutte
+le variabili non di base valgono zero. Sia \(t\)
+la riga del tableau in cui compare \(x_h\).
+La relativa equazione è
+\[
+x_h+\sum_{j\in N}\bar a_{tj}x_j=\bar b_t,
+\]
+dove:
+\begin{itemize}
+\item \(N\) è l'insieme degli indici delle variabili non in base;
+\item \(\bar a_{tj}\) è l'elemento della riga \(t\)
+nella colonna della variabile non di base \(x_j\);
+\item \(\bar b_t\) è il termine noto della riga ed è frazionario,
+perché coincide con \(x_{k,h}^*\).
+\end{itemize}
+I coefficienti e i termini noti provengono dalle trasformazioni
+di base:
+\[
+\bar A_N=B^{-1}A_N,\qquad \bar b=B^{-1}b.
+\]
+
+Poiché \(x_j\geq0\), arrotondare ogni coefficiente verso il basso
+non può aumentare il membro sinistro. Quindi
+\[
+x_h+\sum_{j\in N}\lfloor\bar a_{tj}\rfloor x_j
+\leq x_h+\sum_{j\in N}\bar a_{tj}x_j
+=\bar b_t.
+\]
+Per una soluzione intera, il membro sinistro è intero:
+è una somma di prodotti fra interi. Un intero minore
+o uguale a \(\bar b_t\) è minore o uguale
+a \(\lfloor\bar b_t\rfloor\). Si ottiene
+\begin{equation}
+x_h+\sum_{j\in N}\lfloor\bar a_{tj}\rfloor x_j
+\leq\lfloor\bar b_t\rfloor.
+\tag{3.3}\label{eq:taglio-gomory}
+\end{equation}
+La riga \(t\) è detta \emph{riga generatrice del taglio}.
+
+\begin{proposition}{Validità e separazione del taglio di Gomory}
+Nel problema interamente intero, la disequazione
+\eqref{eq:taglio-gomory} è valida per ogni soluzione
+intera ammissibile ed è violata dall'ottimo di base
+frazionario \(x_k^*\) che l'ha generata.
+\end{proposition}
+
+\begin{proof}
+La validità per i punti interi è esattamente il ragionamento
+di arrotondamento precedente.
+Nella soluzione di base \(x_k^*\) si ha invece
+\[
+x_{k,j}^*=0\quad(j\in N),
+\qquad x_{k,h}^*=\bar b_t.
+\]
+Valutando il membro sinistro del taglio si ottiene
+\[
+x_{k,h}^*
++\sum_{j\in N}\lfloor\bar a_{tj}\rfloor x_{k,j}^*
+=\bar b_t>\lfloor\bar b_t\rfloor.
+\]
+La disuguaglianza è stretta perché \(\bar b_t\notin\mathbb Z\).
+Il punto corrente è quindi escluso e tutti i punti interi
+ammissibili sono preservati.
+\end{proof}
+
+\begin{remark}{Chiarimento sull'arrotondamento dei coefficienti negativi}
+Il simbolo \(\lfloor r\rfloor\) indica il massimo intero
+minore o uguale a \(r\), non il troncamento verso zero.
+Per esempio
+\[
+\left\lfloor\frac23\right\rfloor=0,\qquad
+\left\lfloor-\frac13\right\rfloor=-1,\qquad
+\left\lfloor-\frac43\right\rfloor=-2.
+\]
+Questo dettaglio sarà essenziale nel secondo taglio dell'esempio.
+Nella verifica della separazione, inoltre, il testo scrive
+\(\lfloor\bar b_t\rfloor\leq\bar b_t\); per provare
+la violazione si usa la disuguaglianza \emph{stretta},
+garantita dalla frazionarietà.
+\end{remark}
+
+\begin{remark}{Chiarimento: forma frazionaria equivalente del taglio}
+Poniamo \(f(r)=r-\lfloor r\rfloor\), con \(0\leq f(r)<1\).
+Sottraendo il membro sinistro del taglio dall'equazione
+della riga generatrice,
+\begin{align*}
+\sum_{j\in N}f(\bar a_{tj})x_j
+&=\bar b_t-
+\left(x_h+\sum_{j\in N}\lfloor\bar a_{tj}\rfloor x_j\right)\\
+&\geq \bar b_t-\lfloor\bar b_t\rfloor\\
+&=f(\bar b_t).
+\end{align*}
+Il taglio può quindi scriversi anche come
+\[
+\sum_{j\in N}f(\bar a_{tj})x_j\geq f(\bar b_t).
+\]
+Nell'ottimo corrente il membro sinistro è \(0\), ma
+\(f(\bar b_t)>0\): la violazione risulta immediata.
+\end{remark}
+
+\begin{remark}{Chiarimento sull'ipotesi di interezza e sulla ripetizione}
+La dimostrazione richiede che tutte le variabili della riga,
+comprese quelle di scarto, siano intere nelle soluzioni
+del problema intero. Non si può applicare senza adattamenti
+a una riga con variabili continue di un problema misto.
+
+Nella forma \eqref{eq:taglio-gomory}, coefficienti e termine noto
+sono interi. Introducendo lo scarto del nuovo vincolo,
+esso è automaticamente intero per le soluzioni intere
+già considerate. Si può dunque ripetere il procedimento
+sul modello ampliato. Nell'algoritmo si risolve il nuovo
+rilassamento e si genera un altro taglio finché
+si trova un ottimo intero, oppure si accerta l'inammissibilità.
+\end{remark}
+
+\begin{example}{Applicazione completa dell'algoritmo di Gomory}
+\label{ex:gomory}
+Si vuole risolvere il problema di PLI
+\begin{align*}
+(\mathrm{Pli})\qquad \min\quad &-x_2\\
+\text{s.a.}\quad
+&3x_1+2x_2\leq6 &&\text{(a)},\\
+&-3x_1+2x_2\leq0 &&\text{(b)},\\
+&x_1,x_2\geq0,\qquad x_1,x_2\in\mathbb Z.
+\end{align*}
+Minimizzare \(-x_2\) equivale a massimizzare \(x_2\).
+Le rette di frontiera sono
+\[
+x_2=3-\frac32x_1,\qquad x_2=\frac32x_1.
+\]
+La regione del rilassamento nelle variabili originali
+è il triangolo con vertici
+\[
+(0,0),\qquad (2,0),\qquad A=\left(1,\frac32\right).
+\]
+La figura mostra anche i due tagli che verranno costruiti,
+il vertice \(B\) ottenuto dopo il primo e l'ottimo intero \(C\).
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[x=1.8cm,y=1.5cm,>=Stealth,font=\small]
+  \fill[blue!6] (0,0)--(2,0)--(1,1.5)--cycle;
+  \draw[->] (-.65,0)--(3.65,0) node[right] {$x_1$};
+  \draw[->] (0,-.7)--(0,3.9) node[above] {$x_2$};
+  \draw[gray] (-.45,3.675)--(2.55,-.825)
+    node[below right] {(a)};
+  \draw[gray] (-.4,-.6)--(2.5,3.75) node[above] {(b)};
+  \draw[->,gray] (-.25,3.375)--(-.65,2.975);
+  \draw[->,gray] (2.25,3.375)--(2.65,2.975);
+  \draw[red!65!black] (-.6,1)--(3.6,1)
+    node[right] {$x_2=1$};
+  \draw[orange!75!black] (-.55,-.55)--(3.55,3.55)
+    node[right] {$x_2=x_1$};
+  \foreach \i in {0,...,3}
+    \foreach \j in {0,...,3}
+      \fill[gray!55] (\i,\j) circle (1.5pt);
+  \foreach \p in {(0,0),(1,0),(2,0),(1,1)}
+    \fill \p circle (2.1pt);
+  \draw[fill=white] (1,1.5) circle (2.1pt);
+  \draw[fill=white] (0.666667,1) circle (2.1pt);
+  \node[above left] at (1,1.5) {$A$};
+  \node[above left] at (.666667,1) {$B$};
+  \node[below right] at (1,1) {$C$};
+  \node at (1.35,.43) {$X$};
+  \foreach \i in {1,2,3} \node[below] at (\i,0) {\i};
+  \foreach \j in {1,2,3} \node[left] at (0,\j) {\j};
+\end{tikzpicture}
+\captionof{figure}{Rappresentazione geometrica dell'esempio di Gomory:
+vincoli (a) e (b), reticolo, punti interi ammissibili,
+tagli \(x_2\leq1\) e \(x_2\leq x_1\),
+vertici \(A=(1,\frac32)\), \(B=(\frac23,1)\) e \(C=(1,1)\).}
+\label{fig:gomory-esempio}
+\end{minipage}
+\end{center}
+
+\textbf{Rilassamento continuo e forma standard.}
+Introduciamo gli scarti \(x_3,x_4\) e togliamo l'interezza:
+\begin{align*}
+(\mathrm{Pli\text{-}c})\qquad \min\quad &-x_2\\
+\text{s.a.}\quad
+&3x_1+2x_2+x_3=6,\\
+&-3x_1+2x_2+x_4=0,\\
+&x_1,x_2,x_3,x_4\geq0.
+\end{align*}
+Nel problema intero gli scarti sono automaticamente interi
+perché \(x_3=6-3x_1-2x_2\) e \(x_4=3x_1-2x_2\).
+
+\textbf{Convenzione dei tableau.}
+Si mantiene la convenzione del testo: la prima riga contiene
+i costi ridotti; la cella a sinistra in tale riga contiene
+l'opposto del valore della funzione obiettivo nella soluzione
+di base. Per esempio, una cella pari a \(\frac32\)
+corrisponderà a \(z=-\frac32\).
+Le altre righe indicano la variabile di base e il suo valore.
+Gli elementi incorniciati sono i pivot, segnati con un asterisco
+nel documento originale.
+
+\textbf{Primo tableau.}
+La base iniziale è \(\{x_3,x_4\}\), con
+\[
+x_1=x_2=0,\qquad x_3=6,\qquad x_4=0.
+\]
+Il tableau iniziale è
+\[
+\begingroup
+\renewcommand{\arraystretch}{1.45}
+\begin{array}{|c|rrrr|}
+\hline
+ &x_1&x_2&x_3&x_4\\ \hline
+0&0&-1&0&0\\ \hline
+x_3=6&3&2&1&0\\
+x_4=0&-3&\boxed{2}&0&1\\ \hline
+\end{array}
+\endgroup
+\]
+Il costo ridotto di \(x_2\) è \(-1\), quindi \(x_2\)
+può entrare in base. Il test dei rapporti dà
+\[
+\frac62=3,\qquad \frac02=0.
+\]
+Esce \(x_4\), e il pivot è il \(2\) della seconda riga
+dei vincoli. Il passo è degenere: il valore dell'obiettivo
+e il punto ammissibile non cambiano, pur cambiando la base.
+
+Indichiamo con \(R_0\) la riga dell'obiettivo
+e con \(R_1,R_2\) le righe dei vincoli. Eseguiamo, nell'ordine,
+\begin{align*}
+R_2&\leftarrow\frac12R_2,\\
+R_1&\leftarrow R_1-2R_2,\\
+R_0&\leftarrow R_0+R_2.
+\end{align*}
+Nelle ultime due operazioni si usa la nuova riga \(R_2\).
+
+\textbf{Secondo tableau.}
+Si ottiene esattamente
+\[
+\begingroup
+\renewcommand{\arraystretch}{1.6}
+\begin{array}{|c|rrrr|}
+\hline
+ &x_1&x_2&x_3&x_4\\ \hline
+0&-\frac32&0&0&\frac12\\ \hline
+x_3=6&\boxed{6}&0&1&-1\\
+x_2=0&-\frac32&1&0&\frac12\\ \hline
+\end{array}
+\endgroup
+\]
+Ora entra \(x_1\), il cui costo ridotto è \(-\frac32\).
+Nella sua colonna solo la prima riga ha coefficiente positivo:
+il rapporto è \(6/6=1\), quindi esce \(x_3\).
+Si eseguono
+\begin{align*}
+R_1&\leftarrow\frac16R_1,\\
+R_2&\leftarrow R_2+\frac32R_1,\\
+R_0&\leftarrow R_0+\frac32R_1.
+\end{align*}
+
+\textbf{Terzo tableau: ottimo del rilassamento iniziale.}
+Il tableau finale del rilassamento è
+\[
+\begingroup
+\renewcommand{\arraystretch}{1.65}
+\begin{array}{|c|rrrr|}
+\hline
+ &x_1&x_2&x_3&x_4\\ \hline
+\frac32&0&0&\frac14&\frac14\\ \hline
+x_1=1&1&0&\frac16&-\frac16\\
+x_2=\frac32&0&1&\frac14&\frac14\\ \hline
+\end{array}
+\endgroup
+\]
+Tutti i costi ridotti sono nonnegativi, dunque la soluzione
+è ottima. Nelle variabili originali è
+\[
+x^*=\begin{bmatrix}1\\\frac32\end{bmatrix},
+\qquad z^*_{(\mathrm{Pli\text{-}c})}=-\frac32.
+\]
+Nello spazio comprendente gli scarti è
+\[
+\begin{bmatrix}1&\frac32&0&0\end{bmatrix}^{\mathsf T}.
+\]
+È il vertice \(A\) della Figura~\ref{fig:gomory-esempio}
+e non è intero.
+
+\textbf{Primo taglio di Gomory.}
+Scegliamo la riga generatrice \(t=2\), relativa a \(x_2\):
+\[
+x_2+\frac14x_3+\frac14x_4=\frac32.
+\]
+Applicando \eqref{eq:taglio-gomory},
+\begin{align*}
+x_2+\left\lfloor\frac14\right\rfloor x_3
++\left\lfloor\frac14\right\rfloor x_4
+&\leq\left\lfloor\frac32\right\rfloor,\\
+x_2+0x_3+0x_4&\leq1.
+\end{align*}
+Il primo taglio è quindi
+\[
+\boxed{x_2\leq1}.
+\]
+Il punto \(A\) lo viola perché \(x_2=\frac32>1\).
+Ogni punto intero ammissibile lo soddisfa, come garantito
+dalla dimostrazione generale.
+
+Aggiungendo lo scarto \(x_5\), il primo rilassamento rinforzato è
+\begin{align*}
+(\mathrm{Pli\text{-}c})_1\qquad \min\quad &-x_2\\
+\text{s.a.}\quad
+&3x_1+2x_2+x_3=6,\\
+&-3x_1+2x_2+x_4=0,\\
+&x_2+x_5=1,\\
+&x_1,x_2,x_3,x_4,x_5\geq0.
+\end{align*}
+
+\textbf{Quarto tableau: ottimo dopo il primo taglio.}
+Risolvendo il nuovo problema si ottiene il tableau riportato nel testo:
+\[
+\begingroup
+\renewcommand{\arraystretch}{1.65}
+\begin{array}{|c|rrrrr|}
+\hline
+ &x_1&x_2&x_3&x_4&x_5\\ \hline
+1&0&0&0&0&1\\ \hline
+x_1=\frac23&1&0&0&-\frac13&\frac23\\
+x_2=1&0&1&0&0&1\\
+x_3=2&0&0&1&1&-4\\ \hline
+\end{array}
+\endgroup
+\]
+Per verificarne tutti i coefficienti, dalle uguaglianze
+del modello si ricava
+\begin{align*}
+x_2+x_5&=1,\\
+-3x_1+2(1-x_5)+x_4&=0,\\
+x_1-\frac13x_4+\frac23x_5&=\frac23,\\
+3\left(\frac23+\frac13x_4-\frac23x_5\right)
++2(1-x_5)+x_3&=6,\\
+x_3+x_4-4x_5&=2,\\
+z=-x_2&=-1+x_5.
+\end{align*}
+La base è \(\{x_1,x_2,x_3\}\); le variabili non di base
+sono \(x_4=x_5=0\). La soluzione completa è
+\[
+x_1^*=
+\begin{bmatrix}\frac23&1&2&0&0\end{bmatrix}^{\mathsf T},
+\qquad z^*_{(\mathrm{Pli\text{-}c})_1}=-1.
+\]
+Il pedice in \(x_1^*\) indica qui l'iterazione,
+non la prima componente del vettore.
+La proiezione nelle variabili originali è
+\[
+B=\left(\frac23,1\right).
+\]
+La soluzione è ottima ma ancora frazionaria.
+
+\begin{remark}{Chiarimento sugli ottimi multipli dopo il primo taglio}
+Il vincolo \(x_2\leq1\) rende ottimo ogni punto ammissibile
+con \(x_2=1\). I due vincoli originali danno
+\[
+\frac23\leq x_1\leq\frac43.
+\]
+Fra questi ottimi è già presente il punto intero \((1,1)\).
+Il tableau scelto nel testo restituisce però il vertice
+frazionario \(B\), quindi il procedimento prosegue.
+Se fosse stato individuato un ottimo intero, si sarebbe
+potuto terminare dopo il primo taglio.
+\end{remark}
+
+\textbf{Secondo taglio di Gomory.}
+Scegliamo la riga generatrice \(t=1\), relativa a \(x_1\):
+\[
+x_1-\frac13x_4+\frac23x_5=\frac23.
+\]
+Gli arrotondamenti sono
+\[
+\left\lfloor-\frac13\right\rfloor=-1,\qquad
+\left\lfloor\frac23\right\rfloor=0.
+\]
+Pertanto
+\begin{align*}
+x_1+\left\lfloor-\frac13\right\rfloor x_4
++\left\lfloor\frac23\right\rfloor x_5
+&\leq\left\lfloor\frac23\right\rfloor,\\
+x_1-x_4+0x_5&\leq0.
+\end{align*}
+Il nuovo vincolo è
+\[
+x_1-x_4\leq0.
+\]
+Dal secondo vincolo originale si ricava
+\[
+x_4=3x_1-2x_2.
+\]
+Sostituendo:
+\begin{align*}
+x_1-(3x_1-2x_2)&\leq0,\\
+-2x_1+2x_2&\leq0.
+\end{align*}
+Il secondo taglio nelle variabili originali è dunque
+\[
+\boxed{-2x_1+2x_2\leq0},
+\qquad\text{equivalentemente}\qquad x_2\leq x_1.
+\]
+Il punto \(B=(\frac23,1)\) lo viola:
+\[
+-2\cdot\frac23+2\cdot1=\frac23>0.
+\]
+
+Introduciamo lo scarto \(x_6\) mantenendo la scala usata nel testo:
+\begin{align*}
+(\mathrm{Pli\text{-}c})_2\qquad \min\quad &-x_2\\
+\text{s.a.}\quad
+&3x_1+2x_2+x_3=6,\\
+&-3x_1+2x_2+x_4=0,\\
+&x_2+x_5=1,\\
+&-2x_1+2x_2+x_6=0,\\
+&x_1,x_2,x_3,x_4,x_5,x_6\geq0.
+\end{align*}
+
+\textbf{Quinto tableau: ottimo dopo il secondo taglio.}
+Risolvendo \((\mathrm{Pli\text{-}c})_2\) si ottiene
+\[
+\begingroup
+\renewcommand{\arraystretch}{1.65}
+\begin{array}{|c|rrrrrr|}
+\hline
+ &x_1&x_2&x_3&x_4&x_5&x_6\\ \hline
+1&0&0&0&0&1&0\\ \hline
+x_1=1&1&0&0&0&1&-\frac12\\
+x_2=1&0&1&0&0&1&0\\
+x_3=1&0&0&1&0&-5&\frac32\\
+x_4=1&0&0&0&1&1&-\frac32\\ \hline
+\end{array}
+\endgroup
+\]
+Le equazioni del tableau sono
+\begin{align*}
+x_1+x_5-\frac12x_6&=1,\\
+x_2+x_5&=1,\\
+x_3-5x_5+\frac32x_6&=1,\\
+x_4+x_5-\frac32x_6&=1,\\
+z&=-1+x_5.
+\end{align*}
+Esse si verificano direttamente sostituendo prima
+\(x_2=1-x_5\) e poi
+\(x_1=x_2+\frac12x_6=1-x_5+\frac12x_6\)
+nei due vincoli originali.
+
+Ponendo a zero le non di base \(x_5,x_6\), la soluzione completa è
+\[
+x_2^*=
+\begin{bmatrix}1&1&1&1&0&0\end{bmatrix}^{\mathsf T},
+\qquad z^*_{(\mathrm{Pli\text{-}c})_2}=-1.
+\]
+Nelle sole componenti di base il vettore è
+\((1,1,1,1)^{\mathsf T}\), come riportato nel testo.
+La proiezione nelle variabili originali è
+\[
+C=(1,1).
+\]
+Tutte le componenti sono intere e l'algoritmo termina.
+La soluzione ottima del problema intero è quindi
+\[
+\boxed{x_1=x_2=1,\qquad z^*_{(\mathrm{Pli})}=-1}.
+\]
+
+\begin{remark}{Verifica diretta dell'ottimo intero e refuso del testo}
+I punti interi ammissibili originali sono esattamente
+\[
+X=\{(0,0),(1,0),(2,0),(1,1)\}.
+\]
+Infatti, sommando i due vincoli si ottiene \(4x_2\leq6\);
+poiché \(x_2\) è intero e nonnegativo, \(x_2\in\{0,1\}\).
+Se \(x_2=0\), risulta \(0\leq x_1\leq2\);
+se \(x_2=1\), risulta \(\frac23\leq x_1\leq\frac43\),
+e quindi \(x_1=1\).
+Il minimo di \(-x_2\) è dunque proprio \(-1\).
+
+Nella frase introduttiva dell'ultimo tableau a pagina 105
+compare \((\mathrm{Pli\text{-}c})_1\): è un refuso.
+Il tableau a sei variabili si riferisce al problema
+\((\mathrm{Pli\text{-}c})_2\), che contiene entrambi i tagli.
+\end{remark}
+\end{example}
+
+\begin{remark}{Figura conclusiva presente a pagina 105}
+La pagina 105 contiene anche lo scenario geometrico introduttivo
+al Branch \& Bound, la cui trattazione comincia nel paragrafo 3.4
+a pagina 106. Si riproduce qui anche tale figura, conservando
+gli elementi presenti nell'intervallo richiesto:
+poliedro continuo \(P\), punti del reticolo, punti interi
+ammissibili \(X\) e punto frazionario \(x^*\).
+\end{remark}
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\captionsetup{hypcap=false}
+\begin{tikzpicture}[x=1.45cm,y=1.45cm,>=Stealth,font=\small]
+  \fill[blue!4] (0,0)--(2,0)--(4,1)--(1.5,2)--(0,1.5)--cycle;
+  \draw[->] (-.35,0)--(5.6,0) node[right] {$x_1$};
+  \draw[->] (0,-.3)--(0,3.9) node[above] {$x_2$};
+  \draw[brown!75!black] (-.3,2.72)--(5.1,.56);
+  \draw[brown!75!black] (-.3,1.4)--(5.1,3.2);
+  \draw[brown!75!black] (1.1,-.45)--(5.1,1.55);
+  \draw[->,brown!75!black] (4.7,3.0667)--(4.9,2.62);
+  \draw[->,brown!75!black] (4.9,1.45)--(4.7,1.85);
+  \draw[->,brown!75!black] (4.8,.68)--(4.6,.22);
+  \foreach \i in {0,...,4}
+    \foreach \j in {0,...,3}
+      \fill[brown!80!black] (\i-.025,\j-.025)
+        rectangle (\i+.025,\j+.025);
+  \draw[blue!65!black,line width=1.25pt]
+    (0,0)--(2,0)--(4,1)--(1.5,2)--(0,1.5)--cycle;
+  \foreach \p in {(0,0),(1,0),(2,0),(0,1),(1,1),(2,1),(3,1),(4,1)}
+    \fill[red!75!black] \p circle (1.8pt);
+  \fill[blue!70!black] (1.5,2) circle (2pt);
+  \node[above,blue!70!black] at (1.5,2.08) {$x^*$};
+  \node[red!75!black] at (1.3,1.4) {$X$};
+  \node[blue!65!black] at (2.8,1.6) {$P$};
+  \foreach \i in {1,...,4} \node[below] at (\i,0) {\i};
+  \foreach \j in {1,...,3} \node[left] at (0,\j) {\j};
+\end{tikzpicture}
+\captionof{figure}{Branch \& Bound: scenario. Il bordo blu delimita \(P\);
+i punti rossi costituiscono \(X=P\cap\mathbb Z^2\);
+\(x^*\) è un vertice frazionario. Le rette e le frecce
+descrivono i vincoli e i semipiani ammissibili.}
+\label{fig:branch-bound-scenario}
+\end{minipage}
+\end{center}
