@@ -356,7 +356,7 @@ Un esempio è
 &x_1\leq\frac34 &&\text{(b)},\\
 &x_1,x_2\geq0,\qquad x_1,x_2\in\mathbb Z.
 \end{align*}
-Qui \(X=\varnothing\), mentre nel rilassamento continuo il valore della funzione obiettivo può crescere illimitatamente verso + $\infty$
+Qui \(X=\varnothing\), mentre nel rilassamento continuo il valore della funzione obiettivo può crescere illimitatamente verso + $\infty$.
 Questo perchè la regione ammissibile $P$ è illimtata verso l'alto, come vedi sotto.
 \end{enumerate}
 \end{proposition}
@@ -410,20 +410,31 @@ soddisfa
 \[
 \det(B)\in\{-1,0,1\}.
 \]
-La definizione riguarda quindi i minori di ordine massimo \(m\).
 \end{definition}
 
-Supponiamo che \(A\) e \(b\) siano interi e consideriamo una soluzione
-di base \(x^*\). Per il consueto ragionamento sulle basi si assume
-che le righe dei vincoli siano linearmente indipendenti,
-cioè \(\operatorname{rank}(A)=m\), eliminando prima
-le uguaglianze ridondanti.
 
-Se \(B\) è la matrice di base e \(A_N\) raccoglie le colonne non in base,
-ordinando coerentemente gli indici si ha
+Supponiamo di dover risolvere un problema di programmazione lineare intera (Pli), in cui la matrice dei vincoli \(A\) e il vettore dei termini noti \(b\) abbiano elementi interi.
+
+Consideriamo ora il rilassamento continuo associato al problema (Pli) e supponiamo che \(x^*\) sia una sua soluzione ottima del problema.
+
+Vogliamo stabilire sotto quali condizioni \(x^*\) abbia tutte le componenti intere, così da poter concludere che \(x^*\) è anche una soluzione ottima del problema originale (Pli).
+
+\begin{warning}{}
+  Prima di procedere, ricordati un teorema fondamentale,se un problema di programmazione lineare in forma standard (in questo caso il rilassamento continuo),
+  ammette una soluzione ottima, allora esiste almeno una soluzione ottima che è una soluzione di base ammissibile (SBA).
+\end{warning}
+
+Noi quindi stiamo considerando $x^*$ come una soluzione ottima del problema, questa può essere o una soluzione ottima, o una SBA se è un vertice del poliedro, ma non una SB, perchè se fosse una SB e anche ottima, questo richiederebbe l'ammissibilità cioè sarebbe una SBA ottima.
+
+
+Consideriamo quindi $x^*$,una SBA (dato che sappiamo che esiste dal teorema) (una SBA cioè stiamo considerando un vertice del poliedro), dato che una SBA è una soluzione di base, allora possiamo applicare il teorema \ref{teorema SBA}
+
+\begin{warning}{}
+  Nota che questo procedimento (cioè per dimostrare l'integrità) si può applicare a qualsiasi SBA, non perforza a SBA ottime del problema.
+\end{warning}
+
+Se \(B\) è la matrice di base associata alla soluzione $x^*$,
 \[
-A=\begin{bmatrix}B&A_N\end{bmatrix},
-\qquad
 x^*=
 \begin{bmatrix}x_B^*\\x_N^*\end{bmatrix}
 =
@@ -431,10 +442,10 @@ x^*=
 \]
 Le componenti non di base sono già intere perché nulle.
 L'interezza di \(x^*\) dipende dunque da \(B^{-1}b\).
-Poiché \(b\in\mathbb Z^m\), una condizione sufficiente è che
+Poiché \(b\in\mathbb Z^m\) (abbiamo presupposto che $A$ e $b$ fossero interi), una condizione sufficiente è che
 \(B^{-1}\) sia intera.
 
-La formula dell'inversa mediante la matrice aggiunta è
+Per definizione si ha che:
 \[
 B^{-1}
 =\frac{1}{\det(B)}
@@ -453,16 +464,22 @@ e \(M_{ij}\) si ottiene da \(B\) eliminando la riga \(i\)
 e la colonna \(j\).
 
 La matrice \(B\) è intera perché è estratta da \(A\).
-Ogni \(M_{ij}\) è intera, quindi il suo determinante e
+Ogni \(M_{ij}\) è intera, quindi il suo determinante (det($M_{i,j}$)) e
 il cofattore \(\alpha_{ij}\) sono interi.
-Questo si verifica anche sviluppando ricorsivamente i determinanti
-fino ai minori di ordine \(1\). Se
+
+Quindi $B^{-1}$ è intera se il determinante di $B$ è -1 o 1:
 \[
 \det(B)\in\{-1,1\},
 \]
-la divisione per \(\det(B)\) cambia al più il segno dei cofattori:
-\(B^{-1}\) e \(B^{-1}b\) sono quindi interi.
 
+Quindi :
+\[
+\det(B)\in\{-1,1\} \implies x^* \in \mathbb{Z}^n
+\]
+E quindi $x^*$ è una soluzione ottima anche del problema originale.
+\textbf{$x^*$ era una SBA e quindi un vertice del poliedro del problema di rilassamento, e abbiamo dimostrato che era intero}
+
+Da questo possiamo generalizzare a tutti i vertici del poliedro e dire questo teorema:
 \begin{theorem}{Interezza dei vertici}
 \label{thm:vertici-interi}
 Sia \(A\in\mathbb Z^{m\times n}\) unimodulare e di rango \(m\),
@@ -475,39 +492,23 @@ ha soltanto vertici interi.
 
 \begin{proof}
 Ogni vertice del poliedro in forma standard è una soluzione
-di base ammissibile. La sua matrice di base \(B\) è non singolare
-e, per l'unimodularità di \(A\),
+di base ammissibile. La sua matrice di base \(B\) è non singolare (cioè il determinante è diverso da 0, questo per la definizione di prima della matrice inversa, dato che il determinante sta del denominatore)
+e, dato che per l'unimodularità di \(A\) allora il determinante può assumere questi valori,
 \[
 \det(B)\in\{-1,0,1\}\setminus\{0\}=\{-1,1\}.
 \]
-La formula dei cofattori mostra che \(B^{-1}\) è intera.
+Grazie a prima possiamo dire che  \(B^{-1}\) è intera.
 Segue \(x_B=B^{-1}b\in\mathbb Z^m\); inoltre \(x_N=0\).
 Ogni vertice appartiene quindi a \(\mathbb Z^n\).
 \end{proof}
 
-\begin{remark}{Precisazione sul rango e sulla portata del teorema}
-L'ipotesi di rango pieno, usuale quando si parla di matrici di base,
-è stata resa esplicita. Senza tale ipotesi, la sola condizione
-sui minori di ordine \(m\) può essere vacua. Per esempio
-\[
-A=\begin{bmatrix}2&0\\0&0\end{bmatrix},
-\qquad b=\begin{bmatrix}1\\0\end{bmatrix}
-\]
-ha determinante nullo, ma il poliedro associato ha
-il vertice \((\frac12,0)^{\mathsf T}\), che non è intero.
-
-Il teorema riguarda i \emph{vertici}, non tutti i punti del poliedro.
-Inoltre \(\det(B)=\pm1\) è sufficiente per l'interezza
-con qualunque \(b\) intero; non è necessario per un particolare \(b\).
-Per esempio \(B=\begin{bmatrix}2\end{bmatrix}\),
-\(b=\begin{bmatrix}2\end{bmatrix}\) danno
-\(B^{-1}b=\begin{bmatrix}1\end{bmatrix}\), benché
-\(B^{-1}=\begin{bmatrix}\frac12\end{bmatrix}\).
-\end{remark}
 
 Se il rilassamento ha un ottimo finito, se ne può scegliere uno
 di base: sotto le ipotesi del teorema è intero e risolve
 anche il problema di PLI.
+
+
+\newpage
 
 \subsubsection*{Esempi di problemi di PLI con matrice dei vincoli unimodulare}
 
