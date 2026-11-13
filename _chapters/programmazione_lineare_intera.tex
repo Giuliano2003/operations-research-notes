@@ -518,7 +518,7 @@ In entrambi i termini noti sono interi e la matrice dei vincoli
 possiede una proprietà ancora più forte dell'unimodularità,
 che sarà dimostrata di seguito.
 
-\begin{example}{Il Problema del Trasporto: problema di Hitchcock}
+\subsubsection{Il Problema del Trasporto: problema di Hitchcock}
 \label{ex:trasporto}
 Sono dati \(m\) fornitori di un bene \(M\) e \(n\) clienti.
 Il fornitore \(i\), con \(i=1,\ldots,m\), dispone di
@@ -533,20 +533,35 @@ Il costo di trasporto di un'unità dal fornitore \(i\) al cliente \(j\)
 L'obiettivo è minimizzare il costo totale del trasporto rispettando
 le disponibilità dei fornitori e le richieste dei clienti.
 
-Indichiamo con \(f_{ij}\) la quantità trasportata da \(i\) a \(j\).
+Indichiamo con \(f_{ij}\) la quantità trasportata dal fornitore \(i\) al cliente \(j\).
 La formulazione è
 \begin{align*}
-\min\quad &\sum_{i=1}^m\sum_{j=1}^n c_{ij}f_{ij}\\
+\min\quad &\sum_{i=1}^m\sum_{j=1}^n c_{ij}f_{ij} = c_{11} f_{11} + c_{12} f_{12} \dots \text{ c è un pò come un termine di peso}\\
 \text{s.a.}\quad
-&\sum_{i=1}^m f_{ij}=d_j,
+&\sum_{i=1}^m f_{ij}=d_j \text{ cioè i clienti vengono soddisfati tutti},
 &&j=1,\ldots,n \qquad\text{(a)},\\
-&\sum_{j=1}^n f_{ij}=s_i,
+&\sum_{j=1}^n f_{ij}=s_i \text{ cioè i fornitori devono usare tutto il loro bene disponibile },
 &&i=1,\ldots,m \qquad\text{(b)},\\
 &f_{ij}\geq0,
 &&i=1,\ldots,m,\quad j=1,\ldots,n.
 \end{align*}
-I vincoli (a) sono i \emph{vincoli di destinazione};
-i vincoli (b) sono i \emph{vincoli di origine}.
+\begin{warning}{}
+    Ovviamente, possono esistere diverse soluzioni ammissibili al problema, che differiscono per le quantità di merce trasportate lungo i vari percorsi. Dobbiamo quindi determinare quanta merce trasportare da ciascun fornitore a ciascun cliente, rispettando i vincoli di disponibilità e di domanda, in modo da minimizzare il costo totale del trasporto.
+\end{warning}
+I vincoli (a) sono i \emph{vincoli di destinazione}, cioè che il cliente riceve tutto quello che richiede da i diversi fornitori (può essere anche uno solo) ad es.
+\[
+d_1 = f_{11} + f_{21} + \dots
+\]
+Cioè la richiesta di quel cliente, può essere fornita da diversi fornitori
+
+
+i vincoli (b) sono i \emph{vincoli di origine} cioè che i fornitori forniscano tutto quello che hanno ai clienti (posso fornire anche tutto ad un solo cliente) ad es. 
+\[
+s_1 = f_{11} + f_{12} + \dots
+\]
+cioè il fornitore da tutto quello che ha ai vari clienti.
+
+
 Si osservi quanto segue.
 \begin{enumerate}
 \item[i.] Le variabili sono \(mn\), una per coppia fornitore--cliente.
@@ -683,7 +698,6 @@ e i rispettivi costi.}
 \label{fig:trasporto-32}
 \end{minipage}
 \end{center}
-\end{example}
 
 \paragraph{Importanti osservazioni.}
 La prima osservazione riguarda l'ipotesi di bilanciamento:
