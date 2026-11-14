@@ -530,24 +530,38 @@ Il costo di trasporto di un'unità dal fornitore \(i\) al cliente \(j\)
 \sum_{i=1}^m s_i=\sum_{j=1}^n d_j.
 \tag{3.1}\label{eq:bilanciamento}
 \end{equation}
-L'obiettivo è minimizzare il costo totale del trasporto rispettando
+\textbf{cioè c'è merce per tutti, ma senza ecceddere}.\\
+
+L'obiettivo è minimizzare il \textbf{costo totale del trasporto rispettando}
 le disponibilità dei fornitori e le richieste dei clienti.
 
-Indichiamo con \(f_{ij}\) la quantità trasportata dal fornitore \(i\) al cliente \(j\).
+Indichiamo con \(f_{ij}\) la quantità \textbf{trasportata} dal fornitore \(i\) al cliente \(j\).
 La formulazione è
 \begin{align*}
-\min\quad &\sum_{i=1}^m\sum_{j=1}^n c_{ij}f_{ij} = c_{11} f_{11} + c_{12} f_{12} \dots \text{ c è un pò come un termine di peso}\\
+\min\quad &\sum_{i=1}^m\sum_{j=1}^n c_{ij}f_{ij} = c_{11} f_{11} + c_{12} f_{12} \dots \text{ $c$ è un pò come un termine di peso, fissato all'inizio}\\
 \text{s.a.}\quad
 &\sum_{i=1}^m f_{ij}=d_j \text{ cioè i clienti vengono soddisfati tutti},
-&&j=1,\ldots,n \qquad\text{(a)},\\
-&\sum_{j=1}^n f_{ij}=s_i \text{ cioè i fornitori devono usare tutto il loro bene disponibile },
-&&i=1,\ldots,m \qquad\text{(b)},\\
+&&j=1,\ldots,n \quad \text{(a)},\\
+&\sum_{j=1}^n f_{ij}=s_i \text{ cioè i fornitori devono usare tutto il loro bene disponibile e darlo ai clienti},
+&&i=1,\ldots,m \quad \text{(b)},\\
 &f_{ij}\geq0,
-&&i=1,\ldots,m,\quad j=1,\ldots,n.
+i=1,\ldots,m,j=1,\ldots,n.
 \end{align*}
+
+
 \begin{warning}{}
     Ovviamente, possono esistere diverse soluzioni ammissibili al problema, che differiscono per le quantità di merce trasportate lungo i vari percorsi. Dobbiamo quindi determinare quanta merce trasportare da ciascun fornitore a ciascun cliente, rispettando i vincoli di disponibilità e di domanda, in modo da minimizzare il costo totale del trasporto.
 \end{warning}
+\begin{observation}{}
+    Ogni valore assunto dall'indice $j=1,\dots,n$ identifica un vincolo distinto e, di conseguenza, una riga della matrice $A$.
+
+    In particolare, a $j=1$ corrisponde il primo vincolo, a $j=2$ il secondo, e così via, fino a ottenere $n$ vincoli.
+
+    Analogamente, ogni valore dell'indice $i=1,\dots,m$ identifica un ulteriore vincolo, per un totale di $m$ vincoli.
+
+    Complessivamente, si ottengono quindi $m+n$ vincoli, corrispondenti alle $m+n$ righe della matrice $A$.
+\end{observation}
+
 I vincoli (a) sono i \emph{vincoli di destinazione}, cioè che il cliente riceve tutto quello che richiede da i diversi fornitori (può essere anche uno solo) ad es.
 \[
 d_1 = f_{11} + f_{21} + \dots
@@ -562,27 +576,52 @@ s_1 = f_{11} + f_{12} + \dots
 cioè il fornitore da tutto quello che ha ai vari clienti.
 
 
+
+
+Quello che vogliamo determinare attraverso la risoluzione del problema è il vettore delle variabili decisionali $f$, che in questo caso svolge il ruolo del vettore $x$ di un generico problema di programmazione lineare.
+
+In particolare, vogliamo trovare un vettore $f$ che specifichi quanta merce trasportare lungo ciascun percorso fornitore-cliente, in modo da minimizzare il costo totale del trasporto, rispettando tutti i vincoli del problema.
+
+Il vettore $f$ ha dimensione $mn$, poiché contiene una variabile $f_{ij}$ per ogni possibile coppia fornitore-cliente, con $i=1,\dots,m$ e $j=1,\dots,n$.
+
+
+
+\newpage
+
 Si osservi quanto segue.
 \begin{enumerate}
-\item[i.] Le variabili sono \(mn\), una per coppia fornitore--cliente.
+\item[i.] Le variabili di decisione $f_{ij}$ sono $m \times n$.
+\begin{observation}{}
+  Questo perchè per ogni fornitore, dobbiamo modellare con le variabili di decisione $n$ clienti, ad esempio per il fornitore 1, abbiamo:
+  \[
+  f_{11},f_{12},\dots,f_{1n}
+  \]
+  ci sono $m$ fornitori e quindi abbiamo $m \times n$ variabili.
+\end{observation}
 
 \item[ii.] Sommando i vincoli di destinazione e quelli di origine,
 \[
-\sum_{j=1}^n d_j
-=\sum_{j=1}^n\sum_{i=1}^m f_{ij}
-=\sum_{i=1}^m\sum_{j=1}^n f_{ij}
-=\sum_{i=1}^m s_i.
+\sum_{j = 1}^{n} \sum_{i = 1}^{m} f_{ij} = \sum_{i = 1}^{m} \sum_{j = 1}^{n} f_{ij} \implies \sum_{j = 1}^{n} d_j = \sum_{i = 1}^{m} s_i  
 \]
 Il bilanciamento \eqref{eq:bilanciamento} è quindi necessario
 per l'ammissibilità del modello con tutte le uguaglianze.
 
-\item[iii.] La matrice dei vincoli ha la proprietà di interezza
-che sarà dimostrata attraverso la totale unimodularità.
-Con \(s_i,d_j\) interi, ogni soluzione di base ammissibile
-è intera: si può ottenere un ottimo intero imponendo soltanto
-i vincoli di segno \(f_{ij}\geq0\).
+\item[iii.] La matrice dei vincoli è unimodulare e
+con \(s_i,d_j\) interi, ogni soluzione di base ammissibile
+è intera (\textbf{dal teorema di interezza dei vertici}).
 
-\item[iv.] Ogni istanza si rappresenta con un grafo bipartito completo
+
+\begin{definition}{Grafo Bipartito}
+Un grafo bipartito è un grafo \(G=(V,E)\) in cui l'insieme dei vertici \(V\) può essere suddiviso in due sottoinsiemi disgiunti \(V_1\) e \(V_2\), tali che:
+\begin{enumerate}
+  \item \(V_1 \cup V_2 = V\)
+  \item \(V_1 \cap V_2 = \varnothing\)
+  \item Ogni arco collega un vertice di \(V_1\) con un vertice di \(V_2\).
+\end{enumerate}
+Un grafo è Bipartito completo, se ogni vertice di \(V_1\) è collegato a ogni vertice di \(V_2\)
+\end{definition}
+
+\item[iv.] Ogni istanza si rappresenta con un grafo bipartito completo, l'istanza del grafo è:
 \[
 K_{m,n}=(F\cup C,E),
 \]
@@ -633,10 +672,28 @@ La matrice dei coefficienti tecnologici ha dimensioni
 \[
 (m+n)\times mn
 \]
+\begin{warning}{}
+    Questo perché:
+    \begin{enumerate}
+        \item \textbf{Numero di righe: $m+n$.}
+        Ogni riga della matrice corrisponde a un vincolo del problema.
+        In particolare:
+        \begin{itemize}
+            \item Abbiamo $n$ vincoli relativi alla domanda dei clienti, uno per ciascun cliente $j=1,\dots,n$.
+            \item Abbiamo $m$ vincoli relativi alla disponibilità dei fornitori, uno per ciascun fornitore $i=1,\dots,m$.
+        \end{itemize}
+        Pertanto, il numero complessivo di righe è $m+n$.
+
+        \item \textbf{Numero di colonne: $mn$.}
+        Ogni colonna corrisponde a una variabile decisionale $f_{ij}$, che rappresenta la quantità di merce trasportata dal fornitore $i$ al cliente $j$.
+
+        Poiché abbiamo $m$ fornitori e $n$ clienti, esistono $mn$ possibili coppie fornitore-cliente e, quindi, $mn$ variabili decisionali.
+
+        Questo rappresenta tutte le possibili coppie fornitore-clienti che possono essere messe sulle colonne
+    \end{enumerate}
+\end{warning}
 e coincide con la matrice di incidenza nodo--arco \emph{non orientata}
-del grafo bipartito: nella colonna di \(f_{ij}\) si trovano
-un \(1\) nella riga del fornitore \(i\), un \(1\)
-nella riga del cliente \(j\) e \(0\) nelle altre righe.
+del grafo bipartito
 
 Consideriamo concretamente \(m=3\) fornitori e \(n=2\) clienti:
 \begin{align*}
@@ -667,6 +724,16 @@ A=
 0&1&0&1&0&1
 \end{bmatrix}\in\mathbb Z^{5\times6}.
 \]
+il vettore decisionale è
+\[
+f = \begin{pmatrix}
+f_{11} \\
+ f_{12} \\
+ \vdots \\
+ f_{mn}
+\end{pmatrix}
+\]
+
 Le prime tre righe rappresentano i fornitori, le ultime due
 i clienti. Il grafo associato è \(K_{3,2}\), con
 \(F=\{1,2,3\}\) e \(C=\{1,2\}\).
@@ -699,13 +766,18 @@ e i rispettivi costi.}
 \end{minipage}
 \end{center}
 
-\paragraph{Importanti osservazioni.}
-La prima osservazione riguarda l'ipotesi di bilanciamento:
-essa non è restrittiva se si rappresentano esplicitamente
-la domanda insoddisfatta o l'offerta inutilizzata.
-Si distinguono due scenari alternativi.
+\newpage
 
-\begin{remark}{Scenario 1: offerta complessiva inferiore alla domanda}
+\paragraph{Importanti osservazioni.}
+
+La prima importante osservazione riguarda l'ipotesi di bilanciamento, che risulta essere non restrittiva.
+
+Questo significa che, anche qualora il problema originale non fosse bilanciato, sarebbe comunque possibile ricondurlo a un problema bilanciato equivalente, senza compromettere la ricerca di una soluzione ottima.
+
+Si considerino, infatti, i seguenti due scenari alternativi:
+
+
+\paragraph{Scenario 1: offerta complessiva inferiore alla domanda}
 Supponiamo che
 \[
 \sum_{i=1}^m s_i<\sum_{j=1}^n d_j.
@@ -715,19 +787,30 @@ Per i soli flussi reali si considera quindi
 \[
 \sum_{i=1}^m f_{ij}\leq d_j,\qquad j=1,\ldots,n.
 \]
+Cioè per alcuni clienti potrebbe essere minore, per alcuni uguale e soddisfarli.
+
+
+Questo non va bene perchè non rispetta il vincolo (a) che avevamo messo nel problema standard, quindi faremo in modo di bilanciarlo. 
+\\
+\textbf{Questo viola il vincolo (a), quindi come si fa a bilanciarlo?}
+\\
 Si procede così:
 \begin{enumerate}
-\item si introduce un fornitore fittizio \(m+1\);
+\item si introduce un fornitore fittizio \(m+1\) nell'insieme dei fornitori;
 \item si introducono \(n\) ulteriori variabili
 \[
 f_{(m+1)j}\geq0,\qquad j=1,\ldots,n;
 \]
-\item si definiscono la sua disponibilità e i suoi costi:
+\item si definiscono la disponibilità del nuovo fornitore fittizio e i suoi costi:
 \[
-s_{m+1}=\sum_{j=1}^n d_j-\sum_{i=1}^m s_i,
-\qquad
-c_{(m+1)j}\ \text{da definire},\quad j=1,\ldots,n.
+\begin{aligned}
+s_{m+1} &= \sum_{j=1}^n d_j-\sum_{i=1}^m s_i,
+\\
+\\[6pt]
+c_{(m+1)j} &= \text{da definire},\qquad j=1,\ldots,n.
+\end{aligned}
 \]
+cioè la disponibilità del fornitore fittizio viene definita come la quantità di merce necessaria a soddisfare la domanda complessiva che non può essere coperta dagli altri fornitori.
 \end{enumerate}
 Il modello bilanciato risultante è
 \begin{align*}
@@ -740,26 +823,31 @@ Il modello bilanciato risultante è
 &f_{ij}\geq0,
 &&i=1,\ldots,m+1,\quad j=1,\ldots,n.
 \end{align*}
-La quantità \(f_{(m+1)j}\) misura la domanda del cliente \(j\)
-non soddisfatta dai fornitori reali. I costi fittizi possono
-essere penalità per mancata consegna; la scelta dipende
-dall'applicazione.
+La quantità \(f_{(m+1)j}\) che compare sopratutto nel vincolo (a) misura la domanda del cliente \(j\)
+non soddisfatta dai fornitori reali. Questo perchè devi pensarlo cosi, quando arriva $i=m+1$, si ha
+\[
+s_{m+1} = f_{m+1,1} + f_{m+1,2} + \dots + f_{m+1,n}
+\]
+ed ognuno misura la quantità non soddisfata dai fornitori reali, che verrà soddisfatta da questo.
 
-Per esempio, se l'offerta totale è \(5\) e la domanda totale è \(8\),
-il fornitore fittizio ha disponibilità \(3\): contabilizza
-tre unità di domanda insoddisfatta, senza creare prodotto reale.
-\end{remark}
 
-\begin{remark}{Scenario 2: offerta complessiva superiore alla domanda}
+\newpage
+
+\paragraph{Scenario 2: offerta complessiva superiore alla domanda}
 Supponiamo che
 \[
 \sum_{i=1}^m s_i>\sum_{j=1}^n d_j.
 \]
-Per i soli clienti reali, ciascun fornitore può spedire meno
-della propria disponibilità:
+Cioè la disponibilità di fornitura, è maggiore della domanda degli utenti.
+
+
+Succede quindi che \textbf{qualche} fornitore può spedire meno della propria disponibilità:
 \[
 \sum_{j=1}^n f_{ij}\leq s_i,\qquad i=1,\ldots,m.
 \]
+Cioè un fornitore spartenedo la sua merce a tutti i clienti potrebbe non esaurire la quantità che ha disposizione.
+\textbf{Questo viola il vincolo (b), quindi come si fa a bilanciarlo?}
+\\
 Si procede così:
 \begin{enumerate}
 \item si introduce un cliente fittizio \(n+1\);
@@ -773,6 +861,7 @@ d_{n+1}=\sum_{i=1}^m s_i-\sum_{j=1}^n d_j,
 \qquad
 c_{i(n+1)}\ \text{da definire},\quad i=1,\ldots,m.
 \]
+\textbf{Questo cliente quindi prenderà tutto quello che hanno in piu gli altri fornitori}
 \end{enumerate}
 Il modello bilanciato è
 \begin{align*}
@@ -788,14 +877,18 @@ Il modello bilanciato è
 Il flusso verso il cliente fittizio rappresenta l'offerta inutilizzata.
 Il relativo costo può essere nullo oppure descrivere, per esempio,
 costi di stoccaggio o smaltimento.
-\end{remark}
+
+
+\textbf{Quindi in tutti e due i casi abbiamo bilanciato il problema, facendo in modo che rispettasero i vincoli (a) e (b)}
+
 
 La seconda osservazione riguarda l'esistenza di un ottimo finito.
 
+\newpage
+
 \begin{theorem}{Esistenza di un ottimo finito per il trasporto}
 \label{thm:trasporto-ottimo}
-Ogni istanza bilanciata del Problema del Trasporto sul grafo bipartito
-completo, con disponibilità e domande nonnegative e costi finiti,
+Ogni istanza \textbf{bilanciata} del Problema del Trasporto
 ammette almeno una soluzione ottima finita.
 \end{theorem}
 
@@ -804,13 +897,13 @@ Poniamo
 \[
 \alpha=\sum_{i=1}^m s_i=\sum_{j=1}^n d_j.
 \]
-Se \(\alpha>0\), definiamo
+Definiamo
 \begin{equation}
 f_{ij}=\frac{s_i d_j}{\alpha},
 \qquad i=1,\ldots,m,\quad j=1,\ldots,n.
 \tag{3.2}\label{eq:soluzione-proporzionale}
 \end{equation}
-Tali quantità sono nonnegative. Verifichiamo i vincoli.
+Tali quantità sono nonnegative. Ora abbiamo dato un assegnamento alla quantità trasportata, vediamo se queste quantità soddisfano i vincoli.
 Per ogni fornitore \(i\), i vincoli di origine sono soddisfatti:
 \begin{align*}
 \sum_{j=1}^n f_{ij}
@@ -830,41 +923,28 @@ Per ogni cliente \(j\), i vincoli di destinazione sono soddisfatti:
 &=d_j.
 \end{align*}
 La soluzione \eqref{eq:soluzione-proporzionale} è ammissibile.
+Quindi abbiamo dimostrato che la regione ammissibile è non vuota e può contenere questa soluzione, quindi sicuramente è non vuota.
 
-Se \(\alpha=0\), la nonnegatività implica che tutte le disponibilità
-e le domande sono nulle; \(f_{ij}=0\) è ammissibile,
-senza dividere per zero.
 
-Per ogni soluzione ammissibile e per ogni \(i,j\), si ha inoltre
+Poi per ogni soluzione ammissibile (immagina ce ne siano tante) e per ogni \(i,j\), si ha inoltre
 \begin{align*}
 &f_{ij}\geq0,\\
-&\sum_{\ell=1}^n f_{i\ell}=s_i
-\quad\Longrightarrow\quad f_{ij}\leq s_i,\\
-&\sum_{r=1}^m f_{rj}=d_j
-\quad\Longrightarrow\quad f_{ij}\leq d_j.
+&\sum_{j=1}^n f_{ij}=s_i
+\quad\Longrightarrow\quad f_{ij}\leq s_i, \forall i,j\\
+&\sum_{i=1}^m f_{ij}=d_j
+\quad\Longrightarrow\quad f_{ij}\leq d_j \forall i,j.
 \end{align*}
 Quindi
 \[
 0\leq f_{ij}\leq\min\{s_i,d_j\}.
 \]
-La regione ammissibile è non vuota, chiusa e limitata,
+Quindi abbiamo dimostrato che la regione ammissibile è anche chiusa e limitata.
 dunque compatta. La funzione obiettivo è lineare e continua,
-perciò assume su di essa un minimo finito.
+applicando il teorema di Weierstrass, possiamo concludere che esiste almeno una soluzione ottima finita (cioè per il teorema di Weierstrass,una funzione continua su un insieme non vuoto e compatto assume sempre un minimo e un massimo), anche se non sappiamo ancora quale sia
 \end{proof}
 
-\begin{remark}{Chiarimento sulla soluzione proporzionale e sugli indici}
-La formula \eqref{eq:soluzione-proporzionale} dimostra
-l'ammissibilità del problema continuo: non è necessariamente
-intera né ottima. Per esempio, con
-\(s_1=s_2=d_1=d_2=1\), dà \(f_{ij}=\frac12\).
-L'esistenza di un ottimo intero deriva invece dalla matrice.
 
-Nell'originale alcuni indici delle somme finali sono scambiati:
-si somma sui clienti per ottenere \(s_i\), sui fornitori
-per ottenere \(d_j\), come nelle formule corrette sopra.
-Sono stati esplicitati anche il bilanciamento e il caso \(\alpha=0\).
-\end{remark}
-
+\newpage
 La terza osservazione riguarda la matrice dei coefficienti tecnologici.
 Per il trasporto si può dimostrare la \emph{totale unimodularità},
 che riguarda tutti i minori quadrati, non soltanto quelli
