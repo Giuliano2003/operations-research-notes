@@ -938,9 +938,7 @@ Quindi
 \[
 0\leq f_{ij}\leq\min\{s_i,d_j\}.
 \]
-Quindi abbiamo dimostrato che la regione ammissibile è anche chiusa e limitata.
-dunque compatta. La funzione obiettivo è lineare e continua,
-applicando il teorema di Weierstrass, possiamo concludere che esiste almeno una soluzione ottima finita (cioè per il teorema di Weierstrass,una funzione continua su un insieme non vuoto e compatto assume sempre un minimo e un massimo in quell'intervallo), anche se non sappiamo ancora quale sia
+La funzione obiettivo, essendo lineare, è continua. Poiché la regione ammissibile è non vuota e compatta, per il teorema di Weierstrass la funzione obiettivo assume su di essa un minimo e un massimo assoluti. Di conseguenza, possiamo affermare che esiste almeno una soluzione ottima finita, anche se non sappiamo ancora quale sia
 \end{proof}
 
 
@@ -952,22 +950,16 @@ di ordine massimo.
 
 \begin{definition}{Matrice totalmente unimodulare}
 Una matrice intera \(A\in\mathbb Z^{m\times n}\), con \(m\leq n\),
-si dice \emph{totalmente unimodulare} se, per ogni sottomatrice
-quadrata \(B\) di qualunque ordine \(k=1,\ldots,m\), vale
+si dice \emph{totalmente unimodulare} se, per \textbf{ogni sottomatrice
+quadrata} \(B\) di qualunque ordine \(k=1,\ldots,m\), vale
 \[
 \det(B)\in\{-1,0,1\}.
 \]
-In generale, senza l'ipotesi \(m\leq n\), si considerano
-gli ordini \(k=1,\ldots,\min\{m,n\}\).
+
 \end{definition}
 
 \begin{remark}{Chiarimento sulla differenza fra le due proprietà}
-La totale unimodularità implica l'unimodularità nella definizione
-del testo. Il viceversa non vale in generale: controllare soltanto
-i minori massimi non controlla quelli più piccoli.
-In particolare, una matrice totalmente unimodulare ha tutti
-gli elementi in \(\{-1,0,1\}\), perché ogni elemento
-è un minore di ordine \(1\).
+La totale unimodularità implica l'unimodularità nella definizione.
 \end{remark}
 
 \begin{theorem}{Totale unimodularità della matrice del trasporto}
@@ -991,7 +983,7 @@ Procediamo per induzione sull'ordine \(k\). Per \(k=1\), l'elemento
 è \(0\) o \(1\), quindi l'affermazione è vera.
 Per \(k>1\), distinguiamo i tre casi del testo.
 \begin{enumerate}
-\item \textbf{Esiste una colonna interamente nulla.}
+\item \textbf{Esiste una colonna interamente nulla.}, basta che una fra le colonne è interamente nulla
 Il determinante è immediatamente nullo:
 \[
 \det\!\left(A^{(k)}\right)=0.
@@ -1045,64 +1037,103 @@ Ne segue
 \]
 Lo stesso ragionamento vale per qualunque \(k\) in questo caso.
 
-\item \textbf{Non vi sono colonne nulle e almeno una colonna
-contiene un solo \(1\).}
+\item \textbf{$A^{(k)}$ non ha alcuna colonna di tutti "0", ma almeno una colonna (eventualmente tutte) con un solo "1" (quindi eventualmente altre colonne possono avere tutti "1").}
 Sviluppiamo il determinante lungo una di tali colonne.
-Se l'unico \(1\) è nella posizione \((r,s)\), lo sviluppo
+Se l'\(1\) scelto (bisogna scegliere perforza un 1,per la regola del determinante) è nella posizione \((r,s)\), lo sviluppo
 di Laplace dà
 \[
 \det\!\left(A^{(k)}\right)
 =(-1)^{r+s}\det\!\left(A^{(k-1)}\right).
 \]
-La matrice residua è ancora una sottomatrice di \(A\).
-Per induzione il suo determinante è \(0\), \(1\) o \(-1\),
-e lo stesso vale dopo la moltiplicazione per il segno.
-Equivalentemente, si ripete lo sviluppo fino a un minore
-di ordine \(1\) o fino a uno dei due casi precedenti.
+Per solo ipotesi induttiva, \(\det\!\left(A^{(k-1)}\right)\in\{-1,0,1\}\); quindi anche
+\(\det\!\left(A^{(k)}\right)\in\{-1,0,1\}\).
+
 \end{enumerate}
-I tre casi esauriscono le possibilità e in tutti
-il determinante appartiene a \(\{-1,0,1\}\).
+
+\begin{example}{Esempio del terzo caso}
+    
+    \textbf{Esiste una colonna contenente esattamente
+    un elemento uguale a $1$.}
+
+    Escludendo i due casi precedenti, deve necessariamente
+    esistere almeno una colonna contenente un solo $1$.
+
+    In questo caso possiamo applicare lo
+    \textbf{sviluppo di Laplace} lungo tale colonna,
+    riducendo il calcolo del determinante a quello
+    di una sottomatrice di ordine $k-1$.
+
+    Consideriamo, ad esempio:
+
+    \[
+    A^{(3)}=
+    \begin{pmatrix}
+    0 & 1 & 1\\
+    1 & 0 & 1\\
+    0 & 1 & 0
+    \end{pmatrix}.
+    \]
+
+    Osserviamo che la prima colonna contiene
+    un solo elemento uguale a $1$, situato
+    nella seconda riga.
+
+    Sviluppando il determinante lungo questa colonna:
+
+    \[
+    \begin{aligned}
+    \det(A^{(3)})
+    &=(-1)^{2+1}
+    \det
+    \begin{pmatrix}
+    1 & 1\\
+    1 & 0
+    \end{pmatrix}\\[6pt]
+    &=-\left(1\cdot 0-1\cdot 1\right)\\[6pt]
+    &=-(-1)\\[6pt]
+    &=1.
+    \end{aligned}
+    \]
+
+    Abbiamo quindi ottenuto:
+
+    \[
+    \boxed{\det(A^{(3)})=1.}
+    \]
+
+\textbf{Conclusione.}
+
+I tre casi esaminati coprono tutte le possibilità,
+poiché ogni colonna di $A^{(k)}$ può contenere
+al massimo due elementi uguali a $1$.
+
+Il caso base $k=1$ è immediato, poiché ogni
+elemento della matrice originale appartiene
+a $\{0,1\}$.
+
+Per induzione, ogni sottomatrice quadrata
+di $A$ ha determinante appartenente a
+$\{-1,0,1\}$.
+
+Possiamo quindi concludere che:
+
+\[
+\boxed{A \text{ è totalmente unimodulare}.}
+\]
+
+\end{example}
+
+Quindi abbiamo dimostrato che ogni matrice quadrata che prendiamo (con $k > 1$), può ricadere nei 3 casi.
+
+Nei primi due casi, è semplici da gestire, nell'ultimo caso si usa l'ipotesi di induzione.
 \end{proof}
 
 \begin{corollary}{Interezza delle soluzioni di base del trasporto}
 \label{cor:trasporto-intero}
-Se tutte le disponibilità \(s_i\) e tutte le domande \(d_j\) sono intere,
-ogni soluzione di base del Problema del Trasporto, dopo
-l'eliminazione dei vincoli ridondanti, ha componenti intere.
-In particolare ogni soluzione di base ammissibile è intera
-ed esiste una soluzione ottima intera.
+Se per ogni $i = 1,\dots,m$ e per ogni $j = 1,\dots,n$ si ha che $s_i$ e $d_j$ sono interi, allora ogni soluzione di base ammissibile del problema del trasporto è intera. 
 \end{corollary}
 
-\begin{proof}
-La matrice completa del trasporto ha rango \(m+n-1\):
-la somma dei vincoli di origine coincide con la somma
-dei vincoli di destinazione; nel grafo bipartito completo
-questa è l'unica dipendenza indipendente fra le righe.
-Eliminando una riga ridondante si ottiene una matrice
-di rango pieno ancora totalmente unimodulare, perché
-ogni suo minore è anche un minore della matrice originale.
-
-Ogni matrice di base \(B\) è non singolare e ha determinante
-\(\pm1\). Con termini noti interi, \(B^{-1}b\) è quindi intero.
-L'esistenza di un ottimo finito e la possibilità di sceglierlo
-di base concludono la dimostrazione.
-\end{proof}
-
-\begin{remark}{Precisazione: soluzioni di base e soluzioni ammissibili}
-Le frasi del testo secondo cui una qualunque soluzione
-del trasporto sarebbe intera vanno riferite alle
-\emph{soluzioni di base}. Un poliedro con vertici interi
-contiene normalmente anche punti frazionari,
-ottenuti combinando convessamente i vertici.
-La garanzia utile è che si può scegliere un ottimo di base intero,
-senza imporre esplicitamente l'interezza nel problema continuo.
-
-La matrice completa del trasporto ha righe dipendenti;
-la totale unimodularità permette di applicare il risultato
-sulle basi dopo la rimozione della dipendenza.
-\end{remark}
-
-\begin{example}{Il Problema dell'Assegnamento}
+\paragraph{Il Problema dell'Assegnamento}
 \label{ex:assegnamento}
 Il Problema dell'Assegnamento è il caso speciale del trasporto in cui:
 \begin{enumerate}
@@ -1122,11 +1153,11 @@ La formulazione è
 \end{align*}
 La matrice è totalmente unimodulare e i termini noti
 sono interi. Ogni soluzione di base ammissibile è dunque intera.
-Dalle somme di riga e dalla nonnegatività segue anche
+Dalle somme di riga (dei vincoli (a) e (b)) e dalla nonnegatività segue anche
 \[
 0\leq f_{ij}\leq1.
 \]
-Ogni soluzione di base ammissibile è perciò un vettore booleano,
+Ogni soluzione di\textbf{ base ammissibile} (perchè intera) è perciò un vettore booleano,
 con il significato
 \[
 f_{ij}=
@@ -1135,9 +1166,8 @@ f_{ij}=
 0,&\text{altrimenti}.
 \end{cases}
 \]
-In una soluzione ammissibile \emph{intera}, fra le \(n^2\)
-variabili esattamente \(n\) valgono \(1\), una per riga
-e una per colonna; le altre \(n^2-n\) valgono \(0\).
+In particolare in una SBA \emph{intera}, fra le \(n^2\) ($mn$)
+variabili esattamente \(n\) valgono \(1\) (\textbf{questo perchè fra gli $n$ clienti, posso ricevere in totale massimo $n$ oggetti}); le altre \(n^2-n\) valgono \(0\).
 La matrice \((f_{ij})\) è una matrice di permutazione.
 
 Ogni istanza si rappresenta con
@@ -1186,36 +1216,9 @@ e il collegamento \([i,j]\) ha costo \(c_{ij}\).}
 \label{fig:assegnamento}
 \end{minipage}
 \end{center}
-\end{example}
 
-\begin{remark}{Chiarimento sull'interezza nell'assegnamento}
-Anche per l'assegnamento l'affermazione del testo riferita a
-\emph{qualunque soluzione ammissibile} va corretta:
-sono interi i vertici, e si può scegliere un ottimo intero;
-non tutti i punti ammissibili del rilassamento sono booleani.
-Per \(n=2\), per esempio,
-\[
-(f_{ij})=
-\begin{bmatrix}
-\frac12&\frac12\\
-\frac12&\frac12
-\end{bmatrix}
-\]
-soddisfa tutte le somme di riga e di colonna e la nonnegatività,
-ma è frazionaria. È la media delle due matrici di permutazione
-\[
-\begin{bmatrix}1&0\\0&1\end{bmatrix},
-\qquad
-\begin{bmatrix}0&1\\1&0\end{bmatrix}.
-\]
-\end{remark}
 
-In un problema di PLI generale la matrice non possiede necessariamente
-queste proprietà: l'ottimo del rilassamento può avere componenti
-frazionarie. Questo non significa che ogni matrice non unimodulare
-produca sempre un ottimo frazionario, ma che viene meno la garanzia
-generale di interezza. Occorrono quindi metodi esatti
-che gestiscano esplicitamente tale requisito.
+\newpage
 
 \section{Metodi dei Piani di Taglio}
 \label{sec:piani-taglio}
