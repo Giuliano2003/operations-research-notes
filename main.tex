@@ -10,6 +10,7 @@
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \usepackage{pgfplots}
 \usepackage{placeins}
 \usepackage{caption}
@@ -58,26 +59,172 @@
 \academicyear{Academic Year 2026/2027}
 
 \begin{document}
+\begin{titlepage}
 \thispagestyle{empty}
-\begin{flushright}
-    \small
-    \textbf{Ricerca Operativa}\\
-    \textit{Scritto da : Giuliano Savino}
-\end{flushright}
+\centering
 
-\vspace{-0.15cm}
-\noindent
-\textcolor{blue!60!black}{\rule{\textwidth}{1.2pt}}
+% Colori del frontespizio
+\definecolor{coverblue}{RGB}{31,71,133}
+\definecolor{coverlight}{RGB}{235,242,250}
+\definecolor{coveraccent}{RGB}{204,51,51}
+
+% Intestazione
+{\large\bfseries\color{coverblue}
+Università degli Studi di Napoli Federico II\par}
+
+\vspace{0.35cm}
+
+{\small
+Dipartimento di Ingegneria Elettrica\\
+e delle Tecnologie dell'Informazione\par}
+
+\vspace{0.25cm}
+
+{\small
+Corso di Laurea Magistrale in Informatica\par}
+
+\vspace{0.7cm}
+
+{\color{coverblue}\rule{\textwidth}{1.1pt}}
+
 \vfill
-\begin{center}
 
-    {\Large \textbf{Ricerca Operativa}}\\[0.2cm]
-        
-    {\large \textit{Scritto da : Giuliano Savino}}
+% Titolo
+{\small\bfseries\color{coverblue}
+A P P U N T I\par}
 
-\end{center}
+\vspace{0.45cm}
+
+{\fontsize{38}{44}\selectfont\bfseries
+\color{coverblue}
+Ricerca\\[0.1cm]
+Operativa\par}
+
+\vspace{0.5cm}
+
+{\large\color{black!55}
+Modelli, metodi e ottimizzazione\par}
+
+\vspace{1cm}
+
+% Illustrazione vettoriale:
+% regione ammissibile e soluzione ottima
+\begin{tikzpicture}[
+    x=1.15cm,
+    y=1.15cm,
+    >=Stealth,
+    line cap=round,
+    line join=round,
+    font=\small
+]
+    % Griglia leggera
+    \draw[
+        step=0.5,
+        coverblue!7,
+        very thin
+    ] (0,0) grid (5.3,4);
+
+    % Regione ammissibile:
+    % x_1 >= 0, x_2 >= 0,
+    % x_1 <= 4, x_2 <= 3, x_1 + x_2 <= 5
+    \fill[coverlight]
+        (0,0) -- (4,0) -- (4,1) --
+        (2,3) -- (0,3) -- cycle;
+
+    % Rette associate ai vincoli
+    \draw[coverblue!25, thin]
+        (1.2,3.8) -- (4.8,0.2);
+    \draw[coverblue!25, thin]
+        (0,3) -- (5.1,3);
+    \draw[coverblue!25, thin]
+        (4,0) -- (4,3.8);
+
+    % Contorno della regione
+    \draw[coverblue, very thick]
+        (0,0) -- (4,0) -- (4,1) --
+        (2,3) -- (0,3) -- cycle;
+
+    % Assi
+    \draw[->, black!50, thin]
+        (-0.2,0) -- (5.55,0)
+        node[right] {$x_1$};
+
+    \draw[->, black!50, thin]
+        (0,-0.2) -- (0,4.2)
+        node[above] {$x_2$};
+
+    % Vertici
+    \foreach \p in {(0,0),(4,0),(2,3),(0,3)}
+        \fill[coverblue] \p circle (2pt);
+
+    % Etichetta interna
+    \node[
+        align=center,
+        text=coverblue
+    ] at (1.65,1.05)
+        {Regione\\ammissibile};
+
+    % Direzione di miglioramento per max 2x_1 + x_2
+    \draw[
+        ->,
+        coveraccent,
+        thick
+    ] (2.0,1.65) -- (3.0,2.15);
+
+    % Retta di livello ottima: 2x_1 + x_2 = 9
+    \draw[
+        coveraccent!75,
+        dashed,
+        thick
+    ] (2.7,3.6) -- (4.5,0);
+
+    % Soluzione ottima
+    \fill[coveraccent!12]
+        (4,1) circle (0.19);
+
+    \fill[coveraccent]
+        (4,1) circle (3pt);
+
+    \draw[coveraccent!65, thin]
+        (4.12,1.12) -- (4.55,1.65);
+
+    \node[
+        anchor=west,
+        text=coveraccent,
+        font=\small\bfseries,
+        align=left
+    ] at (4.55,1.65)
+        {Soluzione\\ottima};
+
+\end{tikzpicture}
+
+\vspace{0.45cm}
+
+
 
 \vfill
+
+% Autore
+{\small\color{black!55}A cura di\par}
+
+\vspace{0.15cm}
+
+{\Large\bfseries\color{coverblue}
+Giuliano Savino\par}
+
+\vspace{0.9cm}
+
+{\color{coverblue}\rule{\textwidth}{0.5pt}}
+
+\vspace{0.35cm}
+
+{\small\color{black!55}
+Anno Accademico 2026/2027\par}
+
+\end{titlepage}
+
+\tableofcontents
+\newpage
 
 \tableofcontents
 \newpage
