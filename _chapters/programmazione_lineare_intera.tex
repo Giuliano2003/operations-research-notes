@@ -1374,3 +1374,883 @@ una dimostrazione di terminazione finita per qualunque
 regola di generazione dei tagli.
 \end{remark}
 
+\newpage
+
+\section{Branch e Bound}
+\begingroup
+\newcommand{\BBpli}[1]{\mathrm{PLI}_{#1}}
+\newcommand{\BBrel}[1]{\mathrm{PLI}_{#1}\text{-c}}
+\newcommand{\BBinc}{z_{\mathrm{opt}}}
+\newcommand{\BBsol}{x_{\mathrm{opt}}}
+\newcommand{\BBfig}[2]{%
+  \par\nobreak\smallskip\nobreak
+  {\small\textit{Figura #1 delle dispense.} #2\par}}
+
+\subsection{Enumerazione implicita e partizione del problema}
+
+\begin{definition}{Branch \& Bound}
+Il Branch \& Bound (B\&B) è un metodo di enumerazione implicita per la
+programmazione lineare intera (PLI), alternativo ai metodi dei piani di
+taglio. Applica il principio \emph{divide and conquer}. La ramificazione
+(\emph{branching}) suddivide il problema in sottoproblemi interi con
+insiemi ammissibili più piccoli. La valutazione mediante limiti
+(\emph{bounding}) permette di escludere interi sottoalberi quando nessuna
+delle loro soluzioni può migliorare la migliore soluzione già trovata.
+\end{definition}
+
+\subsubsection{Una partizione in due sottoproblemi}
+
+Sia $X$ l'insieme delle soluzioni intere ammissibili del problema richiamato
+nella figura 3.10 delle dispense e sia $P$ la regione del suo rilassamento
+continuo. Nella figura 3.11 il rilassamento ha soluzione ottima
+\[
+ x^*=\left(\frac32,2\right).
+\]
+La prima coordinata è frazionaria. Ogni soluzione intera deve avere
+$x_1\leq 1$ oppure $x_1\geq 2$, poiché non esistono interi strettamente
+compresi fra $1$ e $2$. Si costruiscono dunque due problemi distinti.
+Nel primo si aggiunge alla formulazione originaria il solo vincolo
+$x_1\leq 1$ e nel secondo il solo vincolo $x_1\geq 2$. Si ottengono
+\[
+ X_1=\{x\in X:x_1\leq 1\},\qquad X_2=\{x\in X:x_1\geq 2\},
+\]
+\[
+ X_1\cup X_2=X,\qquad X_1\cap X_2=\varnothing.
+\]
+Entrambi i figli escludono $x^*$, mentre ogni soluzione intera del padre
+appartiene a uno e un solo figlio. Indicando con $x^*_{x_1\leq 1}$
+e $x^*_{x_1\geq 2}$ le rispettive soluzioni ottime, si sceglie quella
+con il valore migliore della funzione obiettivo originaria.
+
+\begin{center}
+\begin{tikzpicture}[x=.90cm,y=.90cm,>=stealth,font=\small]
+  \draw[->] (-.25,0)--(7,0) node[below left] {$x_1$};
+  \draw[->] (0,-.22)--(0,4.2) node[left] {$x_2$};
+  \draw[brown!65!black] (-.55,1.32)--(7,3.83);
+  \draw[brown!65!black] (-.55,2.82)--(5.9,.24);
+  \draw[brown!65!black] (1.15,-.425)--(7,2.5);
+  \draw[->] (6.4,3.63)--(6.58,3.03);
+  \draw[->] (6.1,2.05)--(5.90,2.45);
+  \draw[->] (5,.60)--(4.82,.15);
+  \draw[blue!60!black,very thick]
+    (0,0)--(2,0)--(4,1)--(1.5,2)--(0,1.5)--cycle;
+  \foreach \i in {0,...,4}{
+    \foreach \j in {0,...,3}{
+      \fill[brown!65!black] (\i,\j) rectangle ++(.085,.085);
+    }
+  }
+  \foreach \i/\j in {0/0,0/1,1/0,1/1,2/0,2/1,3/1,4/1}
+    \fill[red!70!black] (\i,\j) rectangle ++(.085,.085);
+  \foreach \i in {1,2,3,4} \node[below] at (\i,-.04) {$\i$};
+  \foreach \j in {1,2,3} \node[left] at (0,\j) {$\j$};
+  \foreach \i in {1,2}
+    \draw[green!55!black,very thick] (\i,-.10)--(\i,3.55);
+  \draw[->,green!55!black] (1,3.35)--(.25,3.35);
+  \draw[->,green!55!black] (2,3.35)--(2.76,3.35);
+  \fill[blue!65!black] (1.5,2) circle (1.6pt) node[above=2pt] {$x^*$};
+  \node[green!50!black] at (.51,.59) {$X_1$};
+  \node[green!50!black] at (2.53,1.20) {$X_2$};
+  \node[blue!65!black] at (3.65,1.70) {$P$};
+\end{tikzpicture}
+\BBfig{3.11}{Partizione mediante i vincoli $x_1\leq 1$ e $x_1\geq 2$.}
+\end{center}
+
+\subsubsection{Partizione generale e valore ottimo}
+
+Si consideri il problema di minimo
+\[
+ (\BBpli{0})\qquad \min\{c^\top x:Ax\approx b,\ x\in\mathbb Z^n_{\geq 0}\}.
+\]
+Il simbolo $Ax\approx b$ raccoglie vincoli lineari il cui verso, per
+ciascuna riga, può essere $\leq$, $=$ oppure $\geq$. Siano $X_0$ la
+regione ammissibile, $z(x)=c^\top x$ e
+$z^*_{\BBpli{0}}=\min_{x\in X_0}z(x)$.
+
+\begin{definition}{Partizione della regione ammissibile}
+I sottoproblemi $\BBpli{1},\ldots,\BBpli{n_0}$ costituiscono una
+partizione del problema originario quando le loro regioni intere
+$X_1,\ldots,X_{n_0}$ soddisfano
+\[
+ \bigcup_{i=1}^{n_0} X_i=X_0,\qquad X_i\cap X_j=\varnothing\quad(i\ne j).
+\]
+Si possono scartare i figli vuoti. La disgiunzione è richiesta per ogni
+coppia di figli e implica, per $n_0\geq 2$, anche
+$\bigcap_{i=1}^{n_0}X_i=\varnothing$.
+\end{definition}
+
+Per ogni $i$ il valore ottimo del figlio è
+$z^*_{\BBpli{i}}=\min_{x\in X_i}z(x)$. Nel minimo si può assegnare
+valore $+\infty$ ai figli vuoti. Se il padre ha ottimo finito, allora
+\[
+ z^*_{\BBpli{0}}=\min_{1\leq i\leq n_0}z^*_{\BBpli{i}}.
+\]
+
+\emph{Dimostrazione.}
+Da $X_i\subseteq X_0$ segue $z^*_{\BBpli{0}}\leq z^*_{\BBpli{i}}$
+per ogni $i$. Viceversa, una soluzione ottima $x^*$ del padre appartiene
+a un figlio $X_h$. Pertanto
+$z^*_{\BBpli{h}}\leq z(x^*)=z^*_{\BBpli{0}}$. Le due disuguaglianze
+danno l'uguaglianza. Per un massimo si sceglie il maggiore degli ottimi
+dei figli.
+
+Per risolvere il padre, per ogni figlio è sufficiente conseguire uno dei
+seguenti risultati.
+\begin{enumerate}
+ \item Determinare una soluzione ottima del figlio.
+ \item Dimostrare che $X_i=\varnothing$.
+ \item Provare che il figlio non può migliorare la migliore soluzione
+       ammissibile già nota per il problema originario, se se ne conosce una.
+\end{enumerate}
+Ogni figlio ha la stessa natura del padre. Quando occorre, si ripete quindi
+il ragionamento su $X_i$, individuandone una nuova partizione.
+
+\begin{definition}{Albero delle decisioni o branching tree}
+La radice rappresenta il problema originario. Ramificare un nodo
+padre significa generare i nodi figli associati ai sottoproblemi della
+partizione. Una foglia è un nodo senza figli nell'albero costruito.
+La rappresentazione è dinamica perché un nodo ancora da esaminare può
+essere successivamente ramificato.
+\end{definition}
+
+\begin{center}
+\begin{tikzpicture}[font=\small,>=stealth,
+  bbnode/.style={draw,circle,inner sep=2pt,minimum size=9mm}]
+  \node[bbnode,draw=red] (r) at (0,0) {$\BBpli{0}$};
+  \node[bbnode,draw=blue] (l) at (-2.6,-1.4) {$\BBpli{1}$};
+  \node[bbnode] (m) at (0,-1.4) {$\BBpli{i}$};
+  \node[bbnode,draw=blue] (n) at (2.6,-1.4) {$\BBpli{n_0}$};
+  \node[bbnode,draw=blue] (s) at (-1.3,-2.8) {};
+  \node[bbnode,draw=blue] (t) at (1.3,-2.8) {};
+  \foreach \u/\v in {r/l,r/m,r/n,m/s,m/t}
+    \draw[green!45!black] (\u)--(\v);
+  \foreach \x/\y in {-1.3/-1.4,1.3/-1.4,0/-2.8}
+    \node at (\x,\y) {$\cdots$};
+  \node[red!70!black,right] (a) at (.82,.22) {Nodo radice};
+  \draw[->] (a.west)--(r.north east);
+  \node[green!40!black,right] (b) at (2.45,-.35) {Ramificazione};
+  \draw[->] (b.west)--(1.36,-.74);
+  \node[blue!65!black,right] (c) at (2.55,-2.68) {Nodi foglia};
+  \draw[->] (c.west)--(t.east);
+  \draw[->] (c.north)--(n.south);
+\end{tikzpicture}
+\BBfig{3.12}{Radice, ramificazioni e foglie di un albero delle decisioni.}
+\end{center}
+
+\subsubsection{Rilassamento continuo e costruzione dei figli}
+
+\begin{definition}{Rilassamento continuo di un nodo}
+Dato $\BBpli{t}$, si ottiene $\BBrel{t}$ consentendo alle variabili intere
+di assumere valori reali e conservando tutti i vincoli lineari del nodo.
+Si indicano con $P_t$ la regione così ottenuta e con $X_t$ la regione
+intera. Per la PLI pura qui considerata vale $X_t=P_t\cap\mathbb Z^n$.
+\end{definition}
+
+Il rilassamento continuo è la tecnica di rilassamento utilizzata nelle
+dispense per decidere come partizionare il nodo. Alla radice si risolve
+\[
+ (\BBrel{0})\qquad \min\{c^\top x:Ax\approx b,\ x\in\mathbb R^n_{\geq 0}\}.
+\]
+Sia $x^*_{P_0}$ una soluzione ottima finita. Se tutte le componenti
+sono intere, questa soluzione risolve anche $\BBpli{0}$. Altrimenti si
+sceglie una componente frazionaria $[x^*_{P_0}]_h=a\notin\mathbb Z$.
+
+\begin{definition}{Variabile e vincoli di branching}
+La variabile $x_h$ scelta per ramificare è la \emph{variabile di branching}.
+I due \emph{vincoli di branching} sono $x_h\leq\lfloor a\rfloor$ e
+$x_h\geq\lceil a\rceil$, dove $\lfloor a\rfloor$ è il massimo intero
+minore o uguale ad $a$ e $\lceil a\rceil$ il minimo intero maggiore o
+uguale ad $a$. Ciascun figlio eredita i vincoli del padre e riceve uno
+solo dei due nuovi vincoli.
+\end{definition}
+
+\[
+\begin{aligned}
+ (\BBpli{1})\quad &\min\{c^\top x:Ax\approx b,\ x_h\leq\lfloor a\rfloor,\
+                          x\in\mathbb Z^n_{\geq0}\},\\
+ (\BBpli{2})\quad &\min\{c^\top x:Ax\approx b,\ x_h\geq\lceil a\rceil,\
+                          x\in\mathbb Z^n_{\geq0}\}.
+\end{aligned}
+\]
+Poiché $a$ è frazionario, $\lceil a\rceil=\lfloor a\rfloor+1$.
+Le due alternative coprono perciò tutti i valori interi di $x_h$ e sono
+incompatibili. Nei rilassamenti, invece, si elimina la striscia aperta
+$\lfloor a\rfloor<x_h<\lceil a\rceil$, che contiene la soluzione
+continua del padre.
+
+\begin{center}
+\begin{tikzpicture}[font=\small,>=stealth,
+  bbnode/.style={draw,circle,inner sep=3pt}]
+  \node[bbnode] (r) at (0,0) {$\BBpli{0}$};
+  \node[bbnode] (l) at (-3,-1.8) {$\BBpli{1}$};
+  \node[bbnode] (d) at (3,-1.8) {$\BBpli{2}$};
+  \draw (r)--node[above,sloped] {$x_h\leq\lfloor a\rfloor$} (l);
+  \draw (r)--node[above,sloped] {$x_h\geq\lceil a\rceil$} (d);
+  \node[align=center,green!40!black] (b) at (0,-1.13) {Vincoli di\\branching};
+  \draw[->] (b.west)--(-1.51,-.92);
+  \draw[->] (b.east)--(1.51,-.92);
+  \node at (0,-1.92) {$x_h$ variabile di branching};
+\end{tikzpicture}
+\BBfig{3.13}{Ramificazione quando $[x^*_{P_0}]_h=a\notin\mathbb Z$.}
+\end{center}
+
+Per ogni figlio si risolve il corrispondente rilassamento continuo e,
+se necessario, si ripete la ramificazione. In un generico nodo $t$ si
+ritrovano i vincoli originari $Ax\approx b$, $x\geq0$ e tutti i vincoli
+di branching incontrati sull'unico cammino dalla radice a $t$.
+Il vincolo di integralità caratterizza il problema intero di ciascun nodo.
+Una discesa nell'albero restringe l'insieme delle soluzioni candidate.
+In linea di principio si potrebbero enumerare tutte le soluzioni intere.
+Le condizioni di chiusura consentono di evitare l'esplorazione esplicita
+di molti nodi.
+
+\subsection{Criterio di bounding}
+
+\begin{definition}{Migliore soluzione nota e limite del rilassamento}
+La migliore soluzione intera ammissibile trovata finora per il problema
+originario è detta \emph{incumbent} e si indica con $\BBsol$.
+Il suo valore è $\BBinc=z(\BBsol)$. In assenza di una soluzione iniziale,
+si pone simbolicamente $\BBsol=\varnothing$, con $\BBinc=+\infty$ nel
+minimo e $\BBinc=-\infty$ nel massimo. Se è già disponibile una soluzione
+ammissibile, si inizializzano entrambi con quella soluzione e il suo valore.
+Il valore ottimo del rilassamento al nodo $t$ fornisce un limite inferiore
+nel minimo e un limite superiore nel massimo.
+\end{definition}
+
+Siano $P_t^*$ e $X_t^*$ gli insiemi delle soluzioni ottime rispettivamente
+del rilassamento e del problema intero. Le relazioni richiamate nella nota
+delle pp.~111--112 si giustificano con l'inclusione $X_t\subseteq P_t$.
+\begin{enumerate}
+ \item Se $P_t=\varnothing$, anche $X_t=\varnothing$, perché una soluzione
+       intera ammissibile sarebbe pure ammissibile per il rilassamento.
+ \item Se l'obiettivo del problema intero è illimitato nella direzione
+       di ottimizzazione, anche quello del rilassamento è illimitato
+       nella stessa direzione. Infatti la stessa successione di soluzioni
+       è ammissibile in $P_t$. Nella notazione delle dispense l'implicazione
+       di illimitatezza è scritta $z^*_{\BBpli{t}}=\infty\Rightarrow
+       z^*_{\BBrel{t}}=\infty$. Con il segno esplicito si usa $-\infty$
+       per un minimo illimitato inferiormente e $+\infty$ per un massimo
+       illimitato superiormente. L'inammissibilità è trattata al punto 1.
+ \item Se entrambi gli ottimi esistono, nel minimo
+       $z^*_{\BBrel{t}}\leq z^*_{\BBpli{t}}$. Il rilassamento può infatti
+       scegliere anche la soluzione ottima intera. Nel massimo si ottiene
+       $z^*_{\BBrel{t}}\geq z^*_{\BBpli{t}}$.
+ \item Se $y\in P_t^*\cap\mathbb Z^n$, allora $y\in X_t^*$ e
+       $z(y)=z^*_{\BBrel{t}}=z^*_{\BBpli{t}}$. Infatti $y$ è ammissibile
+       per il problema intero e nessun punto di $X_t\subseteq P_t$ può
+       avere valore migliore di $y$.
+\end{enumerate}
+
+\subsubsection{Le tre condizioni di chiusura}
+
+\begin{enumerate}
+ \item \textbf{Inammissibilità.} Se il sistema dei vincoli originari
+ e dei vincoli ereditati lungo il cammino fino a $t$ è incompatibile,
+ $P_t=\varnothing$. Né il nodo né alcun discendente contiene una soluzione
+ intera ammissibile.
+ \item \textbf{Ottimo continuo intero.} Se una soluzione ottima
+ $x^*_{P_t}$ è intera, è ottima anche per $\BBpli{t}$. Se migliora
+ l'incumbent, si aggiornano $\BBsol\gets x^*_{P_t}$ e
+ $\BBinc\gets z(x^*_{P_t})$. Il nodo è risolto anche quando il suo
+ valore non migliora l'incumbent.
+ \item \textbf{Bounding.} Anche con una soluzione ottima frazionaria si
+ chiude $t$ quando il limite del rilassamento dimostra che nessun
+ discendente può migliorare $\BBinc$.
+\end{enumerate}
+
+\emph{Giustificazione del criterio di bounding.}
+Nel minimo, se $x^*_{X_t}$ è una migliore soluzione intera ottenibile
+sotto $t$, si ha $c^\top x^*_{P_t}\leq c^\top x^*_{X_t}$.
+Per ogni punto intero $y$ di qualunque discendente, $y\in X_t\subseteq P_t$.
+Dunque, se il rilassamento ha già valore maggiore o uguale a quello
+dell'incumbent,
+\[
+ \BBinc\leq c^\top x^*_{P_t}\leq c^\top y.
+\]
+Nel massimo tutti i versi si invertono. Si ha
+$c^\top x^*_{P_t}\geq c^\top x^*_{X_t}$ e si può chiudere il nodo se
+\[
+ c^\top y\leq c^\top x^*_{P_t}\leq\BBinc.
+\]
+L'uguaglianza basta se si cerca una soluzione ottima. Un altro punto
+dello stesso valore non migliorerebbe il risultato.
+
+\subsection{Scelta della variabile di branching}
+
+Si consideri un nodo $t$ con ottimo continuo frazionario per il quale
+non è verificato il criterio di bounding. Gli indici tra cui scegliere sono
+\[
+ F=\{\ell\in\{1,\dots,n\}:[x^*_{P_t}]_\ell\notin\mathbb Z\}.
+\]
+Se $|F|=1$ la scelta è obbligata. Se $|F|\geq2$, le dispense indicano
+tre criteri corretti, senza attribuire a uno di essi una superiorità generale.
+\begin{enumerate}
+ \item Scegliere casualmente $h\in F$.
+ \item Scegliere il minimo indice, ossia $h=\min F$.
+ \item Scegliere un indice al quale la componente frazionaria assume il
+       valore più piccolo,
+       $h\in\operatorname*{arg\,min}_{\ell\in F}[x^*_{P_t}]_\ell$.
+       Il minimo è calcolato sui valori delle componenti in $F$, come
+       nella formula delle dispense. L'operatore $\arg\min$ restituisce
+       gli indici che realizzano quel minimo.
+\end{enumerate}
+
+\subsection{Branch \& Bound: esempio numerico}
+
+Si consideri il problema di massimo con funzione obiettivo
+$z(x)=x_1+3x_2$. Per mantenere visibili i vincoli ereditati, si scriverà
+esplicitamente il modello di ciascun nodo.
+
+\newcommand{\BBmodello}[3]{%
+ \[
+ \begin{aligned}
+ (#1)\qquad \max\quad &x_1+3x_2\\
+ \text{soggetto a}\quad &x_1\geq\tfrac12 &&(a)\\
+ &x_1+\tfrac75x_2\leq\tfrac{13}{2} &&(b)\\
+ &-5x_1+3x_2\leq5 &&(c)\\
+ #2
+ &(x_1,x_2)\in #3.
+ \end{aligned}
+ \]}
+\newcommand{\BBdestra}{&x_1\geq2 &&(d')\\}
+\newcommand{\BBbasso}{&x_2\leq3 &&(e)\\}
+
+\BBmodello{\BBpli{0}}{}{\mathbb Z_{\geq0}^2}
+
+La regione intera è $X_0$ e il valore cercato è $z^*_{\BBpli{0}}$.
+Si inizializza $\BBsol=\varnothing$, $\BBinc=-\infty$.
+
+\subsubsection{Radice e ottimo del rilassamento}
+
+\BBmodello{\BBrel{0}}{}{\mathbb R_{\geq0}^2}
+
+Per costruire il poligono $P_0$ si riscrivono i vincoli obliqui come
+\[
+ (b)\quad x_2\leq\frac{65}{14}-\frac57x_1,
+ \qquad
+ (c)\quad x_2\leq\frac53+\frac53x_1.
+\]
+Il vertice $A$ è l'intersezione delle due rette. Sostituendo l'uguaglianza
+di $(c)$ in $(b)$ si ottiene
+\[
+ x_1+\frac75\left(\frac53+\frac53x_1\right)=\frac{13}{2},
+ \quad 6x_1+14+14x_1=39,
+ \quad 20x_1=25,
+ \quad x_1=\frac54.
+\]
+Quindi $x_2=\tfrac53(1+\tfrac54)=\tfrac{15}{4}$.
+Per $B$, da $(a)$ all'uguaglianza si ricava $x_1=1/2$, e da $(c)$
+$x_2=\tfrac53(1+\tfrac12)=\tfrac52$. Sull'asse $x_2=0$ i vincoli
+$(a)$ e $(b)$ danno rispettivamente $C=(1/2,0)$ e $D=(13/2,0)$.
+Poiché una funzione lineare su questo poligono raggiunge il massimo in
+un vertice, basta confrontare i quattro valori.
+
+\begin{center}
+\begin{tabular}{c c l}
+\hline
+Vertice & $(x_1,x_2)$ & $z=x_1+3x_2$\\
+\hline
+$A$ & $(5/4,15/4)$ & $5/4+45/4=50/4$\\
+$B$ & $(1/2,5/2)$   & $1/2+15/2=8$\\
+$C$ & $(1/2,0)$     & $1/2+0=1/2$\\
+$D$ & $(13/2,0)$    & $13/2+0=13/2$\\
+\hline
+\end{tabular}
+\end{center}
+
+Segue $x^*_{P_0}=A=(5/4,15/4)$ e $z^*_{\BBrel{0}}=50/4$.
+Entrambe le componenti sono frazionarie. Si sceglie $x_1$ per la prima
+ramificazione.
+
+\newcommand{\BBpunto}[3]{%
+ \fill[#3] (#1) rectangle ++(.055,.055);
+ \node[#2,text=#3,inner sep=1pt] at (#1) {$#1$};}
+
+\newcommand{\BBgrafico}[3]{%
+\begin{center}
+\begin{tikzpicture}[x=1.02cm,y=.90cm,>=stealth,font=\scriptsize,
+ base/.style={brown!65!black,thick},verso/.style={brown!65!black,->}]
+ \coordinate (A) at (1.25,3.75); \coordinate (B) at (.5,2.5);
+ \coordinate (C) at (.5,0);       \coordinate (D) at (6.5,0);
+ \coordinate (E) at (1,{10/3});   \coordinate (F) at (1,0);
+ \coordinate (G) at (2,0);        \coordinate (H) at (2,{45/14});
+ \coordinate (J) at (2.3,3);      \coordinate (K) at (2,3);
+ \coordinate (L) at (3,2.5);      \coordinate (M) at (3,0);
+ \draw[->] (-.48,0)--(7.08,0) node[below] {$x_1$};
+ \draw[->] (0,-.30)--(0,5.72) node[left] {$x_2$};
+ \foreach \i in {1,...,6}
+   \draw (\i,.04)--(\i,-.05) node[below=1pt] {$\i$};
+ \foreach \j in {1,...,4}
+   \draw (.04,\j)--(-.05,\j) node[left=1pt] {$\j$};
+ \draw[base] (.5,-.19)--(.5,5.20) node[above] {$(a)$};
+ \draw[verso] (.5,4.88)--(.85,4.88);
+ \draw[base] (-.48,{65/14+(.48)*5/7}) node[above left] {$(b)$}
+   --(6.76,{65/14-6.76*5/7});
+ \draw[verso] (-.35,{65/14+.35*5/7})--(-.59,4.51);
+ \draw[base] (-.96,{(1-.96)*5/3})--(1.84,{(1+1.84)*5/3})
+   node[above left] {$(c)$};
+ \draw[verso] (1.69,{(1+1.69)*5/3})--(1.97,4.30);
+ \draw[base] (-.99,1.00)--(2.72,-.237);
+ \draw[verso] (-.76,.923)--(-.59,1.43);
+ \node[below left] at (-.65,.84) {f.o.};
+ \ifnum#1=1
+   \draw[base] (1,-.18)--(1,5.35) node[above] {$(d)$};
+   \draw[verso] (1,5.12)--(.68,5.12);
+ \fi
+ \ifnum#1>1
+   \draw[base] (2,-.18)--(2,5.35) node[above right] {$(d')$};
+   \draw[verso] (2,5.14)--(2.36,5.14);
+ \fi
+ \ifnum#1>2
+   \ifnum#1=4
+     \draw[base] (-.42,4)--(6.35,4) node[right] {$(e')$};
+     \draw[verso] (6.02,4)--(6.02,4.37);
+   \else
+     \draw[base] (-.42,3)--(6.35,3) node[right] {$(e)$};
+     \draw[verso] (6.02,3)--(6.02,2.65);
+   \fi
+ \fi
+ \ifnum#1=5
+   \node[above left] at (1.91,5.35) {$(f)$};
+   \draw[verso] (2,5.14)--(1.63,5.14);
+   \draw[very thick] (G)--(K);
+ \fi
+ \ifnum#1=6
+   \draw[base] (3,-.18)--(3,5.35) node[above] {$(f')$};
+   \draw[verso] (3,5.14)--(3.36,5.14);
+   \node[left] at (-.45,3) {$(e)$};
+ \fi
+ \BBpunto{B}{above left}{black}
+ \BBpunto{C}{above left}{black}
+ \BBpunto{D}{above right}{red!70!black}
+ \ifnum#1<3
+   \fill[red!70!black] (A) circle (1.4pt);
+   \ifnum#1=0
+     \node[above right,red!70!black] at (A) {$A=x^*_{P_0}=(5/4,15/4)$};
+   \else
+     \node[above right,red!70!black] at (A) {$A=(5/4,15/4)$};
+   \fi
+ \else
+   \BBpunto{A}{above left}{black}
+ \fi
+ \ifnum#1=1
+   \BBpunto{E}{above left}{red!70!black}
+   \BBpunto{F}{above left}{red!70!black}
+ \fi
+ \ifnum#1>1
+   \BBpunto{G}{above left}{red!70!black}
+   \fill[red!70!black] (H) circle (1.2pt);
+   \ifnum#1<5
+     \ifnum#1=2
+       \node[above right] at (H) {$H$};
+     \else
+       \node[above right,red!70!black] at (H) {$H=(2,45/14)$};
+     \fi
+   \else
+     \node[above right] at (H) {$H$};
+   \fi
+ \fi
+ \ifnum#1>2
+   \ifnum#1=4\else
+     \BBpunto{K}{below left}{red!70!black}
+     \fill[red!70!black] (J) circle (1.2pt);
+     \ifnum#1=3
+       \node[below right] at (J) {$J$};
+     \else
+       \node[above right,red!70!black] at (J) {$J=(23/10,3)$};
+     \fi
+   \fi
+ \fi
+ \ifnum#1=6
+   \BBpunto{L}{below left}{red!70!black}
+   \BBpunto{M}{above left}{red!70!black}
+ \fi
+ \ifcase#1
+   \node at (2.72,1.65) {$P_0$};
+ \or \node at (.76,1.67) {$P_1$};
+ \or \node at (3.64,1.05) {$P_2$};
+ \or \node at (3.64,1.05) {$P_3$};
+ \or \node at (3.60,4.49) {$P_4=\varnothing$};
+ \or \node[rotate=-90] at (2.25,1.45) {$P_5=\overline{KG}$};
+ \or \node at (4.30,.85) {$P_6$};
+ \fi
+\end{tikzpicture}
+\BBfig{#2}{#3}
+\end{center}}
+
+\BBgrafico{0}{3.14}{Regione ammissibile $P_0$ e ottimo del rilassamento
+alla radice. La freccia sulla retta di livello della f.o. indica il verso
+di crescita di $x_1+3x_2$.}
+
+\subsubsection{Prima ramificazione: da $X_0$ a $X_1$ e $X_2$}
+
+Da $1<5/4<2$ seguono $\lfloor5/4\rfloor=1$ e $\lceil5/4\rceil=2$.
+Si generano i due problemi
+\BBmodello{\BBpli{1}}{&x_1\leq\lfloor5/4\rfloor=1 &&(d)\\}{\mathbb Z_{\geq0}^2}
+\BBmodello{\BBpli{2}}{&x_1\geq\lceil5/4\rceil=2 &&(d')\\}{\mathbb Z_{\geq0}^2}
+
+I rilassamenti si ottengono sostituendo $\mathbb R_{\geq0}^2$ a
+$\mathbb Z_{\geq0}^2$. Per le regioni vale
+\[
+ X_1\cup X_2=X_0,\quad X_1\cap X_2=\varnothing,\qquad
+ P_1\cup P_2\subsetneq P_0,\quad P_1\cap P_2=\varnothing.
+\]
+L'inclusione è stretta perché, ad esempio, $A$ appartiene a $P_0$ ma
+non appartiene a nessuno dei due rilassamenti figli.
+
+\paragraph{Nodo 1.}
+Nel tratto $1/2\leq x_1\leq1$ il bordo superiore è dato da $(c)$.
+Su questo bordo
+\[
+ x_2=\frac{5+5x_1}{3},\qquad
+ z=x_1+3\frac{5+5x_1}{3}=5+6x_1.
+\]
+Il valore cresce con $x_1$. All'estremo $x_1=1$ si trova
+$E=(1,10/3)$, mentre sul bordo inferiore si ha $F=(1,0)$.
+I vertici $C,B,E,F$ danno rispettivamente $1/2,8,11,1$. Pertanto
+\[
+ x^*_{P_1}=E=\left(1,\frac{10}{3}\right)\notin\mathbb Z^2,
+ \qquad z^*_{\BBrel{1}}=1+3\frac{10}{3}=11.
+\]
+\BBgrafico{1}{3.15}{Regione $P_1$ del rilassamento del nodo 1.}
+
+\paragraph{Nodo 2.}
+Per $x_1\geq2$ il bordo superiore è dato da $(b)$. Su questo bordo
+\[
+ z=x_1+3\left(\frac{65}{14}-\frac57x_1\right)
+   =\frac{195}{14}-\frac87x_1.
+\]
+Il coefficiente di $x_1$ è negativo, quindi il massimo si ottiene per
+$x_1=2$. Sostituendo in $(b)$ si ricava
+\[
+ x_2=\left(\frac{13}{2}-2\right)\frac57
+     =\frac92\frac57=\frac{45}{14}.
+\]
+I vertici del triangolo sono $G=(2,0)$, $D=(13/2,0)$ e
+$H=(2,45/14)$, con valori $2$, $13/2$ e
+\[
+ z^*_{\BBrel{2}}=z(H)=2+3\frac{45}{14}
+   =\frac{28+135}{14}=\frac{163}{14}.
+\]
+Anche $x^*_{P_2}=H$ è frazionario. Finora nessun rilassamento ha fornito
+una soluzione ottima intera. I nodi 1 e 2 restano da valutare ulteriormente.
+\BBgrafico{2}{3.16}{Regione $P_2$ del rilassamento del nodo 2.}
+
+\newcommand{\BBalbero}[3]{%
+\begin{center}
+\begin{tikzpicture}[x=1cm,y=1cm,font=\scriptsize,
+ n/.style={circle,draw,minimum size=8mm,inner sep=1.5pt}]
+ \node[n] (r) at (0,0) {$\BBpli{0}$};
+ \node[n] (a) at (-2,-1.6) {$\BBpli{1}$};
+ \node[n] (b) at (2,-1.6) {$\BBpli{2}$};
+ \draw (r)--node[above left] {$x_1\leq1$} (a);
+ \draw (r)--node[above right] {$x_1\geq2$} (b);
+ \ifnum#1<3
+   \node[above right,align=left] at (.28,.18)
+      {$\BBinc=-\infty$\\$\BBsol=\varnothing$};
+   \node[left] at (a.west) {$z(x^*_{P_1})=11$};
+ \else
+   \node[left,align=right] at (a.west) {$z(x^*_{P_1})=11$\\$=\BBinc$};
+ \fi
+ \node[right] at (b.east) {$z(x^*_{P_2})=163/14$};
+ \ifnum#1>1
+   \node[n] (c) at (0,-3.2) {$\BBpli{3}$};
+   \node[n] (d) at (4,-3.2) {$\BBpli{4}$};
+   \draw (b)--node[above left] {$x_2\leq3$} (c);
+   \draw (b)--node[above right] {$x_2\geq4$} (d);
+   \node[left] at (c.west) {$z(x^*_{P_3})=113/10$};
+   \draw[double] (3.64,-3.72)--(4.36,-3.72);
+ \fi
+ \ifnum#1=3
+   \node[n] (e) at (-2,-4.8) {$\BBpli{5}$};
+   \node[n] (f) at (2,-4.8) {$\BBpli{6}$};
+   \draw (c)--node[above left] {$x_1\leq2$} (e);
+   \draw (c)--node[above right] {$x_1\geq3$} (f);
+   \node[left,align=right,red!65!black] at (e.west)
+     {$\BBsol=x^*_{P_5}=(2,3)$\\$\BBinc=z(x^*_{P_5})=11$};
+   \node[right,align=left] at (f.east)
+     {$z(x^*_{P_6})=21/2$\\$<\BBinc$};
+   \draw[double] (-2.36,-2.12)--(-1.64,-2.12);
+   \draw[double] (-2.36,-5.32)--(-1.64,-5.32);
+   \draw[double] (1.64,-5.32)--(2.36,-5.32);
+ \fi
+\end{tikzpicture}
+\BBfig{#2}{#3}
+\end{center}}
+
+\BBalbero{1}{3.17}{Prima operazione di branching. I valori accanto ai
+figli sono limiti superiori.}
+
+\subsubsection{Seconda ramificazione: da $X_2$ a $X_3$ e $X_4$}
+
+Si sceglie il nodo 2. In $H=(2,45/14)$ la sola componente frazionaria è
+$x_2$. Poiché $42/14<45/14<56/14$, si ha
+$\lfloor45/14\rfloor=3$ e $\lceil45/14\rceil=4$. Entrambi i figli
+ereditano $x_1\geq2$.
+
+\BBmodello{\BBpli{3}}{\BBdestra
+ &x_2\leq\lfloor45/14\rfloor=3 &&(e)\\}{\mathbb Z_{\geq0}^2}
+\BBmodello{\BBpli{4}}{\BBdestra
+ &x_2\geq\lceil45/14\rceil=4 &&(e')\\}{\mathbb Z_{\geq0}^2}
+
+\paragraph{Nodo 3.}
+La retta $x_2=3$ incontra $x_1=2$ in $K=(2,3)$ e la retta $(b)$ in $J$.
+La prima coordinata di $J$ si calcola da
+\[
+ x_1+\frac75\cdot3=\frac{13}{2}
+ \quad\Longrightarrow\quad
+ x_1=\frac{13}{2}-\frac{21}{5}=\frac{65-42}{10}=\frac{23}{10}.
+\]
+Il quadrilatero ha vertici $G,K,J,D$. Confrontando i valori
+\[
+ z(G)=2,\quad z(K)=2+9=11,\quad
+ z(J)=\frac{23}{10}+9=\frac{113}{10},\quad z(D)=\frac{13}{2},
+\]
+si trova $x^*_{P_3}=J=(23/10,3)\notin\mathbb Z^2$ e
+$z^*_{\BBrel{3}}=113/10$. Nell'esecuzione illustrata si aggiorna
+l'incumbent quando si incontra un ottimo continuo intero. Il vertice $K$
+sarà registrato al nodo 5.
+\BBgrafico{3}{3.18}{Regione $P_3$ dopo l'aggiunta di $x_2\leq3$.}
+
+\paragraph{Nodo 4.}
+Da $x_1\geq2$ e $x_2\geq4$ seguirebbe
+\[
+ x_1+\frac75x_2\geq2+\frac{28}{5}=\frac{38}{5}
+  =\frac{76}{10}>\frac{65}{10}=\frac{13}{2},
+\]
+in contraddizione con $(b)$. Quindi $P_4=\varnothing$ e anche
+$X_4=\varnothing$. Si chiude il nodo per inammissibilità. Restano i nodi
+1 e 3, con $\BBinc=-\infty$.
+\BBgrafico{4}{3.19}{Il sistema che definisce $P_4$ è incompatibile.}
+\BBalbero{2}{3.20}{Seconda operazione di branching. La doppia linea
+sotto il nodo 4 ne indica la chiusura.}
+
+\subsubsection{Terza ramificazione: da $X_3$ a $X_5$ e $X_6$}
+
+Si sceglie il nodo 3. Nel punto $J=(23/10,3)$ è frazionaria $x_1$.
+Da $2<23/10<3$ seguono i vincoli $x_1\leq2$ e $x_1\geq3$.
+Rimangono in entrambi i figli $x_1\geq2$ e $x_2\leq3$, ereditati
+dal cammino precedente.
+
+\BBmodello{\BBpli{5}}{\BBdestra\BBbasso
+ &x_1\leq\lfloor23/10\rfloor=2 &&(f)\\}{\mathbb Z_{\geq0}^2}
+\BBmodello{\BBpli{6}}{\BBdestra\BBbasso
+ &x_1\geq\lceil23/10\rceil=3 &&(f')\\}{\mathbb Z_{\geq0}^2}
+
+\paragraph{Nodo 5.}
+I vincoli $(d')$ e $(f)$ impongono insieme $x_1=2$. Per tale valore
+$(b)$ dà $x_2\leq45/14$, $(c)$ dà $3x_2\leq15$, ossia $x_2\leq5$,
+e $(e)$ impone $x_2\leq3$. Poiché $3<45/14<5$, risulta
+\[
+ P_5=\{(2,x_2):0\leq x_2\leq3\}=\overline{KG}.
+\]
+Sul segmento l'obiettivo è $2+3x_2$, crescente. In $G$ vale $2$ e in
+$K$ vale $2+3\cdot3=11$. Pertanto
+\[
+ x^*_{P_5}=K=(2,3)\in\mathbb Z^2,\qquad
+ z^*_{\BBrel{5}}=z^*_{\BBpli{5}}=11.
+\]
+Il nodo si chiude per integralità. Si aggiornano
+$\BBsol\gets(2,3)$ e $\BBinc\gets11$.
+\BBgrafico{5}{3.21}{La regione $P_5$ coincide con il segmento $KG$.}
+
+\paragraph{Nodo 6.}
+Il vincolo $x_1\geq3$ individua il triangolo di vertici
+$M=(3,0)$, $D=(13/2,0)$ e $L$, intersezione di $x_1=3$ con $(b)$.
+Si ricava
+\[
+ x_2=\left(\frac{13}{2}-3\right)\frac57
+     =\frac72\frac57=\frac52,
+ \qquad L=\left(3,\frac52\right).
+\]
+Si ha $z(M)=3$, $z(D)=13/2$ e
+\[
+ z(L)=3+3\frac52=\frac{6+15}{2}=\frac{21}{2}.
+\]
+Il massimo continuo è quindi raggiunto in un punto frazionario, ma ogni
+soluzione intera del nodo ha valore al più $21/2<11=\BBinc$. Si chiude
+il nodo per bounding.
+\BBgrafico{6}{3.22}{Regione $P_6$ e ottimo continuo $L$.}
+
+\paragraph{Ritorno al nodo 1 e certificato di ottimalità.}
+Il limite già calcolato al nodo 1 è ancora valido. Il suo confronto con
+l'incumbent aggiornato dà
+\[
+ z^*_{\BBrel{1}}=z(E)=1+3\frac{10}{3}=11\leq\BBinc=11.
+\]
+Si chiude quindi anche il nodo 1 per bounding, questa volta in uguaglianza.
+Non rimangono sottoproblemi da investigare. Si conclude che
+\[
+ \boxed{x^*_{\BBpli{0}}=\BBsol=x^*_{\BBpli{5}}=x^*_{P_5}=(2,3)},
+ \qquad
+ \boxed{z^*_{\BBpli{0}}=\BBinc=z(x^*_{P_5})=11}.
+\]
+\BBalbero{3}{3.23}{Terza operazione di branching. Le foglie 1 e 6 sono
+chiuse per bounding, la 4 per inammissibilità e la 5 per integralità.}
+
+\subsection{Generazione e visita dell'albero di branching}
+
+La scelta della variabile determina come dividere un nodo. La scelta del
+prossimo nodo da esplorare stabilisce invece l'ordine di visita dell'albero.
+
+\begin{definition}{Nodo attivo}
+Un nodo attivo è un sottoproblema già generato che richiede ancora
+esplorazione. Si indica con $Q$ l'insieme dei nodi attivi. L'algoritmo
+termina quando $Q=\varnothing$ e anche l'elaborazione del nodo corrente
+è conclusa.
+\end{definition}
+
+\subsubsection{Visita in profondità: depth first}
+
+\begin{definition}{Depth first e backtracking}
+La visita \emph{depth first} genera o visita il primo figlio di un nodo
+ramificabile e prosegue ricorsivamente lungo il ramo così scelto. Ogni
+discesa è un \emph{forward step}. Quando si verifica una delle tre
+condizioni di chiusura, si risale al padre per esaminare un eventuale
+figlio ancora da generare. La risalita prende il nome di \emph{backtracking}.
+\end{definition}
+
+Per un problema di massimo le operazioni sono le seguenti.
+\begin{enumerate}
+ \item Calcolare il limite superiore $U_0=z^*_{\BBrel{0}}$ alla radice.
+ \item Se si deve ramificare, generare il primo figlio $\BBpli{1}$ e
+       calcolare $U_1=z^*_{\BBrel{1}}$.
+ \item Proseguire dall'ultimo nodo generato con una sequenza di passi
+       avanti, fino a incontrare un nodo $\BBpli{k}$ da chiudere.
+       Se la chiusura fornisce una soluzione intera migliore,
+       aggiornare $\BBsol$ e $\BBinc$.
+ \item Risalire al padre, indicato con $\BBpli{k-1}$ lungo questa
+       sequenza di discese. Se $U_{k-1}>\BBinc$ ed esiste un figlio
+       ancora inesplorato, generarlo come nuovo nodo $\BBpli{k+1}$ e
+       riprendere la discesa. Se $U_{k-1}\leq\BBinc$ o i figli sono
+       esauriti, risalire ancora al predecessore $\BBpli{k-2}$ e
+       ripetere il controllo.
+ \item Memorizzare in una pila $Q$ i nodi o i passi di visita ancora
+       pendenti. Quando si dovrebbe risalire oltre la radice la pila è
+       vuota e l'esecuzione termina.
+\end{enumerate}
+
+\paragraph{Esempio di visita per un problema di massimo.}
+Le lettere nella figura 3.24 danno, in ordine alfabetico, la sequenza
+di generazione e visita. Si calcolano i limiti superiori dei soli nodi
+effettivamente esplorati. Si riportano i valori della figura, compresa
+l'incongruenza numerica discussa sotto.
+
+\begin{center}
+\begin{tikzpicture}[x=.93cm,y=1cm,font=\scriptsize,>=stealth,
+ n/.style={circle,draw,minimum size=6.8mm,inner sep=1pt}]
+ \node[n] (A) at (0,0) {$A$};
+ \node[n] (B) at (-2.30,-1.45) {$B$};
+ \node[n] (G) at (2.30,-1.45) {$G$};
+ \node[n] (C) at (-3.45,-3) {$C$};
+ \node[n] (F) at (-1.15,-3) {$F$};
+ \node[n] (H) at (1.15,-3) {$H$};
+ \node[n] (I) at (3.45,-3) {$I$};
+ \node[n] (D) at (-4.58,-4.52) {$D$};
+ \node[n] (E) at (-2.30,-4.52) {$E$};
+ \foreach \u/\v in {A/B,A/G,B/C,B/F,C/D,C/E,G/H,G/I}
+   \draw (\u)--(\v);
+ \node[above] at (A.north) {$48$};
+ \node[above] at (B.north) {$45$};
+ \node[above] at (C.north) {$45$};
+ \node[above right] at (G.north) {$48>\BBinc$};
+ \node[above,align=center,fill=white,inner sep=1pt] at (F.north)
+   {Bounding\\$44<\BBinc$};
+ \node[above,align=center,fill=white,inner sep=1pt] at (H.north)
+   {Bounding\\$43<\BBinc$};
+ \node[above,align=center,fill=white,inner sep=1pt] at (I.north)
+   {Bounding\\$46=\BBinc$};
+ \node[above left,align=center] at (D.north)
+   {Soluzione intera\\$z(x_D^*)=44=\BBinc$};
+ \node[right,align=left] at (E.east)
+   {Soluzione intera\\$z(x_E^*)=46=\BBinc$};
+ \foreach \v in {D,E,F,H,I}
+   \draw[double] ([xshift=-3mm,yshift=-1mm]\v.south)--
+                 ([xshift=3mm,yshift=-1mm]\v.south);
+ \draw[->] ([yshift=-2mm]I.south)--++(0,-.63) node[below] {STOP};
+\end{tikzpicture}
+\BBfig{3.24}{Visita in profondità nell'ordine $A,B,C,D,E,F,G,H,I$.}
+\end{center}
+
+\begin{enumerate}
+ \item In $A$ il limite è $48$. Si scende al primo figlio $B$, di limite
+       $45$, e al suo primo figlio $C$, anch'esso di limite $45$.
+ \item In $D$, primo figlio di $C$, si incontra una soluzione intera di
+       valore $44$. Si pone $\BBinc=44$ e si chiude $D$.
+ \item Si risale a $C$. Poiché $45>44$, si visita $E$. La figura
+       attribuisce alla sua soluzione intera valore $46$. L'incumbent
+       rappresentato diventa quindi $46$.
+ \item Esaurito il ramo di $C$, il disegno riporta $F$, secondo figlio
+       di $B$, con limite $44<46$. $F$ è contrassegnato come chiuso
+       per bounding.
+ \item Si torna alla radice e si visita $G$. Poiché $48>46$, il suo
+       ramo può ancora migliorare l'incumbent.
+ \item Il primo figlio $H$ ha limite $43<46$ e si chiude per bounding.
+       Il secondo figlio $I$ ha limite $46=46$ e si chiude anch'esso.
+       Nessun nodo rimane da esplorare.
+\end{enumerate}
+
+\emph{Precisazione sui dati della figura 3.24.}
+Poiché $E$ discende da $C$ e da $B$, una soluzione di $E$ di valore
+$46$ sarebbe ammissibile anche in entrambi gli antenati. È quindi
+incompatibile con i loro limiti superiori stampati, entrambi pari a $45$.
+Inoltre, applicando alla lettera il controllo al ritorno in $B$,
+$45\leq46$ basterebbe già a escludere il ramo di $F$. L'albero riproduce
+la sequenza delle dispense e rende visibili i passi di visita, ma i valori
+stampati non possono provenire tutti dalla medesima istanza di massimo.
+
+\paragraph{Vantaggi e svantaggi.}
+La ricorsione rende semplice l'implementazione. Nella visita binaria in
+profondità rimane in attesa al più un ramo fratello per livello, quindi
+il numero di nodi pendenti è limitato dalla profondità dell'albero.
+Raggiungendo rapidamente livelli profondi si possono trovare presto
+soluzioni intere e poi migliorarle. Anche un arresto anticipato, ad esempio
+per un limite di tempo, può così restituire una buona soluzione ammissibile.
+Per passare a un ramo lontano, tuttavia, possono occorrere numerosi passi
+di backtracking.
+
+\subsubsection{Visita secondo il miglior limite: best bound first}
+
+\begin{definition}{Best bound first}
+Si ramifica a partire dal nodo attivo il cui rilassamento continuo
+presenta il limite più favorevole. Per un massimo si sceglie il limite
+superiore più alto, per un minimo il limite inferiore più basso. Tale
+regola privilegia il ramo con la migliore prospettiva di miglioramento
+indicata dal rilassamento.
+\end{definition}
+
+Per il problema di massimo considerato nelle dispense si procede come segue.
+\begin{enumerate}
+ \item Risolvere $\BBrel{0}$ e calcolare $U_0=z^*_{\BBrel{0}}$.
+ \item Se la radice richiede ramificazione, generare entrambi i figli
+       $\BBpli{1}$ e $\BBpli{2}$ e calcolare i limiti $U_1$ e $U_2$
+       dei rilassamenti ammissibili.
+ \item Applicare le condizioni di chiusura, aggiornare l'eventuale
+       incumbent e mantenere in $Q$ i figli che richiedono ancora una
+       ramificazione e che hanno $U_i>\BBinc$.
+ \item Finché $Q\ne\varnothing$, scegliere
+       \[
+        t\in\operatorname*{arg\,max}_{i:\,\BBpli{i}\in Q} U_i.
+       \]
+       Estrarre $\BBpli{t}$, generarne i figli e valutarli con le stesse
+       regole. Dopo ogni miglioramento dell'incumbent si possono eliminare
+       da $Q$ tutti i nodi il cui limite è ormai al più $\BBinc$.
+ \item Terminare quando $Q=\varnothing$.
+\end{enumerate}
+
+Nella formula di p.~126 che descrive $Q$ compare il segno $<$.
+Per un massimo il verso coerente con il criterio di bounding dimostrato
+sopra è $>$, perché $U_i\leq\BBinc$ è precisamente la condizione di
+chiusura. I due figli della radice, indicati due volte con lo stesso indice
+in una riga della pagina, sono $\BBpli{1}$ e $\BBpli{2}$.
+
+Il vantaggio indicato per il best bound first è che in media vengono
+generati meno nodi. Lo svantaggio è che la visita tende a rimanere ai
+livelli meno profondi dell'albero, dove i problemi hanno ereditato meno
+vincoli di branching.
+
+La pagina 126 rinvia alla figura 3.25 per la visita best bound first
+dello stesso esempio e alla figura 3.26 per lo pseudocodice generale
+del B\&B. Entrambe le figure si trovano oltre l'intervallo qui trattato.
+La valutazione della complessità dell'algoritmo è lasciata per esercizio.
+
+
