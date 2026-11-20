@@ -1222,25 +1222,23 @@ e il collegamento \([i,j]\) ha costo \(c_{ij}\).}
 
 \section{Metodi dei Piani di Taglio}
 \label{sec:piani-taglio}
+Si consideri il problema di Programmazione Lineare Intera (Pli). Sia $P$ il poliedro regione ammissibile del suo rilassamento continuo (Pli-c)
+e sia $X = P \cap \mathcal{Z}^n$ la regione ammissibile di (Pli). \\
+Gli algoritmi appartenenti alla famiglia dei metodi dei piani di taglio iterativamente individuano la soluzione ottima $x^*$ del rilassamento continuo (Pli-c) e se $x^*$ \textbf{ha almeno una componente frazionaria} (quindi non è intero), essi \textbf{individuano un vincolo}
+soddisfato da tutte le soluzioni intere del problema appartenenti alla regione ammissibile $P$ (cioè praticamente tutta la regione $X$), ma non soddisfato (\textbf{quindi violato}) dalla soluzione ottima $x^*$.
+\textbf{Tale vincolo che abbiamo trovato}, viene aggiunto alla formulazione matematica di (Pli-c) è detto \textbf{taglio}.
 
-Consideriamo nuovamente \((\mathrm{Pli})\), il poliedro \(P\)
-del suo rilassamento e l'insieme \(X=P\cap\mathbb Z^n\).
-I \emph{metodi dei piani di taglio} risolvono ripetutamente
-rilassamenti continui via via più restrittivi.
-Se l'ottimo corrente \(x^*\) ha una componente frazionaria,
-si cerca un vincolo soddisfatto da tutti i punti interi
-di \(P\), ma violato da \(x^*\). Il nuovo vincolo,
-aggiunto al rilassamento, prende il nome di \emph{taglio}.
 
+In generale viene data la seguente definizione:
 \begin{definition}{Taglio}
 \label{def:taglio}
-Dato \(x^*\in P\), una disequazione
+Dato \(x^*\in P\), il vincolo
 \[
 a^{\mathsf T}x\leq b_0
 \]
 è un taglio per \(x^*\) rispetto a \(X\) se:
 \begin{enumerate}
-\item[i.] è valida per tutti i punti interi ammissibili,
+\item[i.] Tutti i punti appartenenti all'insieme \(X\) rispettano il vincolo considerato.,
 \[
 a^{\mathsf T}x\leq b_0\qquad\forall x\in X;
 \]
@@ -1250,6 +1248,12 @@ a^{\mathsf T}x^*>b_0.
 \]
 \end{enumerate}
 \end{definition}
+
+\begin{observation}{}
+  Il vincolo, potrebbe essere anche un'uguaglianza o un >=, la prof. usa quello per rispettare una canonicità.
+  Ricordarti ovviamente che anche se il (Pli-c) è fatto di altri tipo di vincoli (tipo >=), io posso sempre inserire il mio taglio, basta che rispetti la definizione.
+\end{observation}
+
 
 La prima condizione preserva tutte le soluzioni ammissibili
 del problema intero, comprese quelle ottime.
@@ -1348,6 +1352,9 @@ X\subseteq P_{k+1}\subseteq P_k,
 \qquad
 P_{k+1}\cap\mathbb Z^n=P_k\cap\mathbb Z^n=X.
 \]
+
+La seconda affermazione è vera perchè il vincolo nuovo aggiunto, mantiene dentro tutti i punti $X$. 
+
 Per un problema di minimo con ottimi finiti,
 \[
 z^*_{(\mathrm{Pli\text{-}c})_0}
